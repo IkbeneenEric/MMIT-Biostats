@@ -12,57 +12,19 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-library(dplyr)
-here_here <- function(...) {
-  v_args <- list(...)
-  v_args_ext <- c(list("tutorials"), v_args)
-  case_when(
-    file.exists(here::here(v_args)) ~ here::here(v_args), 
-    file.exists(here::here(v_args_ext)) ~ here::here(v_args_ext)
-    )
-}
 
-hdr_path <- here_here("R", "header-include.R")
+library(dplyr)
+hdr_path <- case_when(
+  file.exists(here::here("R", "header-include.R")) ~ here::here("R", "header-include.R"), 
+  file.exists(here::here("tutorials", "R", "header-include.R")) ~ here::here("tutorials", "R", "header-include.R")
+  )
+  
 
 source(hdr_path)
-# library(ggstatsplot)
+
 theme_set(theme_classic())
 
 
-question <- function (
-    text, ..., 
-    type = c("auto", "single", "multiple", "learnr_radio",  "learnr_checkbox", "learnr_text", "learnr_numeric"), 
-    correct = "Correct!", 
-    incorrect = "Incorrect", 
-    try_again = NULL, 
-    message = NULL, 
-    post_message = NULL, 
-    loading = NULL, 
-    submit_button = rlang::missing_arg(), 
-    try_again_button = rlang::missing_arg(), 
-    allow_retry = TRUE, 
-    random_answer_order = TRUE, 
-    options = list()
-    ) {
-  # browser()
-  # answers <- list(...)
-  learnr::question (
-    text = text, ..., 
-    type = type, 
-    correct = correct, 
-    incorrect = incorrect,
-    try_again = try_again, 
-    message = message, 
-    post_message = post_message, 
-    loading = loading, 
-    submit_button = submit_button, 
-    try_again_button = try_again_button, 
-    allow_retry = allow_retry, 
-    random_answer_order = random_answer_order, 
-    options = options
-    ) 
-  
-}
 
 
 
@@ -86,7 +48,7 @@ The tutorial focuses on three basic skills:
 1. How to create a contingency matrix using R
 1. How to visualise the matrix using the `geom_cols()` layer
 1. How to calculate the Chisquare statistic and its associated p-value
-1. Use the `ggbarstats` from within the [`ggstatsplot` package](https://indrajeetpatil.github.io/ggstatsplot/reference/ggbarstats.html) to plot and carry out the statistical test. 
+<!-- 1. Use the `ggbarstats` from within the [`ggstatsplot` package](https://indrajeetpatil.github.io/ggstatsplot/reference/ggbarstats.html) to plot and carry out the statistical test.  -->
 
 ## Creating a contingency matrix
 
@@ -96,7 +58,7 @@ This data compares the effect of Remdisivir against a placebo in treating Covid-
 
 
 ```{r img-contingency-covid, out.width="80%"}
-knitr::include_graphics(here_here("images", "contingency-covid.png"))
+knitr::include_graphics(here("images", "contingency-covid.png"))
 
 ```
 
@@ -280,10 +242,10 @@ covid_long |>
 
 ```
 
-Both visualizations suggest that the Remdisivir treatment is associated with better outcomes for patients. But is this difference in outcomes significant? That is something we can test using a chi-square statistical test. Our test will 
+Both visualizations suggest that the Remdisivir treatment is associated with better outcomes for patients. But is this difference in outcomes significant? That is something we can establish using a chi-square statistical test. 
 
 
-## Running a chi-square statistical test
+## Chi-square statistical test
 
 We have already established that the average treatment effect is positive: $177/222 - 128/199 = 0.154$ so that patients treated with Remdisivir have a $15.4\%$ chance of recovery than those treated with a placebo. We also found that the odds ratio is $2.18$, suggesting that the odds of recovery for patients treated with Remsidivir is $2.18$ times the odds of recovery for those treated with placebo. But is this result significant? Or is it possible to obtain this result even if the real effect is zero? 
 
@@ -435,7 +397,6 @@ chisq.test(dep_a)
 ```
 
 
-
 Well done, now try answering the following questions: 
 
 ```{r berkeley-quiz, echo=FALSE}
@@ -475,3 +436,76 @@ quiz(
 
 ```
 
+
+
+###
+
+## Treatment vs. outcome (Exercise 2)
+
+You want to see if there is a difference between outcomes associated with the two treatments at the margin, i.e., you will be ignoring the difference in the condition of the patients (mild/severe). 
+
+To this end, you create a table like the one shown below, recording the observed values:
+
+
+```{r img-ex2, out.width="80%"}
+knitr::include_graphics(here("images", "ex2.png"))
+
+```
+
+When you are done use the code chunk below to calculate the expected values, the Chi-Square statistic and the associated p-value. 
+
+
+```{r treatment-outcome, exercise=TRUE}
+
+treatment_outcome <- matrix(
+  c(
+    ___, ___, # Observed counts for treatment A
+    ___, ___ # Observed counts for treatment B
+    ),  
+  nrow = 2,           # Number of rows
+  byrow = TRUE,
+  dimnames = list(
+    Treatment = c("A", "B"),       # Treatment (row names)
+    Outcome  = c("Alive", "Dead")  # Outcome (column names)
+  )
+)
+
+treatment_outcome
+
+chi_treat_out <- chisq.test(treatment_outcome)
+chi_treat_out$___
+chi_treat_out
+
+```
+
+
+
+## Hash and submit
+
+```{r encoder, echo=FALSE, context="server"}
+encoder_logic()
+```
+
+```{r encode, echo=FALSE}
+learnrhash::encoder_ui(ui_before = hash_encoder_ui)
+```
+
+### Submit your hash in a form
+
+After creating the hash, please copy it, navigate to [this form](`r submit_hash_url`) and fill it in and submit. You will need to submit the form once for every lesson you complete in this tutorial.
+
+```{r img-submit, message=FALSE, warning=FALSE, fig.align='center', out.width="50%"}
+
+
+# p_img <- ifelse(
+#   file.exists(
+#     here("tutorials", "images", "Submit-hash.jpg")
+#     ),
+#   here("tutorials", "images", "Submit-hash.jpg"),
+#   here("images", "Submit-hash.jpg")
+#   )
+
+
+knitr::include_graphics(here("images", "Submit-hash.jpg"))
+
+```

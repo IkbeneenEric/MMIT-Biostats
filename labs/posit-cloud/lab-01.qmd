@@ -2,17 +2,13 @@
 title: "Lab 1: Intro to R"
 author: "Author's Name"
 date: "Today's date here"
-output: 
-  html_document:
-    highlight: "pygments"
-    theme: "spacelab"
-    toc: TRUE
-    toc_float: TRUE
-    code_folding: "show"
-    df_print: paged
+format: html
 ---
 
-```{r setup, message=FALSE, echo=FALSE}
+```{r setup}
+#| label: setup
+#| echo: false
+#| message: false
 library(tidyverse)
 
 ```

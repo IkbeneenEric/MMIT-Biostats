@@ -81,3 +81,52 @@ hash_encoder_ui <- {
     input$caption
   }), )
 }
+
+
+
+
+question <- function (
+    text, ..., 
+    type = c("auto", "single", "multiple", "learnr_radio",  "learnr_checkbox", "learnr_text", "learnr_numeric"), 
+    correct = "Correct!", 
+    incorrect = "Incorrect", 
+    try_again = NULL, 
+    message = NULL, 
+    post_message = NULL, 
+    loading = NULL, 
+    submit_button = rlang::missing_arg(), 
+    try_again_button = rlang::missing_arg(), 
+    allow_retry = TRUE, 
+    random_answer_order = TRUE, 
+    options = list()
+) {
+  # browser()
+  # answers <- list(...)
+  learnr::question (
+    text = text, ..., 
+    type = type, 
+    correct = correct, 
+    incorrect = incorrect,
+    try_again = try_again, 
+    message = message, 
+    post_message = post_message, 
+    loading = loading, 
+    submit_button = submit_button, 
+    try_again_button = try_again_button, 
+    allow_retry = allow_retry, 
+    random_answer_order = random_answer_order, 
+    options = options
+  ) 
+  
+}
+
+
+
+here <- function(...) {
+  v_args <- list(...)
+  v_args_ext <- c(list("tutorials"), v_args)
+  case_when(
+    file.exists(here::here(v_args)) ~ here::here(v_args),
+    file.exists(here::here(v_args_ext)) ~ here::here(v_args_ext)
+    )
+}
