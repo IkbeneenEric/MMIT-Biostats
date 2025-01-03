@@ -25,7 +25,7 @@ here_here <- function(...) {
 hdr_path <- here_here("R", "header-include.R")
 
 source(hdr_path)
-library(ggstatsplot)
+# library(ggstatsplot)
 theme_set(theme_classic())
 
 
@@ -322,7 +322,7 @@ The small p-value indicates that the result is significant, and that we can safe
 
 ###
 
-## Sex Bias in Graduate Admissions: Data from Berkeley (Exercise)
+## Sex Bias in Graduate Admissions: Data from Berkeley (Exercise 1)
 
 In 1973, UC Berkeley was sued for gender bias, because their graduate school admission figures led to a [suspicion of sexual discrimination](https://www.science.org/doi/10.1126/science.187.4175.398). The `berkeley` dataset provides information about applicants to graduatie school at Berkeley for the six largest departments in the year 1973 classified by admission and sex. The variables consist of:
 

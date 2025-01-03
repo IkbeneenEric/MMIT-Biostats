@@ -1,0 +1,446 @@
+---
+title: "Lab 1: Intro to R"
+author: "Author's Name"
+date: "Today's date here"
+output: 
+  html_document:
+    highlight: "pygments"
+    theme: "spacelab"
+    toc: TRUE
+    toc_float: TRUE
+    code_folding: "show"
+    df_print: paged
+---
+
+```{r setup, message=FALSE, echo=FALSE}
+library(tidyverse)
+
+```
+
+
+The goal of this lab is to introduce you to R and RStudio, which you'll be using throughout the course both to learn the statistical concepts discussed in the course and to analyze real data and come to informed conclusions. The lab specifications can be found here.
+
+
+To clarify which is which: `R` is the name of the programming language itself and RStudio is a convenient interface for working with `R` . Think of it like this: 
+
+-   R is like a car’s engine,
+-   RStudio is like a car’s dashboard
+
+<!-- please insert an image below -->
+
+To answer the first exercise please consult with the [quarto markdown cheatsheet](https://quarto.org/docs/authoring/markdown-basics.html). 
+
+
+## Exercise 1
+
+Knit your RMarkdown file and observe the result in the form of a knitted report. Now change the following in your RMarkdown (a) In the YAML, identify the author's name and replace it with **your** name. (b) Replace the date to show **today's date**. (c) Identify the sentence "The lab specifications can be found here," and turn the word "here" into a link, (d) [Add an image](https://quarto.org/docs/authoring/figures.html) of the car dashboard (a metaphor for RStudio) and the car engine (a metaphor for R).
+
+### Basic syntax in R
+
+In R, there are several types of single value items, such as: logical, numeric and character.
+For example,
+
+*   TRUE or FALSE are logical
+*   1, 2, 3 ... are numeric 
+*   a, b, c ... are character
+
+This is pretty self-explanatory, but there are other data types we will investigate later, most notibly the factor data type, which allows you to define a categorical variable, such as gender (levels: female, male), or directions (levels: north, south, east, west). 
+
+### Vectors
+
+The term vector in R is a bit different from the traditional sense of vector in math.
+It stands for a list of items that are the same type,
+i.e., a list that is all numeric, or all character, but not mixed.
+
+To create a vector, you use the `c()` command.
+For example, I want to create a vector of 1, 2, 3, the code will be
+
+```{r}
+c(1, 2, 3)
+```
+
+Now, to save my vector (or anything) as an R item, you will use the `<-` syntax. This is called the left arrow. Let's say we are saving this vector of c(1, 2, 3) as an item called `a` then
+
+```{r}
+a <- c(1, 2, 3)
+```
+
+When you run this, something happens.
+If you look at the environment at the upper right, you should see 'a' shows up as a saved item.
+Remember to use a different name for different items.
+If you save them as the same name, the later item will just overwrite the previous.
+
+Say I want a vector consists of apple, banana, and orange, and save it as an item named `b`, what do I do?
+
+```{r}
+b <- c("apple", "banana", "orange")
+b
+```
+
+Note that apple, banana and orange all have to be in quotes `" "`.
+The quotes `" "` specify the terms apple, banana or oranges are characters,
+not items in the environment.
+Forgetting to use quotes is a very common source of bugs.
+
+### Subsetting vectors
+
+Say if you want to select a member of a vector by position,
+you will use the square bracket `[ ]` syntax.
+Say I want the 2nd member in vector `a`, the code will be
+
+```{r}
+a[2]
+```
+
+If I want anything but the 2nd member, it will be
+
+```{r}
+a[-2]
+```
+
+If I want the 1st and 2nd member, it will be
+
+```{r}
+a[c(1, 2)]
+```
+
+If I want anything but the 1st and 2nd member, it will be
+
+```{r}
+a[-c(1, 2)]
+```
+
+You don't have to memorize how to do anything.
+If you ever get confused, you can always go look at the base R cheat sheet.
+
+### Matrix
+
+Matrix is rectangular data that is all the same type, e.g., all numeric.\
+For example, if I want a matrix like this:
+
+| 1 | 2 | 3 | 4 |
+| 1 | 2 | 1 | 2 |
+| 2 | 3 | 2 | 4 |
+
+What do I do?
+An easy way to do is combining different vectors.
+
+```{r}
+my_matrix <- rbind(
+  c(1, 2, 3, 4),
+  c(1, 2, 1, 2),
+  c(2, 3, 2, 4)
+)
+
+my_matrix
+```
+
+The `rbind()` command takes vectors of the same length, and bind them as rows. The matrix has 3 rows, so I bind 3 vectors together.
+(Note: there is a `cbind()` command, which binds vectors as columns.)
+
+
+### Data frame
+
+The last type of items I will cover today is data frame.
+Data frame is the technical jargon for data tables in R.
+We will cover data frames more in depth in the next lesson.
+Today we will just have a brief introduction. 
+
+Say I have 3 apples, 4 banana and 2 oranges,
+and I want to organize this info into a table, and called this table fruits.
+What do I do?
+
+```{r}
+fruits <- data.frame(
+  name = c("apple", "banana", "orange"),
+  count = c(3, 4, 2)
+)
+
+fruits
+```
+
+To make a new table, you can use the `data.frame()` command.
+Inside `data.frame()`, you then type out each columns as vectors.
+In this example, the columns are name and count.
+
+Notice that in a data frame, all members of a column are the same type. For example, the count column is all numeric.
+This is different from a matrix, because in a matrix, all members are the same type across rows and columns.
+Also notice data frames have column names.
+In this case, the column names are name and count.
+
+You can pull out a particular column using its name.
+For example, say I want to pull out the count column, what do I do?
+
+You will use the `$` syntax.
+
+```{r}
+fruits$count
+```
+
+If I want the name column, it would be `fruits$name` instead.
+
+### Operations
+
+Now let's go over some basic operations.
+Say I want to add 0.5 to each member of my matrix,
+then take the log2 of each member then take the square root, what do I do?
+
+```{r}
+sqrt(log2(my_matrix + 0.5))
+```
+
+See, nothing complicated, just an interactive calculator.
+You see how the parentheses of `log2()` and `sqrt()` are nested.
+You can imagine if you do this for many steps, there will be too many parentheses to keep track of.
+To avoid the too many nested parentheses problem, you can use the pipe syntax.
+
+The pipe is `%>%`
+
+The pipe belongs to the dplyr package, so if you want to use the pipe, you have to load the dplyr package first. We already did that earlier when we did `library(dplyr) `.
+
+The shortcut is Ctrl+Shift+M on a PC and Cmd+Shift+M on a Mac.
+I think Ctrl+Shift+M also works on a Mac.
+When you use the pipe, it takes the output of the previous line and feed it as the input for the next line.
+In our example, it should look like:
+
+```{r}
+(my_matrix + 0.5) %>% 
+  log2() %>% 
+  sqrt() 
+```
+
+See how this is much clearer and easier to read than nested parentheses?
+
+It's a good practice to start a new line after `%>%`, which makes your code easier to read.
+
+`%>%` is a good trick.
+
+Missing parentheses is another common source of bugs, and `%>%` really reduces that.
+
+### Add comments
+
+Sometimes it's nice to annotate your code in-line as well.
+The way to do it is using the `#` symbol in the code chunk.
+Any text on the same line after a `#` sign will be ignore in a code chunk by R.
+For example:
+
+```{r}
+(my_matrix + 0.5) %>% #add 0.5 to every value first
+  log2() %>% #then take log2()
+  sqrt() #lastly take square root 
+```
+
+If you add the `#` sign at the very start of the line, it will skip that entire line.
+
+```{r}
+c(4, 4, 4) %>% 
+  # log2() %>%
+  # mean() %>% 
+  sqrt()
+```
+
+This is helpful when you realize you want to skip a step (or steps), but you don't want to remove the code.
+
+You can simply add a `#` sign to the start of the lines that you want to skip, and R will ignore them.
+
+The shortcut is `Ctrl+Shift+C` on a PC and `Cmd+Shift+C` on a Mac.
+
+
+### Exercise 2
+
+Insert a new code chunk and create a matrix as shown below. Save it as an object called `my_mat2`.
+
+
+
+
+| 1  | 1 | 2 | 2 |
+| 2  | 2 | 1 | 2 |
+| 2  | 3 | 3 | 4 |
+| 1  | 2 | 3 | 4 |
+
+
+(a) Take the square root for each member of `my_mat2`, then take `log2()`, 
+
+(b) lastly find the maximum value (use the pipe syntax. The command for maximum is `max()`)
+
+
+### Exercise 3
+
+Use the following info to make a data frame and save it as an item called "grade". Now pull out the column with the scores. Use the `$` syntax.
+
+> Adel got 85 on the exam, Bren got 83, and Cecil got 93. Their letter grades are B, B, and A, respectively (Hint: How many columns do you have to have?).
+
+
+
+
+
+## The `arbuthnot` dataset
+
+The Arbuthnot data set refers to the work of [Dr. John Arbuthnot](https://en.wikipedia.org/wiki/John_Arbuthnot), an 18<sup>th</sup> century physician, writer, and mathematician. He was interested in the ratio of newborn boys to newborn girls, so he gathered the baptism records for children born in London for every year from 1629 to 1710. 
+
+### Exercise 4
+
+Use the code chunk below to load the `arbuthnot` dataset. Now use the `glimpse` function to display its content, and the `dim` function to display its dimensions. Write down the variables associated with the dataset and the number of observations in your dataset.  
+
+```{r load-data, message=FALSE}
+# Load the tidyverse library below
+
+
+# load the data into the environment
+
+
+# Use `glimpse` function to inspect your dataset below
+
+
+# Use the `dim` function to see the dimensions of your dataset 
+
+
+
+
+
+```
+
+
+**Answer**: There are _____ variables in the arbuthnot dataset. The names of the variables are: `____`, `____` and `____`. The dataset consists of ____ observations (rows).
+
+
+
+### Exercise 5
+
+What command would you use to extract just the counts of girls baptized? Try it out in the code chunk below:
+
+```{r}
+
+
+```
+
+
+**Answer**: To extract the counts of baptized girls, we need to use the following command: _____________.
+
+
+### Exercise 6
+
+Create the plot and answer the following: is there an apparent trend in the number of girls baptized over the years? How would you describe it? 
+
+```{r trend-girls}
+# Insert code below
+
+
+
+
+```
+
+
+**Answer**: ________
+
+
+### Exercise 7
+
+Now, generate a plot of the proportion of boys born over time. What do you see?
+
+```{r plot-prop-boys-arbuthnot}
+# Insert code below
+
+
+
+```
+
+
+**Answer**: ________
+
+
+
+## The`present` dataset
+
+Answer the following questions with the `present` dataset:
+
+
+
+### Exercise 8
+
+What years are included in this data set? What are the dimensions of the data frame? What are the variable names? How many observations are in your data?
+
+```{r present-dataset}
+# We already loaded the tidyverse library
+# so we do not need to do this again. 
+# However, we do need to load the new data into the environment
+# Insert code below
+
+
+
+# What years are included in the dataset?
+
+
+# What are the dimensions of the dataset?
+
+
+# What are the variable names? 
+
+
+
+
+
+```
+
+
+**Answer**: ________
+
+
+
+
+### Exercise 9
+
+How do these counts compare to Arbuthnot's? Are they of a similar magnitude?
+
+
+```{r count-compare}
+# Insert code below
+
+
+
+
+
+
+```
+
+
+
+**Answer**: ________
+
+
+
+
+### Exercise 10
+
+Make a plot that displays the proportion of boys born over time. What do you see? Does Arbuthnot’s observation about boys being born in greater proportion than girls hold up in the U.S.? What explains the differences you observe? Include a plot in your response. Hint: You should be able to reuse your code from a previous exercise, just replace the name of the data frame..
+
+```{r plot-prop-boys-present}
+# Insert code below
+
+
+
+
+
+```
+
+**Answer**: ________
+
+
+
+### Exercise 11
+
+In which year did we see the largest total number of births in the U.S.?
+
+
+```{r find-max-total}
+# Insert code below
+
+
+
+
+```
+
+
+**Answer**: ________
+
+

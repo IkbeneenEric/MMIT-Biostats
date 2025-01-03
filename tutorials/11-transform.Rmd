@@ -1,5 +1,5 @@
 ---
-title: "Handling datasets: tibbles"
+title: "Transforming Data"
 output: 
   learnr::tutorial:
     progressive: true
@@ -49,9 +49,9 @@ number_ones <- babynames::babynames %>%
 ```
 
 
-## Welcome
+## Welcome: transforming data
 
-In this tutorial you will master some common tools for manipulating data with R:
+In this tutorial you will master some common tools for transforming data with R:
 
 * tibbles and `View()`, which let you inspect raw data
 * `select()` and `filter()`, which let you extract rows and columns from a data frame

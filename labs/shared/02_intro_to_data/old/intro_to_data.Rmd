@@ -1,0 +1,346 @@
+---
+title: "Introduction to data"
+output:
+  html_document:
+    theme: cerulean
+    highlight: pygments
+    css: ../lab.css
+    toc: true
+    toc_float: true
+---
+
+```{r global-options, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE, results = FALSE, fig.show = "hide", message = FALSE)
+library(tidyverse)
+library(openintro)
+```
+
+
+In this lab we explore flights, specifically a random sample of domestic flights that departed from the three major New York City airports in 2013.
+
+We will generate simple graphical and numerical summaries of data on these flights and explore delay times. You will find all the work-space for your lab on posit cloud [using this link](https://posit.cloud/spaces/405625/content/6723024).
+
+
+## Getting started
+
+
+
+In this lab, we will explore and visualize the data using the **tidyverse** suite of packages.
+The data can be found in the `data` folder, and you will load it into your environment using the `read_csv` function. 
+
+### Creating a reproducible lab report
+
+Remember that we will be using R Markdown to create reproducible lab reports.
+In RStudio, go to the file `lab-02.Rmd`
+
+-   Update the YAML with your name, the date and the name of the lab. 
+-   load the `tidyverse` package
+-   read in the `nycflights` dataset from the data folder
+-   knit your file to see that everything is working. 
+
+If you run the code in the chunk, you should now see the nycflights data in your environment panel on the top left in rstudio.
+
+```{r load-packages, eval=FALSE, echo=TRUE}
+# 1. load the library "tidyverse"
+library(___)
+# 2. use the read_csv file to read the dataset
+nycflights <- read_csv("_____")
+```
+
+
+### The data
+
+The [Bureau of Transportation Statistics](http://www.rita.dot.gov/bts/about/) (BTS) is a statistical agency that is a part of the Research and Innovative Technology Administration (RITA).
+As its name implies, BTS collects and makes transportation data available, such as the flights data we will be working with in this lab.
+
+
+The data set `nycflights` that shows up in your workspace is a *data matrix*, with each row representing an *observation* and each column representing a *variable*.
+
+R calls this data format a **data frame** or a **tibble**, terms that will be used throughout the labs. For this data set, each *observation* is a single flight.
+
+To view the names of the variables, type the following command in the console:
+
+```{r names, echo=TRUE, eval=FALSE}
+glimpse(nycflights)
+```
+
+This returns the names of the variables in this data frame.
+
+The **codebook** (description of the variables) can be accessed by pulling up the help file. Now type this in your console:
+
+```{r help, eval=FALSE}
+?nycflights
+```
+
+One of the variables refers to the carrier (i.e. airline) of the flight, which is coded according to the following system.
+
+-   `carrier`: Two letter carrier abbreviation.
+
+    -   `9E`: Endeavor Air Inc.
+    -   `AA`: American Airlines Inc.
+    -   `AS`: Alaska Airlines Inc.
+    -   `B6`: JetBlue Airways
+    -   `DL`: Delta Air Lines Inc.
+    -   `EV`: ExpressJet Airlines Inc.
+    -   `F9`: Frontier Airlines Inc.
+    -   `FL`: AirTran Airways Corporation
+    -   `HA`: Hawaiian Airlines Inc.
+    -   `MQ`: Envoy Air
+    -   `OO`: SkyWest Airlines Inc.
+    -   `UA`: United Air Lines Inc.
+    -   `US`: US Airways Inc.
+    -   `VX`: Virgin America
+    -   `WN`: Southwest Airlines Co.
+    -   `YV`: Mesa Airlines Inc.
+
+
+
+Let's think about some questions we might want to answer with these data:
+
+-   How delayed were flights that were headed to Los Angeles?
+-   How do departure delays vary by month?
+-   Which of the three major NYC airports has the best on time percentage for departing flights?
+
+## Analysis
+
+Our initial analysis will progress in three steps: 
+
+-   Explore the departure delays
+-   Explore the departure delays by month
+-   Explore the rate of on-time departures from New-York airports. 
+
+
+
+### Departure delays
+
+Let's start by examining the distribution of departure delays of all flights with a histogram.
+
+```{r hist-dep-delay}
+ggplot(data = nycflights, 
+       aes(x = dep_delay)) +
+  geom_histogram()
+```
+
+This function says to plot the `dep_delay` variable from the `nycflights` data frame on the x-axis. The x-axis is divided to small segments, known as `bins`. We then count the number of data-points that fall into each bin, which is an indicator of the probability of observing the values associated with that bin.
+
+But the size of the bin will influence the shape of the histogram. Larger bins will include more observations. You can easily define the binwidth you want to use:
+
+```{r hist-dep-delay-bins}
+
+ggplot(data = nycflights, aes(x = dep_delay)) + geom_histogram(binwidth = 15)
+
+ggplot(data = nycflights, aes(x = dep_delay)) + geom_histogram(binwidth = 150)
+
+```
+
+As you can see, the distribution is very much skewed to the right. Ideally we would like to stretch the small numbers and squeeze the large numbers together. To do that, add to your `ggplot` the following layer at the very end `+ scale_x_log10()`.  
+
+1.  Experiment with different binwidths to adjust your histogram in a way that will show its important features. You may also want to try using the `+ scale_x_log10()` . What features are revealed now that were obscured in the original histogram? **Note:** When using the log scale, you may need to experiment with bin widths that are smaller than 1, such as `binwidth=0.1` or even less!
+
+If you want to visualize only delays of flights headed to Los Angeles, you need to first `filter` the data for flights with that destination (`dest == "LAX"`) and then make a histogram of the departure delays of only those flights.
+
+```{r lax-flights-hist}
+lax_flights <- nycflights %>%
+  filter(dest == "LAX")
+ggplot(data = lax_flights, aes(x = dep_delay)) +
+  geom_histogram()
+```
+
+Let's decipher these two commands (OK, so it might look like four lines, but the first two physical lines of code are actually part of the same command. It's common to add a break to a new line after `%>%` to help readability).
+
+-   Command 1: Take the `nycflights` data frame, `filter` for flights headed to LAX, and save the result as a new data frame called `lax_flights`.
+
+    -   `==` means "if it's equal to".
+    -   `LAX` is in quotation marks since it is a character string.
+
+-   Command 2: Basically the same `ggplot` call from earlier for making a histogram, except that it uses the smaller data frame for flights headed to LAX instead of all flights.
+
+::: {#boxedtext}
+**Logical operators:** Filtering for certain observations (e.g. flights from a particular airport) is often of interest in data frames where we might want to examine observations with certain characteristics separately from the rest of the data.
+To do so, you can use the `filter` function and a series of **logical operators**.
+The most commonly used logical operators for data analysis are as follows:
+
+-   `==` means "equal to"
+-   `!=` means "not equal to"
+-   `>` or `<` means "greater than" or "less than"
+-   `>=` or `<=` means "greater than or equal to" or "less than or equal to"
+:::
+
+You can also obtain numerical summaries for these flights:
+
+```{r lax-flights-summ}
+lax_flights %>%
+  summarise(mean_dd   = mean(dep_delay), 
+            median_dd = median(dep_delay), 
+            n         = n())
+```
+
+Note that in the `summarise` function you created a list of three different numerical summaries that you were interested in.
+The names of these elements are user defined, like `mean_dd`, `median_dd`, `n`, and you can customize these names as you like (just don't use spaces in your names).
+Calculating these summary statistics also requires that you know the function calls.
+Note that `n()` reports the sample size.
+
+::: {#boxedtext}
+**Summary statistics:** Some useful function calls for summary statistics for a single numerical variable are as follows:
+
+-   `mean`
+-   `median`
+-   `sd`
+-   `var`
+-   `IQR`
+-   `min`
+-   `max`
+
+Note that each of these functions takes a single vector as an argument and returns a single value.
+:::
+
+You can also filter based on multiple criteria.
+Suppose you are interested in flights headed to San Francisco (SFO) in February:
+
+```{r sfo-feb-flights}
+sfo_feb_flights <- nycflights %>%
+  filter(dest == "SFO", month == 2)
+```
+
+Note that you can separate the conditions using commas if you want flights that are both headed to SFO **and** in February.
+If you are interested in either flights headed to SFO **or** in February, you can use the `|` instead of the comma.
+
+2.  Create a new data frame that includes flights headed to SFO in February, and save this data frame as `sfo_feb_flights`. How many flights meet these criteria? Try to use the function `nrow` inside of [inline code](https://rmarkdown.rstudio.com/lesson-4.html) in your answer, and knit your file to see that your text shows the  answer correctly. 
+
+
+3.  Describe the distribution of the **arrival** delays of flights headed to SFO in February, using an appropriate histogram and summary statistics.
+**Hint:** The summary statistics you use should depend on the shape of the distribution.
+
+
+Instead of filtering for each city, you can calculate summary statistics for various **groups** in your data frame.
+For example, we can modify the above command using the `group_by` function to get the same summary stats for each origin airport:
+
+```{r summary-custom-list-origin}
+sfo_feb_flights %>%
+  group_by(origin) %>%
+  summarise(median_dd = median(dep_delay), iqr_dd = IQR(dep_delay), n_flights = n())
+```
+
+Here, we first grouped the data by `origin` and then calculated the summary statistics.
+
+4.  Calculate the median and interquartile range for `arr_delay`s of flights in in the `sfo_feb_flights` data frame, grouped by carrier. Which carrier has the most variable arrival delays?
+
+### Departure delays by month
+
+Which month would you expect to have the highest average delay departing from an NYC airport?
+
+Let's think about how you could answer this question:
+
+-   First, calculate monthly averages for departure delays. With the new language you are learning, you could
+
+    -   `group_by` months, then
+    -   `summarise` mean departure delays.
+
+-   Then, you could to `arrange` these average delays in `desc`ending order
+
+```{r mean-dep-delay-months}
+nycflights %>%
+  group_by(month) %>%
+  summarise(mean_dd = mean(dep_delay)) %>%
+  arrange(desc(mean_dd))
+```
+
+<!-- 5.  Suppose you really dislike departure delays and you want to schedule your travel in a month that minimizes your potential departure delay leaving NYC. One option is to choose the month with the lowest mean departure delay. Another option is to choose the month with the lowest median departure delay. What are the pros and cons of these two choices? -->
+
+
+
+```{r mean-median-dep-delay-months, eval=FALSE, include=FALSE}
+nycflights %>%
+  group_by(month) %>%
+  summarise(mean_dd = mean(dep_delay), median_dd = median(dep_delay)) %>%
+  arrange(desc(mean_dd))
+
+nycflights |> 
+  ggplot( aes(factor(month), abs(dep_delay)+1)) +
+  geom_boxplot() +
+  scale_y_log10()
+
+```
+
+```{=html}
+<!--
+Which month has the highest average departure delay from an NYC airport? What
+    about the highest median departure delay? Which of these measures is more 
+    reliable for deciding which month(s) to avoid flying if you really dislike 
+    delayed flights.
+-->
+```
+### On time departure rate for NYC airports
+
+Suppose you will be flying out of NYC and want to know which of the three major NYC airports has the best on time departure rate of departing flights.
+Also supposed that for you, a flight that is delayed for less than 5 minutes is basically "on time."" You consider any flight delayed for 5 minutes of more to be "delayed".
+
+In order to determine which airport has the best on time departure rate, you can
+
+-   first classify each flight as "on time" or "delayed",
+-   then group flights by origin airport,
+-   then calculate on time departure rates for each origin airport,
+-   and finally arrange the airports in descending order for on time departure percentage.
+
+Let's start with classifying each flight as "on time" or "delayed" by creating a new variable with the `mutate` function.
+
+```{r dep-type}
+nycflights <- nycflights %>%
+  mutate(dep_type = ifelse(dep_delay < 5, "on time", "delayed"))
+```
+
+The first argument in the `mutate` function is the name of the new variable we want to create, in this case `dep_type`.
+
+Then if `dep_delay < 5`, we classify the flight as `"on time"` and `"delayed"` if not, i.e. if the flight is delayed for 5 or more minutes.
+
+Note that we are also overwriting the `nycflights` data frame with the new version of this data frame that includes the new `dep_type` variable.
+
+We can handle all of the remaining steps in one code chunk:
+
+```{r ot-dep-rate, eval=FALSE, echo=TRUE}
+nycflights %>%
+  group_by(___) %>%
+  summarise(on_time_dep_rate = sum(dep_type == "on time") / n()) %>%
+  arrange(desc(___))
+```
+
+
+```{r ot-dep-rate-sol, eval=FALSE, echo=FALSE}
+nycflights %>%
+  group_by(origin) %>%
+  summarise(on_time_dep_rate = sum(dep_type == "on time") / n(), n = n()) %>%
+  arrange(desc(on_time_dep_rate)) |> 
+  ggplot(aes(origin, on_time_dep_rate)) + geom_col()
+```
+
+
+
+5.  Create a list of `origin` airports and their rate of on time departure, and then visualize the distribution of on on time departure rate across the three airports using a segmented bar plot. If you could select an airport based on on time departure percentage, which NYC airport would you choose to fly out of?
+**Hint:** For the segmented bar plot, will need to map the `aes`thetic arguments as follows: `x = origin, fill = dep_type`.
+
+
+------------------------------------------------------------------------
+
+## More Practice
+
+6.  Mutate the data frame so that it includes a new variable that contains the average speed, `avg_speed` traveled by the plane for each flight (in mph, or if you are brave, in km/h). Now make a scatterplot of `avg_speed` vs. `distance`.
+    Describe the relationship between average speed and distance.
+    **Hint:** Average speed can be calculated as distance divided by number of hours of travel, and note that `air_time` is given in minutes. You will need to use `geom_point()`.
+
+7.  Replicate the following plot and determine what is the cutoff point for the latest departure delay where you can still have a chance to arrive at your destination on time. 
+    **Hint:** The data frame plotted only contains flights from American Airlines, Delta Airlines, and United Airlines, and the points are `color`ed by `carrier`. To determine the cut off point, try scaling the x-axis and the y-axis on the logarithmic scale. You can also filter the data, so that you plot only data where `arr_delay <= 0` 
+
+```{r plot-to-replicate, echo=FALSE, fig.show="asis", fig.width=7, fig.height=4}
+dl_aa_ua <- nycflights %>%
+  filter(carrier == "AA" | carrier == "DL" | carrier == "UA")
+ggplot(data = dl_aa_ua, aes(x = dep_delay, y = arr_delay, color = carrier)) +
+  geom_point(alpha = .5) 
+
+# dl_aa_ua <- nycflights %>%
+#   filter((carrier == "AA" | carrier == "DL" | carrier == "UA") & arr_delay <= 0)
+
+```
+
+------------------------------------------------------------------------
+
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">![Creative Commons License](https://i.creativecommons.org/l/by-sa/4.0/88x31.png){style="border-width:0"}</a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
