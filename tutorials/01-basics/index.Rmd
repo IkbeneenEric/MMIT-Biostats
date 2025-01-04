@@ -1,0 +1,49 @@
+---
+title: "Basic visualization and programming in R"
+output: html_document
+params:
+  shiny_url: "https://oferengel-posit.shinyapps.io/"
+---
+
+<meta http-equiv='cache-control' content='no-cache'> 
+<meta http-equiv='expires' content='0'> 
+<meta http-equiv='pragma' content='no-cache'>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(glue)
+shiny_url <- params$shiny_url
+```
+
+<img style="float: right; margin: 0px 0px 20px 20px" src="../../logo/umcg.png" alt="Tutorial illustration" width="20%" height="20%">
+
+
+These tutorials provide a bird's eye view of R visualization and programming you will need to run basic data science and biostatistical tasks. 
+
+
+## Tutorials
+
+### 1 - [Basic visualization](`r glue("{shiny_url}01-basics-viz/")`){target="_blank"}
+
+Visualization is one of the most important tools for data science and a rewarding way to start learning R; since you get an immediate visual response which helps you explore the data in a variety of ways. In this tutorial you will learn how to...  
+
+*   How to create graphs with a reusable **template**
+*   How to add variables to a graph with **aesthetics**
+*   How to make different "types" of graphs with **geoms** 
+
+### 2 - [Basic programming](`r glue("{shiny_url}02-basics-prog")`){target="_blank"}
+
+
+In this tutorial you will acquire the foundations to understand R code. You'll learn about:
+
+* **functions** and their **arguments**
+* **objects**
+* R's basic **data types**, data structures including **vectors** and **lists** and **package system**
+
+
+## Additional references
+
+These tutorials are built off the code developed by Garrett Grolemund (co-author of R for [Data Science](R for Data Science)) created the RStudio Primers—a set of free interactive {learnr} apps to teach R to the public. These were hosted on a Shiny server maintained by RStudio and accessible through RStudio.cloud.
+
+
+
