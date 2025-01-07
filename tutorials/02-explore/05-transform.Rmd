@@ -12,6 +12,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 library(dplyr)
+library(babynames)
 here_here <- function(...) {
   v_args <- list(...)
   v_args_ext <- c(list("tutorials", "02-explore"), v_args)
@@ -283,10 +284,14 @@ To figure that out, you will first need to trim down `babynames`, and extract on
 To see what I mean, consider how I made the plot above: I began with the entire data set, which if plotted as a scatterplot would've looked like this.
 
 ```{r all-props-dots, out.width = "60%", cached = TRUE, echo=TRUE}
-ggplot(babynames) +
-  geom_point(aes(x = year, y = prop)) +
-  labs(title = "Popularity of every name in the data set")
+# ggplot(babynames) +
+#   geom_point(aes(x = year, y = prop)) +
+#   labs(title = "Popularity of every name in the data set")
+# 
+# ggsave(here::here("tutorials", "02-explore", "images", "all-props-dots.png"))
+# 
 
+knitr::include_graphics(here_here("images", "all-props-dots.png"))
 
 ```
 
@@ -303,9 +308,16 @@ babynames %>%
 If I had skipped this step, my line graph would've connected all of the points in the large data set, creating an uninformative graph.
 
 ```{r all-props-line, out.width = "60%", cached = TRUE, echo=TRUE}
-ggplot(babynames) +
-  geom_line(aes(x = year, y = prop)) +
-  labs(title = "Popularity of every name in the data set")
+# ggplot(babynames) +
+#   geom_line(aes(x = year, y = prop)) +
+#   labs(title = "Popularity of every name in the data set")
+# 
+# ggsave(here::here("tutorials", "02-explore", "images", "all-props-lines.png"))
+ 
+
+knitr::include_graphics(here_here("images", "all-props-lines.png"))
+
+
 ```
 
 We get vertical lines because every year is associated with a single value on the `x-axis` buy multiple proportions on the `y-axis`, so numerous points directly above and below one another are connected by lines going up and down.  

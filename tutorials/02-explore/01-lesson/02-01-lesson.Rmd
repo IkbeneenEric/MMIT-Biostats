@@ -21,6 +21,7 @@ library(emo)
 library(gt)
 library(gradethis)
 library(glue)
+library(shiny)
 gradethis::gradethis_setup(pass.praise = TRUE, fail.encourage = TRUE)
 submit_hash_url <- "https://forms.gle/uxn1MkCSNkmiHcnB6"
 
@@ -30,7 +31,8 @@ knitr::opts_chunk$set(warning = FALSE,
                       fig.width = 5,
                       fig.align = "center")
 
-comics <- read_csv("data/comics.csv") |> 
+comics <- read_csv(here::here("tutorials", "02-explore", "04-lesson","data", "comics.csv")) |>
+  filter(!is.na(appearances)) |> 
   filter(!is.na(align), 
          !is.na(id), 
          !is.na(gender)) |>

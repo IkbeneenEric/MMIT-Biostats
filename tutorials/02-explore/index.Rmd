@@ -92,10 +92,10 @@ In this tutorial you will practice  transforming data with R:
 * `%>%` or `|>`, which organizes your code into reader-friendly "pipes"
 * `mutate()`, `group_by()`, and `summarize()`, which help you use your data to compute new variables and summary statistics
 
-	
-### 5 [Case study](`r glue("{shiny_url}02-04-lesson")`){target="_blank"}
 
-Apply what you've learned to explore and summarize a real world dataset in this case study of email spam.
+<!-- ### 5 [Case study](`r glue("{shiny_url}02-04-lesson")`){target="_blank"} -->
+
+<!-- Apply what you've learned to explore and summarize a real world dataset in this case study of email spam. -->
 
 ## Additional references
 
