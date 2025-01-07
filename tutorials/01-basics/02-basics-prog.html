@@ -829,7 +829,7 @@ solutions, please enter your identifying information, then click the button belo
 <label class="control-label" id="studentID-label" for="studentID">What is your student ID (Gebruikersnaam  s-/p-nummer)?</label>
 <input id="studentID" type="text" class="shiny-input-text form-control" value=""/>
 </div>
-<div id="outbede19bc2f49919b" class="shiny-text-output"></div>
+<div id="out228d02fc0c04742c" class="shiny-text-output"></div>
 </div>
 <div class="row" style="padding-bottom: 0.5em;">
 <div class="col-sm-3">
@@ -894,7 +894,7 @@ solutions, please enter your identifying information, then click the button belo
 <div id="section-submit-your-hash-in-a-form" class="section level3">
 <h3>Submit your hash in a form</h3>
 <p>After creating the hash, please copy it, navigate to <a
-href="https://forms.gle/ajEDfePc1jcTukyB7">this form</a> and fill it in
+href="https://forms.gle/uxn1MkCSNkmiHcnB6">this form</a> and fill it in
 and submit. You will need to submit the form once for every lesson you
 complete in this tutorial.</p>
 <p><img src="images/Submit-hash.jpg" width="50%" style="display: block; margin: auto;" />
@@ -902,9 +902,9 @@ complete in this tutorial.</p>
 <script type="application/shiny-prerendered" data-context="server-start">
 library(dplyr)
 hdr_path <- case_when(
-  file.exists(here::here("R", "header-include.R")) ~ here::here("R", "header-include.R"), 
-  file.exists(here::here("tutorials", "R", "header-include.R")) ~ here::here("tutorials", "R", "header-include.R"), 
-  file.exists(here::here("tutorials", "01-basics", "R", "header-include.R")) ~ here::here("tutorials", "01-basics", "R", "header-include.R")
+    file.exists(here::here("R", "header-include.R")) ~ here::here("R", "header-include.R"), 
+    file.exists(here::here("tutorials", "R", "header-include.R")) ~ here::here("tutorials", "R", "header-include.R"), 
+    file.exists(here::here("tutorials", "01-basics", "R", "header-include.R")) ~ here::here("tutorials", "01-basics", "R", "header-include.R")
   )
 
 
@@ -941,9 +941,9 @@ output$`tutorial-exercise-functions-1-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "functions-1", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "functions-1", 
     code = "", opts = list(label = "\"functions-1\"", exercise = "TRUE"), 
@@ -983,9 +983,9 @@ output$`tutorial-exercise-functions-2-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "functions-2", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "functions-2", 
     code = "", opts = list(label = "\"functions-2\"", exercise = "TRUE"), 
@@ -1025,9 +1025,9 @@ output$`tutorial-exercise-functions-3-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "functions-3", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "functions-3", 
     code = "", opts = list(label = "\"functions-3\"", exercise = "TRUE"), 
@@ -1067,9 +1067,9 @@ output$`tutorial-exercise-functions-4-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "functions-4", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "functions-4", 
     code = "", opts = list(label = "\"functions-4\"", exercise = "TRUE"), 
@@ -1109,9 +1109,9 @@ output$`tutorial-exercise-functions-5-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "functions-5", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "functions-5", 
     code = "# sqrt(961)", opts = list(label = "\"functions-5\"", 
@@ -1151,9 +1151,9 @@ output$`tutorial-exercise-arguments-1-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "arguments-1", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "arguments-1", 
     code = "", opts = list(label = "\"arguments-1\"", exercise = "TRUE"), 
@@ -1186,13 +1186,13 @@ learnr:::store_exercise_cache(structure(list(label = "arguments-1", global_setup
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "arguments-2", 
     question = structure("Which arguments of R norm are optional?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_7f04467", 
+    "character")), answers = list(structure(list(id = "lnr_ans_f9e45ee", 
         option = "n", value = "n", label = structure("n", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b368964", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_160c1e2", 
         option = "mean", value = "mean", label = structure("mean", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b339e77", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_1083dda", 
         option = "sd", value = "sd", label = structure("sd", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
@@ -1203,7 +1203,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "arguments-2-answer", question = "arguments-2"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1734781624.69218, options = list()), class = c("learnr_checkbox", 
+    seed = 870611557.59459, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
 
@@ -1217,9 +1217,9 @@ output$`tutorial-exercise-arguments-3-output` <- renderUI({
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "arguments-3", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "arguments-3", 
     code = "", opts = list(label = "\"arguments-3\"", exercise = "TRUE"), 
@@ -1259,9 +1259,9 @@ output$`tutorial-exercise-arguments-4-output` <- renderUI({
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "arguments-4", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "arguments-4", 
     code = "rnorm(100, mu = 100, sd = 50)", opts = list(label = "\"arguments-4\"", 
@@ -1295,33 +1295,33 @@ learnr:::store_exercise_cache(structure(list(label = "arguments-4", global_setup
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "objects-1", 
     question = structure("Which of these would be valid object names?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_85250dc", 
+    "character")), answers = list(structure(list(id = "lnr_ans_35e4cc9", 
         option = "today", value = "today", label = structure("today", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_9374cdb", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_74767e5", 
         option = "1st", value = "1st", label = structure("1st", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_db656e4", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_e74ab41", 
         option = "+1", value = "+1", label = structure("+1", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a2aa998", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_43abf77", 
         option = "vars", value = "vars", label = structure("vars", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_3ee8f09", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_33ed7e7", 
         option = "\\^_^", value = "\\^_^", label = structure("^_^", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_52c7a75", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_fdf91fc", 
         option = "foo", value = "foo", label = structure("foo", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
     "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
     "character"))), messages = list(correct = structure("Remember that the most helpful names will remind you what you put in your object.", html = TRUE, class = c("html", 
     "character")), try_again = structure("Incorrect. Be sure to select every correct answer.", html = TRUE, class = c("html", 
-    "character")), incorrect = structure("Please try again.", html = TRUE, class = c("html", 
+    "character")), incorrect = structure("Try it again; next time’s the charm!", html = TRUE, class = c("html", 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "objects-1-answer", question = "objects-1"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 232031842.891952, options = list()), class = c("learnr_checkbox", 
+    seed = 2046148216.04719, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
  
@@ -1335,9 +1335,9 @@ output$`tutorial-exercise-objects-2-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "objects-2", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "objects-2", 
     code = "", opts = list(label = "\"objects-2\"", exercise = "TRUE"), 
@@ -1378,9 +1378,9 @@ output$`tutorial-exercise-objects-3-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "objects-3", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "objects-3", 
     code = "data <- rnorm(100, mean = 100, sd = 15)\ncopy <- data", 
@@ -1423,9 +1423,9 @@ output$`tutorial-exercise-objects-4-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "objects-4", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "objects-4", 
     code = "", opts = list(label = "\"objects-4\"", exercise = "TRUE"), 
@@ -1465,9 +1465,9 @@ output$`tutorial-exercise-objects-5-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "objects-5", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "objects-5", 
     code = "iris <- 1\niris", opts = list(label = "\"objects-5\"", 
@@ -1508,9 +1508,9 @@ output$`tutorial-exercise-vectors-1-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "vectors-1", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "vectors-1", 
     code = "", opts = list(label = "\"vectors-1\"", exercise = "TRUE"), 
@@ -1550,9 +1550,9 @@ output$`tutorial-exercise-vectors-2-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "vectors-2", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "vectors-2", 
     code = "", opts = list(label = "\"vectors-2\"", exercise = "TRUE"), 
@@ -1592,9 +1592,9 @@ output$`tutorial-exercise-vectors-3-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "vectors-3", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "vectors-3", 
     code = "vec <- c(1, 2, 4, 8, 16)", opts = list(label = "\"vectors-3\"", 
@@ -1635,9 +1635,9 @@ output$`tutorial-exercise-vectors-4-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "vectors-4", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "vectors-4", 
     code = "vec <- c(1, 2, 4, 8, 16)\nvec[]", opts = list(label = "\"vectors-4\"", 
@@ -1678,9 +1678,9 @@ output$`tutorial-exercise-vectors-5-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "vectors-5", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "vectors-5", 
     code = "vec2 <- c(alpha = 1, beta = 2, gamma = 3)", opts = list(
@@ -1721,9 +1721,9 @@ output$`tutorial-exercise-vectors-6-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "vectors-6", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "vectors-6", 
     code = "c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) + c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)", 
@@ -1763,9 +1763,9 @@ output$`tutorial-exercise-vectors-7-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "vectors-7", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "vectors-7", 
     code = "1 + c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)", opts = list(
@@ -1799,36 +1799,36 @@ learnr:::store_exercise_cache(structure(list(label = "vectors-7", global_setup =
 learnr:::question_prerendered_chunk(structure(list(type = c("auto", "single", "multiple", "learnr_radio", 
 "learnr_checkbox", "learnr_text", "learnr_numeric"), label = "types1", 
     question = structure("Which of these is not an atomic data type", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_8c696ac", 
+    "character")), answers = list(structure(list(id = "lnr_ans_85f39fd", 
         option = "numeric/double", value = "numeric/double", 
         label = structure("numeric/double", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_978e8ce", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_552cc51", 
         option = "integer", value = "integer", label = structure("integer", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_fe8a6bc", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_548b95b", 
         option = "character", value = "character", label = structure("character", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_31e0fe0", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a71f8af", 
         option = "logical", value = "logical", label = structure("logical", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b6d6c6d", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_9c19e44", 
         option = "complex", value = "complex", label = structure("complex", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_3b7947e", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_e30373d", 
         option = "raw", value = "raw", label = structure("raw", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5d3670e", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b33832a", 
         option = "simple", value = "simple", label = structure("simple", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
     "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
-    "character"))), messages = list(correct = structure("That’s a first-class answer!", html = TRUE, class = c("html", 
-    "character")), try_again = structure("Try it again. You get better each time.", html = TRUE, class = c("html", 
-    "character")), incorrect = structure("Try it again. You get better each time.", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("You aced it!", html = TRUE, class = c("html", 
+    "character")), try_again = structure("That’s okay: you learn more from mistakes than successes. Let’s do it one more time.", html = TRUE, class = c("html", 
+    "character")), incorrect = structure("That’s okay: you learn more from mistakes than successes. Let’s do it one more time.", html = TRUE, class = c("html", 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "types1-answer", question = "types1"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 1212522815.93537, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 435353910.797273, 
     options = list()), class = c("auto", "single", "multiple", 
 "learnr_radio", "learnr_checkbox", "learnr_text", "learnr_numeric", 
 "tutorial_question")), session = session)
@@ -1837,17 +1837,17 @@ learnr:::question_prerendered_chunk(structure(list(type = c("auto", "single", "m
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "types2", question = structure("What type of data is <code>&quot;1L&quot;<\u002fcode>", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_c1ef2b", 
+"character")), answers = list(structure(list(id = "lnr_ans_f728743", 
     option = "numeric/double", value = "numeric/double", label = structure("numeric/double", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_f5342e3", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_1b142e9", 
     option = "integer", value = "integer", label = structure("integer", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = structure("Close. <code>1L<\u002fcode> would be an integer, but look closer.", html = TRUE, class = c("html", 
     "character")), type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_7db708a", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_b345170", 
     option = "character", value = "character", label = structure("character", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_f6eb28d", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_b5db573", 
     option = "logical", value = "logical", label = structure("logical", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
 "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
@@ -1857,7 +1857,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
 "character")), incorrect = structure("Try it again. Perseverence is the key to success.", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "types2-answer", question = "types2"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 1399538111.34829, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 89217913.9584547, 
     options = list()), class = c("learnr_radio", "tutorial_question"
 )), session = session)
 </script>
@@ -1872,9 +1872,9 @@ output$`tutorial-exercise-types3-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "types3", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "types3", 
     code = "", opts = list(label = "\"types3\"", exercise = "TRUE"), 
@@ -1914,9 +1914,9 @@ output$`tutorial-exercise-types4-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "types4", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "types4", 
     code = "", opts = list(label = "\"types4\"", exercise = "TRUE"), 
@@ -1951,24 +1951,24 @@ learnr:::store_exercise_cache(structure(list(label = "types4", global_setup = st
 learnr:::question_prerendered_chunk(structure(list(type = c("auto", "single", "multiple", "learnr_radio", 
 "learnr_checkbox", "learnr_text", "learnr_numeric"), label = "types5", 
     question = structure("How many types of data can you put into a single vector?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_e41d3f5", 
+    "character")), answers = list(structure(list(id = "lnr_ans_32185b6", 
         option = "1", value = "1", label = structure("1", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ad34344", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_262ac9d", 
         option = "6", value = "6", label = structure("6", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a1ec649", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5f137f8", 
         option = "As many as you like", value = "As many as you like", 
         label = structure("As many as you like", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
     "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
     "character"))), messages = list(correct = structure("All the items in a vector must be of the same data type. Different types cannot be combined within the same vector.", html = TRUE, class = c("html", 
-    "character")), try_again = structure("Try it again; next time’s the charm!", html = TRUE, class = c("html", 
-    "character")), incorrect = structure("Try it again; next time’s the charm!", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Try it again. Perseverence is the key to success.", html = TRUE, class = c("html", 
+    "character")), incorrect = structure("Try it again. Perseverence is the key to success.", html = TRUE, class = c("html", 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "types5-answer", question = "types5"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 1918145417.10679, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 1426175109.33589, 
     options = list()), class = c("auto", "single", "multiple", 
 "learnr_radio", "learnr_checkbox", "learnr_text", "learnr_numeric", 
 "tutorial_question")), session = session)
@@ -1977,32 +1977,32 @@ learnr:::question_prerendered_chunk(structure(list(type = c("auto", "single", "m
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "types6", question = structure("Which of these are object names? What is the difference between object names and character strings?", html = TRUE, class = c("html", 
-"character")), answers = list(structure(list(id = "lnr_ans_acd5a16", 
+"character")), answers = list(structure(list(id = "lnr_ans_e032560", 
     option = "foo", value = "foo", label = structure("foo", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_98cb288", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_d253fcb", 
     option = "\"num\"", value = "\"num\"", label = structure("“num”", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_4c66406", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_d5cf3d1", 
     option = "mu", value = "mu", label = structure("mu", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_5ec6b82", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_3f18bbd", 
     option = "\"sigma\"", value = "\"sigma\"", label = structure("“sigma”", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_9988b92", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_8af6a89", 
     option = "\"data\"", value = "\"data\"", label = structure("“data”", html = TRUE, class = c("html", 
     "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-"tutorial_quiz_answer")), structure(list(id = "lnr_ans_6d6211", 
+"tutorial_quiz_answer")), structure(list(id = "lnr_ans_b765af4", 
     option = "a", value = "a", label = structure("a", html = TRUE, class = c("html", 
     "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
 "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
 "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
 "character"))), messages = list(correct = structure("Character strings are surrounded by quotation marks, object names are not.", html = TRUE, class = c("html", 
 "character")), try_again = structure("Incorrect. Be sure to select every correct answer.", html = TRUE, class = c("html", 
-"character")), incorrect = structure("Try it again; next time’s the charm!", html = TRUE, class = c("html", 
+"character")), incorrect = structure("Try it again. You get better each time.", html = TRUE, class = c("html", 
 "character")), message = NULL, post_message = NULL), ids = list(
     answer = "types6-answer", question = "types6"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 140259709.434686, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 1697905673.20935, 
     options = list()), class = c("learnr_checkbox", "tutorial_question"
 )), session = session)
 </script>
@@ -2011,23 +2011,23 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
 learnr:::question_prerendered_chunk(structure(list(type = c("auto", "single", "multiple", "learnr_radio", 
 "learnr_checkbox", "learnr_text", "learnr_numeric"), label = "lists1", 
     question = structure("Which data structure(s) could you use to store these pieces of data in the same object? <code>1001<\u002fcode>, <code>TRUE<\u002fcode>, <code>&quot;stories&quot;<\u002fcode>.", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_59cef83", 
+    "character")), answers = list(structure(list(id = "lnr_ans_9c20a7a", 
         option = "a vector", value = "a vector", label = structure("a vector", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_33f1cd9", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_21b3e7e", 
         option = "a list", value = "a list", label = structure("a list", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_4e3a872", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_724862", 
         option = "neither", value = "neither", label = structure("neither", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
     "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
-    "character"))), messages = list(correct = structure("That’s a first-class answer!", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Nice job!", html = TRUE, class = c("html", 
     "character")), try_again = structure("Don’t give up now, try it one more time.", html = TRUE, class = c("html", 
     "character")), incorrect = structure("Don’t give up now, try it one more time.", html = TRUE, class = c("html", 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "lists1-answer", question = "lists1"), loading = NULL, 
-    random_answer_order = TRUE, allow_retry = TRUE, seed = 1690511491.71279, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 464163116.783857, 
     options = list()), class = c("auto", "single", "multiple", 
 "learnr_radio", "learnr_checkbox", "learnr_text", "learnr_numeric", 
 "tutorial_question")), session = session)
@@ -2043,9 +2043,9 @@ output$`tutorial-exercise-lists2-output` <- renderUI({
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "lists2", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "lists2", 
     code = "", opts = list(label = "\"lists2\"", exercise = "TRUE"), 
@@ -2085,9 +2085,9 @@ output$`tutorial-exercise-lists3-output` <- renderUI({
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "lists3", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "lists3", 
     code = "things <- list(number = 1001, logical = TRUE, string = \"stories\")", 
@@ -2128,9 +2128,9 @@ output$`tutorial-exercise-lists4-output` <- renderUI({
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "lists4", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "lists4", 
     code = "nums <- c(1, 2, 3, 4)\nlogs <- c(TRUE, TRUE, FALSE, TRUE)\nstrs <- c(\"apple\", \"banana\", \"carrot\", \"duck\")", 
@@ -2168,21 +2168,21 @@ learnr:::store_exercise_cache(structure(list(label = "lists4", global_setup = st
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "lists4-question", 
     question = structure("Choose the correct statements regarding data frames:", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_2439b32", 
+    "character")), answers = list(structure(list(id = "lnr_ans_90086d0", 
         option = "All items in a column belong to one vector", 
         value = "All items in a column belong to one vector", 
         label = structure("All items in a column belong to one vector", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_55f96e", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5dd2763", 
         option = "All items in a row belong to one vector", value = "All items in a row belong to one vector", 
         label = structure("All items in a row belong to one vector", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_177b535", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_526fb0e", 
         option = "All items in a column are of the same data type", 
         value = "All items in a column are of the same data type", 
         label = structure("All items in a column are of the same data type", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_c8b60b8", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b55823e", 
         option = "All items in a row are of the same data type", 
         value = "All items in a row are of the same data type", 
         label = structure("All items in a row are of the same data type", html = TRUE, class = c("html", 
@@ -2195,7 +2195,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "lists4-question-answer", question = "lists4-question"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 999731178.034464, options = list()), class = c("learnr_checkbox", 
+    seed = 817558549.619295, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")), session = session)
 </script>
  
@@ -2209,9 +2209,9 @@ output$`tutorial-exercise-lists5-output` <- renderUI({
 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "lists5", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "lists5", 
     code = "nums <- c(1, 2, 3, 4)\nlogs <- c(TRUE, TRUE, FALSE, TRUE)\nstrs <- c(\"apple\", \"banana\", \"carrot\", \"duck\")\ndf <- data.frame(numbers = nums, logicals = logs, strings = strs)", 
@@ -2247,27 +2247,27 @@ learnr:::store_exercise_cache(structure(list(label = "lists5", global_setup = st
 learnr:::question_prerendered_chunk(structure(list(type = c("auto", "single", "multiple", "learnr_radio", 
 "learnr_checkbox", "learnr_text", "learnr_numeric"), label = "packages1", 
     question = structure("What does this common error message suggest? <code>object _____ does not exist.<\u002fcode>", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_1b63ee9", 
+    "character")), answers = list(structure(list(id = "lnr_ans_27593cf", 
         option = "You misspelled your object name", value = "You misspelled your object name", 
         label = structure("You misspelled your object name", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ebd0d2e", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ec2d620", 
         option = "You've forgot to load the package that ____ comes in", 
         value = "You've forgot to load the package that ____ comes in", 
         label = structure("You’ve forgot to load the package that ____ comes in", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_d68eaae", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_13f5ef2", 
         option = "Either", value = "Either", label = structure("Either", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
     "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
-    "character"))), messages = list(correct = structure("Swell job!", html = TRUE, class = c("html", 
-    "character")), try_again = structure("Please try again.", html = TRUE, class = c("html", 
-    "character")), incorrect = structure("Please try again.", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Very good!", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Don’t give up now, try it one more time.", html = TRUE, class = c("html", 
+    "character")), incorrect = structure("Don’t give up now, try it one more time.", html = TRUE, class = c("html", 
     "character")), message = NULL, post_message = NULL), ids = list(
         answer = "packages1-answer", question = "packages1"), 
     loading = NULL, random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1244934841.92028, options = list()), class = c("auto", 
+    seed = 1741272049.18916, options = list()), class = c("auto", 
 "single", "multiple", "learnr_radio", "learnr_checkbox", "learnr_text", 
 "learnr_numeric", "tutorial_question")), session = session)
 </script>
@@ -2282,9 +2282,9 @@ output$`tutorial-exercise-packages2-output` <- renderUI({
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "packages2", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "packages2", 
     code = "", opts = list(label = "\"packages2\"", exercise = "TRUE"), 
@@ -2324,9 +2324,9 @@ output$`tutorial-exercise-packages3-output` <- renderUI({
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::store_exercise_cache(structure(list(label = "packages3", global_setup = structure(c("library(dplyr)", 
-"hdr_path <- case_when(", "  file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
-"  file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
+"hdr_path <- case_when(", "    file.exists(here::here(\"R\", \"header-include.R\")) ~ here::here(\"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"R\", \"header-include.R\"), ", 
+"    file.exists(here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")) ~ here::here(\"tutorials\", \"01-basics\", \"R\", \"header-include.R\")", 
 "  )", "", "", "source(hdr_path)"), chunk_opts = list(label = "setup", 
     include = FALSE)), setup = NULL, chunks = list(list(label = "packages3", 
     code = "", opts = list(label = "\"packages3\"", exercise = "TRUE"), 

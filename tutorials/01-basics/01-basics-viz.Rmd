@@ -13,8 +13,9 @@ editor_options:
 ```{r setup, include=FALSE}
 library(dplyr)
 hdr_path <- case_when(
-  file.exists(here::here("R", "header-include.R")) ~ here::here("R", "header-include.R"), 
-  file.exists(here::here("tutorials", "R", "header-include.R")) ~ here::here("tutorials", "R", "header-include.R")
+    file.exists(here::here("R", "header-include.R")) ~ here::here("R", "header-include.R"), 
+    file.exists(here::here("tutorials", "R", "header-include.R")) ~ here::here("tutorials", "R", "header-include.R"), 
+    file.exists(here::here("tutorials", "01-basics", "R", "header-include.R")) ~ here::here("tutorials", "01-basics", "R", "header-include.R")
   )
   
 
@@ -88,17 +89,16 @@ You can use the black triangle that appears at the top right of the table to scr
 
 
 ```{r quiz-rows-columns}
-quiz(
-  caption = "",
-  question("how many observations and how many variables are in the `hsb2` dataset? ",
-    allow_retry = TRUE, random_answer_order = TRUE,
+  question(
+    "how many observations and how many variables are in the `hsb2` dataset? ",
+    type = "checkbox",
     answer("234 variables", message = "Nope, try again!"),
     answer("234 observations", correct = TRUE),
     answer("11 variables", correct = TRUE),
     answer("11 observations", message = "Nope, try again!"), 
     correct = "Well done! The ROWS in a dataset are known as observations and the COLUMNS are the variables."
     )
-  )
+
 
 
 
@@ -126,16 +126,15 @@ To see the help-page describing the `mpg` data-set, please type `?mpg` in the co
 
 
 ```{r q-mpg-help}
-quiz(
-  caption = "", 
-  question("The `mpg` dataset consists of several columns of data. What is true about those columns (choose more than one)?",
-    allow_retry = TRUE, random_answer_order = TRUE,
-    answer("`drv` and `class` are continuous variables.", message = "Nope, try again!"),
-    answer("`displ` measures engine's volume (in litres)", correct = TRUE),
-    answer("`cty` and `hwy` measure fuel efficiency", correct = TRUE),
-    answer("`manufacturer` is a categorical variable", correct = TRUE)
+question(
+    "The `mpg` dataset consists of several columns of data. Which statement is UNTRUE about those columns?",
+    answer("`drv` and `class` are numeric/continuous variables.", correct = TRUE),
+    answer("`displ` measures engine's volume (in litres)"),
+    answer("`cty` and `hwy` measure fuel efficiency"),
+    answer("`manufacturer` is a categorical variable"), 
+    correct = "These two variables are decidedly categrorical and not numeric/continuous."
   )
-)
+
 
 
 ```
@@ -274,6 +273,9 @@ Run `ggplot(data = mpg)` what do you see?
 ```
 
 
+
+
+
 ###
 
 Good job! A ggplot that has no layers looks blank. To finish the graph, add a geom function.
@@ -281,11 +283,32 @@ Good job! A ggplot that has no layers looks blank. To finish the graph, add a ge
      
 ### Exercise 2 
 
-Make a scatterplot of `cty` vs `hwy`.
+Make a scatterplot showing how the variable `cty` (efficiency indicator in the city, map to the x-axis) determines the  `hwy` (efficiency on the highway, map to the y-axis).
 
 ```{r scatterplot, exercise = TRUE}
 
 ```
+
+```{r scatterplot-solution}
+
+ggplot(data = mpg)  + 
+  geom_point(mapping = aes(x = cty, y = hwy)) + 
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed")
+
+```
+
+
+```{r q-mpg-datatypes}
+question(
+    "The efficiency in the city `cty` is associated with that on the highway `hwy`. Which statement is TRUE (choose more than one)?",
+    type = "checkbox", 
+    answer("20 miles/gallon in the city is associated with about 28 miles/gallon on the highway", correct = TRUE),
+    answer("miles/gallon in the city is generally higher than on the highway"),
+    answer("miles/gallon in the city is generally lower than on the highway", correct = TRUE), 
+    correct = "Cars are less efficient in the city than on the highway, which is why `cty` is generally lower than `hwy`."
+  )
+```
+
 
 ###
 
@@ -639,14 +662,13 @@ Until then, the best way to get a comprehensive overview of the available geoms 
 What geom would you use to draw a line chart? A boxplot? A histogram? An area chart?
 
 
-```{r predict01, echo=FALSE}
+```{r q-predict01, echo=FALSE}
 
-question("What geom would you use to draw a line chart? A boxplot? A histogram? An area chart?",
-         answer("geom_linechart(), boxplot(), geom_histogram(), geom_area()"),
-         answer("geom_line(), geom_boxplot(), geom_histogram(), geom_areachart()"),
-         answer("geom_line(), geom_boxplot(), geom_histogram(), geom_area()", correct = TRUE),
-         allow_retry = TRUE, 
-         correct = "Wicked smart! Good job"
+question(
+  "What geom would you use to draw a line chart? A boxplot? A histogram? An area chart?",
+  answer("geom_linechart(), boxplot(), geom_histogram(), geom_area()"),
+  answer("geom_line(), geom_boxplot(), geom_histogram(), geom_areachart()"),
+  answer("geom_line(), geom_boxplot(), geom_histogram(), geom_area()", correct = TRUE)
 )
 
 ```
@@ -658,12 +680,13 @@ question("What geom would you use to draw a line chart? A boxplot? A histogram? 
 
 
 ```{r q1, echo = FALSE}
-question("What does the `se` argument to `geom_smooth()` do?",
-         answer("Nothing. `se` is not an argument of `geom_smooth()`"),
-         answer("chooses a method for calculating the smooth line", message = "That is what the `method` argument of `geom_smooth()` does."),
-         answer("controls whether or not to **s**how **e**rrors"),
-         answer("Adds or removes a standard error ribbon around the smooth line", correct = TRUE),
-         allow_retry = TRUE
+question(
+  "What does the `se` argument to `geom_smooth()` do?",
+  answer("Nothing. `se` is not an argument of `geom_smooth()`"),
+  answer("chooses a method for calculating the smooth line", 
+         message = "That is what the `method` argument of `geom_smooth()` does."),
+  answer("controls whether or not to **s**how **e**rrors"),
+  answer("Adds or removes a standard error ribbon around the smooth line", correct = TRUE)
 )
 ```
 
@@ -724,14 +747,6 @@ After creating the hash, please copy it, navigate to [this form](`r submit_hash_
 ```{r img-submit, message=FALSE, warning=FALSE, fig.align='center', out.width="50%"}
 
 
-p_img <- ifelse(
-  file.exists(
-    here("tutorials", "images", "Submit-hash.jpg")
-    ),
-  here("tutorials", "images", "Submit-hash.jpg"),
-  here("images", "Submit-hash.jpg")
-  )
-
-if (file.exists(p_img))
-  knitr::include_graphics(p_img)
+if (file.exists(here("01-basics", "images", "Submit-hash.jpg")))
+  knitr::include_graphics(here("01-basics", "images", "Submit-hash.jpg"))
 ```

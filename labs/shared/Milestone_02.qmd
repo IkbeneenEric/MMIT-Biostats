@@ -1,0 +1,120 @@
+---
+title: Read and Visualize
+author: Your name here
+date: The date here
+format: html
+editor: source
+---
+
+
+## Read and Visualize
+
+In this milestone, you'll use ggplot2 to visualize the distribution of male and female birth. But before you begin, you'll need to import the `arbuthnot` data set. Unlike Milestone 1, the data set has not been loaded for you.
+
+
+## Recreation
+
+### Part 1 - Import
+
+In the code chunk below, use a command from the readr package to read in the data set.
+
+* You first need to load the relevant package using the `library(___)` function.
+* The data set lives in the file `arbuthnot.csv`, which is stored in the `data/` folder in your working directory.
+* Save the data set as an object named `arbuthnot`.
+
+
+```{r}
+#| label: setup
+#| include: false
+
+# Load your packages here
+
+
+# Load the dataset from the file
+
+
+```
+
+### Part 2 - Pivot longer
+
+Before we can visualize the distribution of births, we first need to transform the dataset. So instead of having...
+
+year | boys | girls
+-----|------|-------
+1629 | 5218 | 4683
+1630 | 4858 | 4457 
+1631 | 4422 | 4102 
+...  | ...  |  ...
+
+
+We want to have something that looks like this: 
+
+year | sex   | births
+-----|-------|-------
+1629 | boys  | 4683
+1629 | girls | 4683
+1630 | boys  | 4457 
+1630 | girls | 4102 
+...  |  ...  |  ...
+
+
+In the second table, every year appears twice: once for the boys and once for the girls. The second table is therefore known as having a `longer` format. To create the longer format, we use two columns (`boys` and `girls`) and transformed them into the following columns: 
+
+* One column with the sex names. We call this column the `name` column, because it consists of the **columnames** from the previous table. 
+* A second column with the number of births. We call this column the `value` column, because it contains the **observed values** from the previous table. 
+
+To transform a table to a longer format, we will use the `pivot_longer()` command and store the result in an object that we shall call: `arbuthnot_longer`. The `pivot_longer()` function needs three  
+
+
+```{r}
+#| label: pivot longer
+
+arbuthnot_longer <- arbuthnot |> 
+  pivot_longer(
+    cols = boys:girls, 
+    names_to = "___", 
+    values_to = "___"
+    )
+
+```
+
+
+
+### Part 3 - Visualize
+
+Run the code chunk below to see a plot. Your task is to recreate this plot.
+
+
+```{r}
+#| label: recreate this
+knitr::include_graphics("images/milestone02.png")
+
+```
+
+Use `ggplot()` in the chunk below to re-create the plot above. Before plotting, remember to use the data in its `longer` format. What happens if you use the data in its `wider` format?
+
+
+```{r}
+#| label: recreation-visualize
+
+
+```
+
+## Extension
+
+Using the code chunk below, investigate a research question about this data, using the visualization skills you learned this week. Some ideas:
+
+1. Try to compare the two distributions in other ways: for example, you can experiment with `geom_violin` or with [`geom_density_ridges`](https://cran.r-project.org/web/packages/ggridges/vignettes/introduction.html). 
+2. See if you can replicate the same visualisation using the `present.csv`. Does the 
+3. You may want to use statistical tests to compare the two distributions. Search the web on how to run a `t-test` in R and try running both independent and dependent t-tests. What did you find? 
+4. Try running the nonparametric version of the independent-samples t-test (Mann-Whitney U-Test) and the nonparametric version of the paired-samples t-test (the Wilcoxon Signed-Rank Test).
+5. Do the same using `ggstatsplot`, an extension of `ggplot2` package for creating graphics with details from statistical tests included in the information-rich plots themselves.  You can find examples here https://indrajeetpatil.github.io/ggstatsplot/
+
+
+
+```{r}
+#| label: extension
+
+
+```
+

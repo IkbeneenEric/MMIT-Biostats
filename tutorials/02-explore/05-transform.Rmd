@@ -14,7 +14,7 @@ editor_options:
 library(dplyr)
 here_here <- function(...) {
   v_args <- list(...)
-  v_args_ext <- c(list("tutorials"), v_args)
+  v_args_ext <- c(list("tutorials", "02-explore"), v_args)
   case_when(
     file.exists(here::here(v_args)) ~ here::here(v_args), 
     file.exists(here::here(v_args_ext)) ~ here::here(v_args_ext)
@@ -25,15 +25,8 @@ hdr_path <- here_here("R", "header-include.R")
 
 source(hdr_path)
 
-# tops <- babynames::babynames %>% 
-#   group_by(name, sex) %>% 
-#   summarise(total = sum(n)) %>% 
-#   ungroup() %>% 
-#   top_n(10, total)
-# 
-# write_csv(tops, here::here("tutorials", "data", "babynames_tops"))
-
-tops <- read_csv(here_here("tutorials", "data", "babynames_tops.csv"))
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+tops <- read_csv(here_here("data", "babynames_tops.csv"))
 
 top_10 <- babynames::babynames %>% 
   semi_join(tops, by = c("name", "sex"))
@@ -51,7 +44,7 @@ number_ones <- babynames::babynames %>%
 
 ## Welcome: transforming data
 
-In this tutorial you will master some common tools for transforming data with R:
+In this tutorial you will practice  transforming data with R:
 
 * tibbles and `View()`, which let you inspect raw data
 * `select()` and `filter()`, which let you extract rows and columns from a data frame
@@ -77,7 +70,7 @@ Before we begin, let's learn a little about our data. The `babynames` dataset co
 
 What does this mean? In R, whenever you want to use a package that is not part of base R, you need to load the package with the command `library()`. Until you load a package, R will not be able to find the datasets and functions contained in the package. For example, if we asked R to display the `babynames` dataset, which comes in the babynames package, right now, we'd get the message below. R cannot find the dataset because we haven't loaded the babynames package.
 
-```{r error = TRUE}
+```{r baby01, error = TRUE}
 babynames
 ```
 
@@ -87,7 +80,7 @@ This might sound like an inconvenience, but choosing which packages to load keep
 
 In the chunk below, load babynames (the package) and then open the help page for `babynames` (the data set). Be sure to read the help page before going on.
 
-```{r babynames-1, exercise = TRUE, exercise.setup = "bnames"}
+```{r babynames-1, exercise = TRUE}
 
 ```
 
@@ -104,7 +97,7 @@ library(babynames)
 
 Now that you know a little about the dataset, let's examine its contents. If you were to run `babynames` at your R console, you would get output that looks like this:
 
-```{r echo = TRUE, eval = FALSE}
+```{r out-baby, echo = TRUE, eval = FALSE}
 babynames
 
 #> 187     1880   F       Christina    65 6.659495e-04
@@ -124,7 +117,7 @@ babynames
 #>  [ reached getOption("max.print") -- omitted 1825233 rows ]
 ```
 
-Yikes. What is happening?
+Yikes. Six columns (variables) of the dataset are showing indeed, but the presentation of the data is not what we are used to seeing... What is happening?
 
 ### Displaying large data
 
@@ -142,7 +135,7 @@ Whenever you do not have the tibble packages loaded, R will display the tibble a
 
 You can think of the difference between the data frame display and the tibble display like this:
 
-```{r out.width = "75%"}
+```{r img-tibble_display, out.width = "75%", echo=FALSE}
 knitr::include_graphics("images/tibble_display.png")
 ```
 
@@ -165,7 +158,7 @@ babynames
 
 Excellent! If you want to check whether or not an object is a tibble, you can use the `is_tibble()` function that comes in the tibble package. For example, this would return TRUE: `is_tibble(babynames)`.
 
-```{r echo = FALSE, message = FALSE}
+```{r lib-tibble, echo = FALSE, message = FALSE}
 library(tibble)
 ```
 
@@ -175,7 +168,7 @@ You do not need to worry much about tibbles in these tutorials; in future tutori
 
 What if you'd like to inspect the remaining portions of a tibble? To see the entire tibble, use the `View()` command. R will launch a window that shows a scrollable display of the entire data set. For example, the code below will launch a data viewer in the RStudio IDE.
 
-```{r echo = TRUE, eval = FALSE}
+```{r view-baby, echo = TRUE, eval = FALSE}
 View(babynames)
 ```
 
@@ -190,7 +183,7 @@ The tibble package is one of several packages that are known collectively as ["t
 
 When you use tidyverse packages, you can make your life easier by using the **tidyverse** package. The tidyverse package provides a shortcut for installing and loading the entire suite of packages in "the tidyverse", e.g. 
 
-```{r eval = FALSE}
+```{r inst-tidy, eval = FALSE}
 install.packages("tidyverse")
 library(tidyverse)
 ```
@@ -238,7 +231,11 @@ question('Which package is not loaded by `library("tidyverse")`',
   answer("ggplot2"),
   answer("dplyr"),
   answer("tibble"),
-  answer("babynames", correct = TRUE, message = "Now that you are familiar with the data set, and have loaded the necessary packages, let's explore the data."),
+  answer(
+    "babynames",
+    correct = TRUE,
+    message = "Now that you are familiar with the data set, and have loaded the necessary packages, let's explore the data."
+  ),
   allow_retry = TRUE
 )
 ```
@@ -262,14 +259,14 @@ Click the Next Topic button to begin.
 
 ## The history of people's names
 
-```{r echo = FALSE, message = FALSE, warning = FALSE}
+```{r load-tidy, echo = FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
 ```
 
 
 You can use the data in `babynames` to make graphs like this, which reveal the history the name `Mary`, but you can try it with another name, such as your own!
 
-```{r echo = FALSE, message = FALSE, warning = FALSE, out.width = "90%"}
+```{r plot-mary, echo = FALSE, message = FALSE, warning = FALSE, out.width = "90%"}
 babynames %>% 
   filter(name == "Mary", sex == "F") %>% 
   ggplot() +
@@ -285,15 +282,17 @@ To figure that out, you will first need to trim down `babynames`, and extract on
 
 To see what I mean, consider how I made the plot above: I began with the entire data set, which if plotted as a scatterplot would've looked like this.
 
-```{r out.width = "60%", cached = TRUE, echo=TRUE}
+```{r all-props-dots, out.width = "60%", cached = TRUE, echo=TRUE}
 ggplot(babynames) +
   geom_point(aes(x = year, y = prop)) +
   labs(title = "Popularity of every name in the data set")
+
+
 ```
 
 I then narrowed the data to just the rows that contain my name, before plotting the data with a line geom. Here's how the rows with just my name look as a scatterplot.
 
-```{r out.width = "60%", cached = TRUE, echo=TRUE}
+```{r narrow-mary, out.width = "60%", cached = TRUE, echo=TRUE}
 babynames %>% 
   filter(name == "Mary", sex == "F") %>% 
   ggplot() +
@@ -303,15 +302,19 @@ babynames %>%
 
 If I had skipped this step, my line graph would've connected all of the points in the large data set, creating an uninformative graph.
 
-```{r out.width = "60%", cached = TRUE, echo=TRUE}
+```{r all-props-line, out.width = "60%", cached = TRUE, echo=TRUE}
 ggplot(babynames) +
   geom_line(aes(x = year, y = prop)) +
   labs(title = "Popularity of every name in the data set")
 ```
 
-Your goal in this section is to repeat this process for your own name (or a name that you choose). Remember that the names in the dataset come from a dataset provided by the social security services of the United States of America. So if your name is not popular in the USA, it may not appear in the dataset. Along the way, you will learn a set of functions that isolate information within a data set. 
+We get vertical lines because every year is associated with a single value on the `x-axis` buy multiple proportions on the `y-axis`, so numerous points directly above and below one another are connected by lines going up and down.  
 
-### Isolating data
+###
+
+Repeat this process using your own name (or a different name that you choose). Remember that the names in the dataset come from a dataset provided by the social security services of the United States of America. So if your name is not popular in the USA, it may not appear in the dataset. Along the way, you will learn a set of functions that isolate information within a data set. 
+
+## Isolating data
 
 This type of task occurs often in Data Science: you need to extract data from a table before you can use it. You can do this task quickly with three functions that come in the dplyr package:
 
@@ -323,7 +326,7 @@ Notice the similarity between `select` and `filter`: whereas the first operates 
 
 Each of the three functions takes a data frame or tibble as its first argument and returns a new data frame or tibble as its output. 
 
-## select()
+### select()
 
 `select()` extracts columns of a data frame and returns the columns  as a new data frame. To use `select()`, pass it the name of a data frame to extract columns from, and then the names of the columns to extract. The column names do not need to appear in quotation marks or be prefixed with a `$`; `select()` knows to find them in the data frame that you supply.
 
@@ -375,7 +378,7 @@ question(
 )
 ```
 
-## filter()
+### filter()
 
 `filter()` extracts rows from a data frame and returns them as a new data frame. As with `select()`, the first argument of `filter()` should be a data frame to extract rows from. The arguments that follow should be logical tests; `filter()` will return every row for which the tests return `TRUE`.
 
@@ -383,7 +386,7 @@ question(
 
 For example, the code chunk below returns every row with the name "Sea" in `babynames`. 
 
-```{r echo = TRUE}
+```{r filter01, echo = TRUE}
 filter(babynames, name == "Sea")
 ```
 
@@ -424,11 +427,13 @@ filter(babynames, is.na(n))
 
 When you use logical tests, be sure to look out for two common mistakes. One appears in each code chunk below. Can you find them? When you spot a mistake, fix it and then run the chunk to confirm that it works.
 
-```{r eval = FALSE, echo = TRUE}
+```{r filter-mist01, eval = FALSE, echo = TRUE}
 filter(babynames, name = "Sea")
 ```
 
 ```{r filter-1a, exercise = TRUE, exercise.setup = "bnames"}
+# Fix this mistake
+# filter(babynames, name = "Sea")
 
 ```
 
@@ -444,11 +449,13 @@ Good Job! Remember to use `==` instead of `=` when testing for equality.
 
 A second common mistake is shown in the code below. Try to run it and notice the error message. How would you fix this error?
 
-```{r eval = FALSE, echo = TRUE}
+```{r filter0b, eval = FALSE, echo = TRUE}
 filter(babynames, name == Sea)
 ```
 
 ```{r filter-1b, exercise = TRUE, exercise.setup = "bnames"}
+# Fix this mistake  
+# filter(babynames, name == Sea)
 
 ```
 
@@ -555,7 +562,7 @@ When you combine multiple logical tests, be sure to look out for these two commo
 1. Using repeated `|` instead of `%in%`, e.g. `x == 1 | x == 2 | x == 3` instead of `x %in% c(1, 2, 3)`
 
 
-## arrange()
+### arrange()
 
 `arrange()` returns all of the rows of a data frame reordered by the values of a column. As with `select()`, the first argument of `arrange()` should be a data frame and the remaining arguments should be the names of columns. If you give `arrange()` a single column name, it will return the rows of the data frame reordered so that the row with the lowest value in that column appears first, the row with the second lowest value appears second, and so on. If the column contains character strings, `arrange()` will place them in alphabetical order.
 
@@ -633,7 +640,7 @@ arrange(babynames, desc(n))
 
 The number of children represented by each proportion grew over time as the population grew.
 
-## `%>%` or `|>`
+### `%>%` or `|>`
 
 ### Steps
 
@@ -789,7 +796,7 @@ Like `select()`, `filter()` and `arrange()`, these functions all take a data fra
 
 Let's master each function and use them to analyze popularity as we go.
 
-## summarise()
+### summarise()
 
 `summarise()` takes a data frame and uses it to calculate a new data frame of summary statistics. 
 
@@ -897,7 +904,7 @@ However, we had to isolate your name from the rest of your data to calculate thi
 
 Eventually, the program could combine all of the results back into a single data set. However, you don't need to write such a program; this is the job of dplyr's `group_by()` function.
 
-## group_by()
+### group_by()
 
 `group_by()` takes a data frame and then the names of one or more columns in the data frame. It returns a copy of the data frame that has been "grouped" into sets of rows that share identical combinations of values in the specified columns. 
 
@@ -1038,7 +1045,7 @@ top_10 %>%
 
 Good job! This graph shows different trends than the one above, now let's consider why.
 
-## mutate()
+### mutate()
 
 ### The total number of children by year
 
@@ -1077,11 +1084,11 @@ To use this definition, we could:
 
 To do this, we will need to learn one last dplyr function.
 
-### mutate()
+### 
 
 `mutate()` uses a data frame to compute new variables. It then returns a copy of the data frame that includes the new variables. For example, we can use `mutate()` to compute a `percent` variable for `babynames`. Here percent is just the `prop` multiplied by 100 and rounded to two decimal places.
 
-```{r echo = TRUE}
+```{r mutate-pct, echo = TRUE}
 babynames %>%
   mutate(percent = round(prop * 100, 2))
 ```
@@ -1125,7 +1132,7 @@ Some of the most useful vectorised functions in R to use with `mutate()` include
 
 For ranking, I recommend that you use `min_rank()`, which gives the smallest values the top ranks. To rank in descending order, use the familiar `desc()` function, e.g.
 
-```{r echo = TRUE}
+```{r mn-rank, echo = TRUE}
 min_rank(c(50, 100, 1000))
 min_rank(desc(c(50, 100, 1000)))
 ```
@@ -1209,7 +1216,7 @@ Together these six functions create a _grammar_ of data manipulation, a system o
 1. _Data sets often contain more information than you need_
 1. _Data sets imply more information than they display_
 
-The six dplyr functions help you work with these realities by isolating and revealing the information contained in your data. In fact, dplyr provides more than six functions for this grammar: dplyr comes with several functions that are variations on the themes of `select()`, `filter()`, `summarise()`, and `mutate()`. Each follows the same pipeable syntax that is used throughout dplyr. If you are interested, you can learn more about these peripheral functions in the [dplyr cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/source/pdfs/data-transformation-cheatsheet.pdf).
+The six dplyr functions help you work with these realities by isolating and revealing the information contained in your data. In fact, dplyr provides more than six functions for this grammar: dplyr comes with several functions that are variations on the themes of `select()`, `filter()`, `summarise()`, and `mutate()`. Each follows the same pipeable syntax that is used throughout dplyr. If you are interested, you can learn more about these peripheral functions in the [dplyr cheatsheet](https://www.rstudio.com/wp-content%2Fuploads%2F2015%2F02%2Fdata-wrangling-cheatsheet.pdf).
 
 ## Challenges
 
@@ -1217,7 +1224,7 @@ Apply your knowledge of dplyr to do the following two challenges.
 
 ### Number Ones Challenge - boys
 
-How many distinct boys names acheived a rank of Number 1 in any year?
+List the distinct names of boys that are ranked Number 1 in across all years?
 
 ```{r ones-1, exercise = TRUE, exercise.setup = "bnames"}
 
@@ -1228,45 +1235,57 @@ babynames %>%
   group_by(year, sex) %>% 
   mutate(rank = min_rank(desc(n))) %>% 
   filter(rank == 1, sex == "M") %>% 
-  ungroup() %>% 
-  summarise(distinct = n_distinct(name))
+  ungroup() |> 
+  distinct(name)
 ```
+
+
+Notice here that the very last action in the sequence above is `ungroup()`. Although not strictly necessary, it is always a good practice to use `ungroup()` shortly after using `group_by()`.  If you make a habit out of it, this practice will prevent errors down the line. 
+
 
 ### Number Ones Challenge - girls
 
-How many distinct girls names acheived a rank of Number 1 in any year?
+List the distinct names of girls that are ranked Number 1 in across all years?
 
 ```{r ones-2, exercise = TRUE, exercise.setup = "bnames"}
 
 ```
 
-```{r ones-2-solution}
-babynames %>% 
-  group_by(year, sex) %>% 
-  mutate(rank = min_rank(desc(n))) %>% 
-  filter(rank == 1, sex == "F") %>% 
-  ungroup() %>% 
-  summarise(distinct = n_distinct(name))
+```{r q-one}
+question(
+  "When comparing distinct names of boys and girls, among those ranked first we see the following:",
+  answer("There are more distinct names for boys than girls"), 
+  answer("There are more distinct names for girls than boys", correct = TRUE),
+  answer("There are the same number of distinct names for boys than girls"), 
+  correct = "Even among names ranked first, we see that there is greater diversity among the names of girls than among the names of boys."
+)
+
 ```
+
+
 
 ### Number Ones Challenge - Plot
 
 `number_ones` is a vector of every boys name to acheive a rank of one. 
 
-```{r echo = TRUE}
+```{r num-ones, echo = TRUE}
 number_ones
 ```
 
 Use `number_ones` with `babynames` to recreate the plot below, which shows the popularity over time for every name in `number_ones`.
 
-```{r, fig.height=5, out.width="100%"}
+```{r name-in, fig.height=5, out.width="100%", echo=FALSE}
 babynames %>% 
   filter(name %in% number_ones, sex == "M") %>% 
   ggplot() +
     geom_line(aes(x = year, y = prop, color = name))
 ```
 
-```{r ones-3, exercise = "TRUE", exercise.setup = "bnames"}
+
+
+```{r ones-3, exercise = TRUE, exercise.setup = "bnames"}
+
+
 
 ```
 
@@ -1279,7 +1298,7 @@ babynames %>%
 
 ### Name Diversity Challenge - number of unique names
 
-Which gender uses more names?
+Which gender uses more distinct names?
 
 In the chunk below, calculate and then plot the number of distinct names used each year for boys and girls. Place year on the x axis, the number of distinct names on they y axis and color the lines by sex.
 
@@ -1291,14 +1310,16 @@ In the chunk below, calculate and then plot the number of distinct names used ea
 ```{r diversity-1-solution}
 babynames %>% 
   group_by(year, sex) %>% 
-  summarise(n_names = n_distinct(name)) %>% # or summarise(n_names = n())
+  summarise(n_names = n_distinct(name)) %>% 
   ggplot() +
     geom_line(aes(x = year, y = n_names, color = sex))
 ```
 
+We can see that for every year (and more so in recent years), there are more distinct names among girls than among boys. Could that be because there are simply more girls than boys per year in our dataset? If the number of distinct names in a group was proportional to the size of the group, wouldn't we expect there to be more distinct names in the larger group? 
+
 ### Name Diversity Challenge - number of boys and girls
 
-Let's make sure that we're not confounding our search with the total number of boys and girls born each year. With the chunk below, calculate and then plot over time the total number of boys and girls by year. Is the relative number of boys and girls constant?
+So let's make sure that we're not confounding our search with the total number of boys and girls born each year. With the chunk below, calculate and then plot over time the total number of boys and girls by year. Is the relative number of boys and girls constant?
 
 ```{r diversity-2, exercise = TRUE, exercise.setup = "bnames"}
 
@@ -1312,9 +1333,46 @@ babynames %>%
     geom_line(aes(x = year, y = n, color = sex))
 ```
 
+
+```{r my-test, echo=FALSE, eval=FALSE, include=FALSE}
+babynames |> 
+  count(year, sex)
+
+
+babynames %>% 
+  group_by(year, sex) %>% 
+  summarise(n_names = n_distinct(name), n = sum(n), .groups = "drop") |> 
+  mutate(prop = n_names / n) |> 
+  pivot_wider(id_cols = year, names_from = sex, values_from = prop, names_prefix = "sex_") |> 
+  mutate(diff = sex_F - sex_M) |> 
+  ggplot(aes(x = year, y = diff)) + geom_line()
+
+
+
+babynames %>% 
+  group_by(year, sex) %>% 
+  summarise(n_names = n_distinct(name), n = sum(n), .groups = "drop") |> 
+  mutate(prop = n_names / n) |> 
+  pivot_wider(id_cols = year, names_from = sex, values_from = prop, names_prefix = "sex_") |> 
+  mutate(diff = sex_F - sex_M) |> 
+  print(n = 200)
+
+babynames %>% 
+  group_by(year, sex) %>% 
+  summarise(per_name = mean(n))|> 
+  pivot_wider(id_cols = year, names_from = sex, values_from = per_name, names_prefix = "sex_") |> 
+  mutate(diff = sex_M - sex_F) |> 
+  print(n = 200)
+
+
+  
+```
+
+
+
 ### Name Diversity Challenge - children per name
 
-Hmm. Sometimes there are more girls and sometimes more boys. In addition, the entire population has been grown over time. Let's account for this weith a new metric: the average number of children per name.
+Hmm. This plot does not appear to give us a straightforward answer: before the 1940s there seems to be more baby girls in our dataset, and more baby boys thereafter. In addition, the entire population has grown over time. Let's account for this with a new metric: the average number of children per name.
 
 If girls have a smaller number of children per name, that would imply that they use more names overall (and vice versa).
 
@@ -1333,7 +1391,7 @@ babynames %>%
     geom_line(aes(x = year, y = per_name, color = sex))
 ```
 
-Good job! In recent years, there are fewer girls (on average) given any particular name than boys. This suggests that there is more variety in girls names than boys names once you account for population. Interestingly, the number of children per name has gone down steeply for each gender since the 1960's, even though the total population has continued to increase. This suggests that there is a greater variety of names today than in the past.
+Good job! Since about the 1920s, there are fewer girls (on average) given any particular name than boys. This suggests that there is more variety in girls names than boys names once you account for population. Interestingly, the number of children per name has gone down steeply for each gender since the 1960's, even though the total population has continued to increase. This suggests that there is a greater variety of names today than in the past.
 
 ### Where to from here
 
@@ -1354,22 +1412,10 @@ learnrhash::encoder_ui(ui_before = hash_encoder_ui)
 
 ### Submit your hash in a form
 
-After creating the hash, please copy it, navigate to [this form](`r submit_hash_url`) and fill it in and submit. You will need to submit the form once for every lesson you complete in this tutorial.
+After creating the hash, please copy it, navigate to [this form](`r submit_hash_url`){target="_blank"} and fill it in and submit. You will need to submit the form once for every lesson you complete in this tutorial.
 
-```{r img-submit, message=FALSE, warning=FALSE, fig.align='center', out.width="50%"}
+```{r img-submit, message=FALSE, warning=FALSE, fig.align='center', out.width="50%", echo=FALSE}
 
-
-
-
-p_img <- ifelse(
-  file.exists(
-    here("tutorials", "images", "Submit-hash.jpg")
-    ),
-  here("tutorials", "images", "Submit-hash.jpg"),
-  here("images", "Submit-hash.jpg")
-  )
-
-
-if (file.exists(p_img))
-  knitr::include_graphics(p_img)
+if (file.exists(here("images", "Submit-hash.jpg")))
+  knitr::include_graphics(here("images", "Submit-hash.jpg"))
 ```

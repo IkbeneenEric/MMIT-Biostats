@@ -127,7 +127,7 @@ question <- function (
 
 here <- function(...) {
   v_args <- list(...)
-  v_args_ext <- c(list("tutorials"), v_args)
+  v_args_ext <- c(list("tutorials", "02-explore"), v_args)
   case_when(
     file.exists(here::here(v_args)) ~ here::here(v_args),
     file.exists(here::here(v_args_ext)) ~ here::here(v_args_ext)
