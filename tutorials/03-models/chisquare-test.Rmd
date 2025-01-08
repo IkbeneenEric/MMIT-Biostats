@@ -12,12 +12,19 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
+# https://oferengel-posit.shinyapps.io/chisquare-test/
 
 library(dplyr)
-hdr_path <- case_when(
-  file.exists(here::here("R", "header-include.R")) ~ here::here("R", "header-include.R"), 
-  file.exists(here::here("tutorials", "R", "header-include.R")) ~ here::here("tutorials", "R", "header-include.R")
+library(purrr)
+try_paths <- c(
+  here::here("R", "header-include.R"), 
+  here::here("tutorials", "03-models", "R", "header-include.R")
   )
+
+
+
+
+hdr_path <- try_paths[map_lgl(try_paths, file.exists)]
   
 
 source(hdr_path)
@@ -313,10 +320,10 @@ berkeley_aggregated <- berkeley |>
   column_to_rownames("Gender") 
 
 
-# Calculate the odds of admission rate among males vs. females
+# Calculate the odds of admission rate among females vs. males
 
 
-# Calculate the odds ratio
+# Rhe odds ratio when comparing female to male 
 
 
 # Calculate the chi-square, degrees of freedom and the p-value 
@@ -334,25 +341,26 @@ berkeley_aggregated <- berkeley |>
   column_to_rownames("Gender") 
 
 
-# Calculate the odds of admission rate among males vs. females
-odds <- berkeley_aggregated |> 
-  mutate(odds = Admitted / Rejected) |> 
-  pull(odds)
+# The odds of admission rate among female to male 
+odds_table <- berkeley_aggregated |> 
+  mutate(odds = Admitted / Rejected) 
 
-# Calculate the odds ratio
-(odds_ratio <- odds[2] / odds[1])
+# The odds ratio when comparing female to male 
+odds_ratio <- odds_table["Female", "odds"] / odds_table["Male", "odds"]
+print(odds_ratio)
 
 
-# Calculate the chi-square, degrees of freedom and the p-value 
+# The chi-square, degrees of freedom and the p-value 
 chisq.test(berkeley_aggregated)
 
 ```
 
-The odds-ratio of admission is about 1.84 when comparing males to females, and the p-value is very small indeed, a significant result.
+The odds-ratio of admission is about 0.54 when comparing females to males, which means the average odds of females to be admitted is almost half as males, with a very small p-value. 
+That is a significant result that tells us that the average female applicant is much less likely to be admitted than the average male. Of course we already know that this is because the average female applied to more competitive departments, and therefore her chances to get admission were slimmer. 
 
 ###
 
-Now run the same exercise for each department separately. So for each department, you want to calculate the odds-ratio of admission when comparing male to female admission, and the associated p-value. 
+Now run the same exercise for each department separately. So for each department, you want to calculate the odds-ratio of admission when comparing female to male admission, and the associated p-value. Remember that an odds ratio < 1 means that males are preferred, and an odds-ratio > 1 means that females are preferred. 
 
 
 
@@ -375,26 +383,31 @@ Now run the same exercise for each department separately. So for each department
 
 ```{r berkeley-dep-solution}
 
-# Filter the data for department A
-dep_a <- berkeley |> 
-  filter(Dept == "A") |> 
+# Filter the data for a department
+# Change the department code to run for a different department
+department_code <- "A"
+dep <- berkeley |> 
+  filter(Dept == department_code) |> 
   column_to_rownames("Gender") |> 
   select(-Dept)
 
 
-# For department A, the odds of admission rate among males vs. females
-odds_a <- dep_a |> 
-  mutate(odds = Admitted / Rejected) |> 
-  pull(odds)
+# The odds of admission rate among males vs. females
+odds_table <- dep |> 
+  mutate(odds = Admitted / Rejected) 
 
-# For department A, the odds ratio
-(odds_ratio_a <- odds_a[2] / odds_a[1])
+# Rhe odds ratio when comparing female to male 
+odds_ratio <- odds_table["Female", "odds"] / odds_table["Male", "odds"]
+print(odds_ratio)
 
 
-# For department A the chi-square, degrees of freedom and the p-value 
-chisq.test(dep_a)
+# The chi-square, degrees of freedom and the p-value 
+chisq.test(dep)
 
 ```
+
+
+###
 
 
 Well done, now try answering the following questions: 
@@ -402,23 +415,24 @@ Well done, now try answering the following questions:
 ```{r berkeley-quiz, echo=FALSE}
 
 quiz(
+  caption = "",
   question(
     type = "learnr_checkbox",
-    "When considering the admission rate of UC Berkeley in 1973, which of the following statements is correct?", 
-    answer("For the university as a whole, the the odds of admission was *significantly* greater for male than female candidates", correct = TRUE),
-    answer("For a random applicant in the sample, the probability of admission is significantly greater if we know they were male", correct = TRUE), 
+    "When considering this dataset about the admission rate of UC Berkeley in 1973, which of the following statements correct?", 
+    answer("The the odds of admission was *significantly* greater for male than female candidates", correct = TRUE),
+    answer("None of the departments appear to have a significant preference of male applicants over female ones", correct = TRUE), 
     answer("When comparing male to female applicants to the same department, males are significantly more likely to be admitted")
   ),
   question(
     type = "learnr_checkbox",
-    "In which of the follwing departments, was the odds of admission greater for male than female candidates?",
+    "In which of the follwing departments, was the odds of admission greater for female than male candidates?",
     random_answer_order = FALSE,
-    answer("Department A"), 
-    answer("Department B"), 
-    answer("Department C", correct = TRUE), 
-    answer("Department D"), 
-    answer("Department E", correct = TRUE), 
-    answer("Department F")
+    answer("Department A", correct = TRUE), 
+    answer("Department B", correct = TRUE), 
+    answer("Department C"), 
+    answer("Department D", correct = TRUE), 
+    answer("Department E"), 
+    answer("Department F", correct = TRUE)
   ), 
   question(
     random_answer_order = FALSE,
@@ -448,7 +462,7 @@ To this end, you create a table like the one shown below, recording the observed
 
 
 ```{r img-ex2, out.width="80%"}
-knitr::include_graphics(here("images", "ex2.png"))
+knitr::include_graphics(here("images", "chisquare-ex2.png"))
 
 ```
 

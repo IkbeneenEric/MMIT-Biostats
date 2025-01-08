@@ -283,17 +283,22 @@ To figure that out, you will first need to trim down `babynames`, and extract on
 
 To see what I mean, consider how I made the plot above: I began with the entire data set, which if plotted as a scatterplot would've looked like this.
 
-```{r all-props-dots, out.width = "60%", cached = TRUE, echo=TRUE}
-# ggplot(babynames) +
-#   geom_point(aes(x = year, y = prop)) +
-#   labs(title = "Popularity of every name in the data set")
-# 
-# ggsave(here::here("tutorials", "02-explore", "images", "all-props-dots.png"))
-# 
+```{r all-props-dots, out.width = "60%", eval = FALSE, echo=TRUE}
+ggplot(babynames) +
+  geom_point(aes(x = year, y = prop)) +
+  labs(title = "Popularity of every name in the data set")
 
+
+
+```
+
+
+```{r all-props-dots-show-res, echo=FALSE, out.width = "60%"}
 knitr::include_graphics(here_here("images", "all-props-dots.png"))
 
 ```
+
+
 
 I then narrowed the data to just the rows that contain my name, before plotting the data with a line geom. Here's how the rows with just my name look as a scatterplot.
 
@@ -307,24 +312,35 @@ babynames %>%
 
 If I had skipped this step, my line graph would've connected all of the points in the large data set, creating an uninformative graph.
 
-```{r all-props-line, out.width = "60%", cached = TRUE, echo=TRUE}
-# ggplot(babynames) +
-#   geom_line(aes(x = year, y = prop)) +
-#   labs(title = "Popularity of every name in the data set")
-# 
-# ggsave(here::here("tutorials", "02-explore", "images", "all-props-lines.png"))
- 
+```{r all-props-line, out.width = "60%", eval = FALSE, echo=TRUE}
+ggplot(babynames) +
+  geom_line(aes(x = year, y = prop)) +
+  labs(title = "Popularity of every name in the data set")
+
+```
+
+
+```{r all-props-line-show-res, out.width = "60%", cached = TRUE, echo=FALSE}
 
 knitr::include_graphics(here_here("images", "all-props-lines.png"))
 
-
 ```
+
 
 We get vertical lines because every year is associated with a single value on the `x-axis` buy multiple proportions on the `y-axis`, so numerous points directly above and below one another are connected by lines going up and down.  
 
 ###
 
-Repeat this process using your own name (or a different name that you choose). Remember that the names in the dataset come from a dataset provided by the social security services of the United States of America. So if your name is not popular in the USA, it may not appear in the dataset. Along the way, you will learn a set of functions that isolate information within a data set. 
+Use the code-chunk below to repeat this process using your own name (or a different name that you choose). Remember that the names in the dataset come from a dataset provided by the social security services of the United States of America. So if your name is not popular in the USA, it may not appear in the dataset. Along the way, you will learn a set of functions that isolate information within a data set. 
+
+
+```{r narrow-your-name, exercise=TRUE}
+babynames %>% 
+  filter(name == "____", sex == "_") %>% 
+  ggplot() +
+    geom_point(aes(x = year, y = prop)) +
+    labs(title = "Popularity of the name ____")
+```
 
 ## Isolating data
 
@@ -379,7 +395,7 @@ Helper Function   | Use                                               | Example
 
 ### select() quiz
 
-```{r select-quiz}
+```{r select-quiz, echo=FALSE}
 question(
   "Which of these is not a way to select the `name` and `n` columns together?",
   answer("select(babynames, -c(year, sex, prop))"),
@@ -563,7 +579,7 @@ filter(babynames, n %in% c(5, 6, 7, 8, 9))
 
 ###
 
-Good job! Although the first code works, you should make your code more concise by collapsing multiple or statements into an %in% statement when possible."
+Good job! Although the first code works, you should make your code more concise by collapsing multiple or statements into an %in% statement when possible.
 
 
 ### Two more common mistakes - Recap
@@ -776,7 +792,7 @@ I suggest that we focus on two definitions of _popular_, one that uses sums and 
 
 This raises a question:
 
-```{r q1}
+```{r q1, echo=FALSE}
 question(
   "Do we have enough information in `babynames` to compare the popularity of names?",
   answer("No. No cell in `babynames` contains a rank value or a sum across years."),
@@ -1263,7 +1279,7 @@ List the distinct names of girls that are ranked Number 1 in across all years?
 
 ```
 
-```{r q-one}
+```{r q-one, echo=FALSE}
 question(
   "When comparing distinct names of boys and girls, among those ranked first we see the following:",
   answer("There are more distinct names for boys than girls"), 
@@ -1414,7 +1430,7 @@ In other words, you now know how to look at data in R, as well as how to access 
 
 ## Hash and submit
 
-```{r encoder, echo=FALSE, context="server"}
+```{r encoder, echo=FALSE, context="server", echo=FALSE}
 encoder_logic()
 ```
 
