@@ -71,7 +71,7 @@ Learn useful statistics for describing distributions of data.
 * Boxplot
 * outlier detection
 
-### 3 - [Summarizing with statistics](`r glue("{shiny_url}02-03-lesson")`){target="_blank"}
+### 3 - [Summarizing with statistics](`r glue("{shiny_url}02-03-lesson-v01")`){target="_blank"}
 
 Statistics for describing distributions of data.
 
