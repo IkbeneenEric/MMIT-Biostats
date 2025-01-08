@@ -36,7 +36,20 @@ By the end of the tutorial, you'll be able to answer these questions and more, w
 
 ## Lessons
 
-### 1 - [Visualizing categorical data](`r glue("{shiny_url}02-01-lesson/")`){target="_blank"}
+
+
+### 1 - [Transforming data](`r glue("{shiny_url}05-transform")`){target="_blank"}
+
+In this tutorial you will practice  transforming data with R:
+
+* tibbles and `View()`, which let you inspect raw data
+* `select()` and `filter()`, which let you extract rows and columns from a data frame
+* `arrange()`, which lets you reorder the rows in your data
+* `%>%` or `|>`, which organizes your code into reader-friendly "pipes"
+* `mutate()`, `group_by()`, and `summarize()`, which help you use your data to compute new variables and summary statistics
+
+
+### 2 - [Visualizing categorical data](`r glue("{shiny_url}02-01-lesson/")`){target="_blank"}
 
 Creating graphical and numerical summaries of two categorical variables, primarily using two R packages: ggplot2 and dplyr.
 
@@ -54,7 +67,7 @@ Creating graphical and numerical summaries of two categorical variables, primari
     * data integrity check for levels
   * Pie chart
 
-### 2 - [Visualizing numerical data](`r glue("{shiny_url}02-02-lesson")`){target="_blank"}
+### 3 - [Visualizing numerical data](`r glue("{shiny_url}02-02-lesson")`){target="_blank"}
 
 Learn useful statistics for describing distributions of data.
 
@@ -71,7 +84,7 @@ Learn useful statistics for describing distributions of data.
 * Boxplot
 * outlier detection
 
-### 3 - [Summarizing with statistics](`r glue("{shiny_url}02-03-lesson-v01")`){target="_blank"}
+### 4 - [Summarizing with statistics](`r glue("{shiny_url}02-03-lesson-v01")`){target="_blank"}
 
 Statistics for describing distributions of data.
 
@@ -81,16 +94,6 @@ Statistics for describing distributions of data.
 * Unusual observations
 * Transformations: Logarithm and sqrt to reduce skew in graphics and ease comparisons.
 
-
-### 4 - [Transforming data](`r glue("{shiny_url}05-transform")`){target="_blank"}
-
-In this tutorial you will practice  transforming data with R:
-
-* tibbles and `View()`, which let you inspect raw data
-* `select()` and `filter()`, which let you extract rows and columns from a data frame
-* `arrange()`, which lets you reorder the rows in your data
-* `%>%` or `|>`, which organizes your code into reader-friendly "pipes"
-* `mutate()`, `group_by()`, and `summarize()`, which help you use your data to compute new variables and summary statistics
 
 
 <!-- ### 5 [Case study](`r glue("{shiny_url}02-04-lesson")`){target="_blank"} -->
