@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<meta name="progressive" content="true" />
+<meta name="allow-skip" content="true" />
+<meta name="learnr-version-prerender" content="0.11.5" />
+
+<title>Regression modeling: 7 - Evaluating and extending parallel slopes model</title>
+
+<!-- header-includes START -->
+<!-- HEAD_CONTENT -->
+<!-- header-includes END -->
+<!-- HEAD_CONTENT -->
+
+<!-- highlightjs -->
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+<!-- taken from https://github.com/rstudio/rmarkdown/blob/de8a9c38618903627ca509f5401d50a0876079f7/inst/rmd/h/default.html#L293-L343 -->
+<!-- tabsets -->
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+<!-- end tabsets -->
+
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+
+</head>
+
+<body>
+<a class='sr-only sr-only-focusable visually-hidden-focusable' href='#learnr-tutorial-content'>Skip to Tutorial Content</a>
+
+
+
+<div class="pageContent band">
+<main class="bandContent page">
+
+<article class="topics" id="learnr-tutorial-content">
+
+<div id="section-evaluating-and-extending-parallel-slopes-model"
+class="section level2">
+<h2>Evaluating and extending parallel slopes model</h2>
+<p>This lesson covers model evaluation. By looking at different
+properties of the model, including the adjusted <span
+class="math inline">\(R^2\)</span>, you’ll learn to compare models so
+that you can select the best one. You’ll also learn about interaction
+terms in linear models.</p>
+</div>
+<div id="section-model-fit-residuals-and-prediction"
+class="section level2">
+<h2>Model fit, residuals, and prediction</h2>
+<div id="section-residuals" class="section level3">
+<h3>Residuals</h3>
+<p><img src="03-07-lesson_files/figure-html/mpg-displ-resid-1.png" width="624" /></p>
+<p>One of the most natural questions we might have about our model is:
+“how well does it fit?” We measure this by computing—for each
+observation—the difference between the actual value of the response
+variable and the fitted value from our model. This distance is called a
+<strong>residual</strong>. Residuals for two observations are
+illustrated in this plot with vertical arrows. Just as in simple linear
+regression, the model fitting procedure will automatically minimize the
+length of those arrows across all of the points.</p>
+<p>In a parallel slopes model, our model is represented by two lines,
+but only one of the lines is relevant for each observation. In the plot,
+the green points—each corresponding to a car made in 2008—are compared
+to the green line, and the orange points—each corresponding to a car
+made in 1999—are compared to the orange line.</p>
+<p>Note that this necessarily makes our parallel slopes model more
+flexible than a simple linear regression model. The two lines are
+constrained to be parallel, but we still have two instead of one. If the
+best fit occurs when the two lines are very close together, then the
+coefficient of the categorical variable will be very small, and the
+parallel slopes model will be very similar to the simple linear
+regression model.</p>
+</div>
+<div id="section-model-fit" class="section level3">
+<h3>Model Fit</h3>
+<p>The coefficient of determination—usually called R-squared or <span
+class="math inline">\(R^2\)</span>—carries over from simple linear
+regression. Recall that the sum of the squared residuals (or errors) is
+denoted SSE. If the model fits the data better, then the residuals are
+smaller, the SSE is smaller, and the <span
+class="math inline">\(R^2\)</span> value is higher. The total sum of the
+squares—denoted SST—is a function of the response variable alone and
+does not depend on the model.</p>
+<p>In general, a higher <span class="math inline">\(R^2\)</span> may be
+a sign of a better model fit, but the situation becomes more complicated
+in multiple regression because additional explanatory variables will
+always increase <span class="math inline">\(R^2\)</span>. Thus, model
+fits in multiple regression are often compared using the adjusted <span
+class="math inline">\(R^2\)</span> value defined here. Note that the
+only difference is that a penalty is applied as the number of
+explanatory variables <span class="math inline">\(p\)</span> increases.
+Unlike <span class="math inline">\(R^2\)</span>, adjusted <span
+class="math inline">\(R^2\)</span> will not necessarily increase as new
+explanatory variables are added—it could go up or down.</p>
+<p>To summarize:</p>
+<ul>
+<li><span class="math inline">\(R^2 = 1 - \frac{SSE}{SST}\)</span></li>
+<li><span class="math inline">\(SSE\)</span> gets smaller as <span
+class="math inline">\(\Rightarrow R^2\)</span> increases</li>
+<li>As <span class="math inline">\(p\)</span> (number of explanatory
+variables) increases <span class="math inline">\(R^2\)</span> will
+always increase (or stay the same)</li>
+<li>To adjust for an increasing <span class="math inline">\(R^2\)</span>
+use: <span class="math inline">\(R^2_{adj} = 1 - \frac{SSE}{SST} \cdot
+\frac{n-1}{n-p-1}\)</span></li>
+</ul>
+</div>
+<div id="section-fitted-values" class="section level3">
+<h3>Fitted values</h3>
+<pre class="r"><code># returns a vector
+predict(mod)</code></pre>
+<pre class="r"><code># returns a data.frame
+augment(mod)</code></pre>
+<p>Retrieving the fitted values produced by our model can be done in two
+different ways. The <code>predict()</code> function will return the
+fitted values as a vector, while the <code>augment()</code> function
+from the broom package will return a data.frame that contains the
+original observations, the fitted values, the residuals, and several
+other diagnostic computations.</p>
+<p>Since this tutorial uses the tidyverse, we will generally prefer the
+latter method.</p>
+<p>Another important bit of functionality is the ability to make
+out-of-sample predictions. This means using our model to make
+predictions about observations that were not part of the data set on
+which the model was fit.</p>
+</div>
+<div id="section-toyota-matrix" class="section level3">
+<h3>2008 Toyota Matrix</h3>
+<p><img
+src="images/2006_toyota_matrix-pic-49683-1600x1200.jpeg" /><!-- --></p>
+<p>For example, suppose you currently drive a 2008 Toyota Matrix like
+the one you see here. However, this car isn’t in our dataset. What does
+our model predict for the fuel economy of this car?</p>
+</div>
+<div id="section-predictions" class="section level3">
+<h3>Predictions</h3>
+<pre class="r"><code>new_obs &lt;- data.frame(displ = 1.8, year = 2008)</code></pre>
+<pre class="r"><code># returns a vector
+predict(mod, newdata = new_obs)</code></pre>
+<pre><code>##        1 
+## 30.17807</code></pre>
+<pre class="r"><code># returns a data.frame
+augment(mod, newdata = new_obs)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["displ"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["year"],"name":[2],"type":["dbl"],"align":["right"]},{"label":[".fitted"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1.8","2":"2008","3":"30.17807"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>To figure this out, we can simply input the values of the explanatory
+variables. In this case, my car has a 1.8 liter engine. We can create a
+new data.frame with the information, and then feed it to
+<code>predict()</code> or <code>augment()</code> using the newdata
+argument. Either function will return a predicted mileage of 30.18 mpg.
+This is slightly less than the manufacturer’s reported 33 mpg, giving us
+a residual of 2.82 mpg.</p>
+</div>
+<div id="section-r2-vs.-adjusted-r2" class="section level3">
+<h3><span class="math inline">\(R^2\)</span> vs. adjusted <span
+class="math inline">\(R^2\)</span></h3>
+<p>Two common measures of how well a model fits to data are <span
+class="math inline">\(R^2\)</span> (the coefficient of determination)
+and the adjusted <span class="math inline">\(R^2\)</span>. The former
+measures the percentage of the variability in the response variable that
+is explained by the model. To compute this, we define</p>
+<p><span class="math display">\[
+    R^2 = 1 - \frac{SSE}{SST} \,,
+\]</span></p>
+<p>where <span class="math inline">\(SSE\)</span> and <span
+class="math inline">\(SST\)</span> are the sum of the squared residuals,
+and the total sum of the squares, respectively. One issue with this
+measure is that the <span class="math inline">\(SSE\)</span> can only
+decrease as new variables are added to the model, while the <span
+class="math inline">\(SST\)</span> depends only on the response variable
+and therefore is not affected by changes to the model. This means that
+you can increase <span class="math inline">\(R^2\)</span> by adding
+<em>any</em> additional variable to your model - even random noise.</p>
+<p>The adjusted <span class="math inline">\(R^2\)</span> includes a term
+that penalizes a model for each additional explanatory variable (where
+<span class="math inline">\(p\)</span> is the number of explanatory
+variables).</p>
+<p><span class="math display">\[
+    R^2_{adj} = 1 - \frac{SSE}{SST} \cdot \frac{n-1}{n-p-1} \,,
+\]</span></p>
+</div>
+</div>
+<div id="section-your-turn" class="section level2">
+<h2>Your turn</h2>
+<div id="section-model-fit-1" class="section level3">
+<h3>Model Fit</h3>
+<p>Now try it for yourself. The model <code>mod</code> from the
+<code>mariokart</code> data set is already in your workspace.</p>
+<ul>
+<li>Use <code>mutate()</code> to add a variable called
+<code>noise</code> by calling <code>rnorm()</code> with the argument
+<code>n</code> equal to the <code>nrow()</code> to the
+<code>mariokart</code> data set. Save the new dataframe as
+<code>mariokart_noisy</code>.</li>
+<li>The first argument of <code>lm()</code> is a formula involving the
+variables <code>total_pr</code>, <code>wheels</code>, <code>cond</code>,
+and <code>noise</code>.</li>
+<li>Call the function <code>summary()</code> to compute <span
+class="math inline">\(R^2\)</span> and adjusted <span
+class="math inline">\(R^2\)</span> on the new model object
+<code>mod2</code>. Did the value of <span
+class="math inline">\(R^2\)</span> increase? What about adjusted <span
+class="math inline">\(R^2\)</span>?</li>
+</ul>
+<div class="tutorial-exercise" data-label="ex1" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code># R^2 and adjusted R^2
+
+# add random noise
+mariokart_noisy &lt;- ____
+  
+# compute new model
+mod2 &lt;- ____
+
+# new R^2 and adjusted R^2
+_____(____)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="ex1-hint-1"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code># R^2 and adjusted R^2
+summary(mod)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex1-hint-2"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code># add random noise
+mariokart_noisy &lt;- mariokart |&gt;
+  mutate(noise = rnorm(n = nrow(mariokart)))</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex1-hint-3"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code># compute new model
+mod2 &lt;- lm(total_pr ~ wheels + cond + noise, data = mariokart_noisy)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex1-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code># R^2 and adjusted R^2
+summary(mod)
+
+# add random noise
+mariokart_noisy &lt;- mariokart |&gt;
+  mutate(noise = rnorm(n = nrow(mariokart)))
+  
+# compute new model
+mod2 &lt;- lm(total_pr ~ wheels + cond + noise, data = mariokart_noisy)
+
+# new R^2 and adjusted R^2
+summary(mod2)</code></pre>
+</div>
+</div>
+<div id="section-prediction" class="section level3">
+<h3>Prediction</h3>
+<p>Once we have fit a regression model, we can use it to make
+predictions for unseen observations or retrieve the fitted values. Here,
+we explore two methods for doing the latter.</p>
+<p>A traditional way to return the fitted values (i.e. the <span
+class="math inline">\(\hat{y}\)</span>’s) is to run the
+<code>predict()</code> function on the model object. This will return a
+vector of the fitted values. Note that <code>predict()</code> will take
+an optional <code>newdata</code> argument that will allow you to make
+predictions for observations that are not in the original data.</p>
+<p>A newer alternative is the <code>augment()</code> function from the
+<strong>broom</strong> package, which returns a <code>data.frame</code>
+with the response variable (<span class="math inline">\(y\)</span>), the
+relevant explanatory variables (the <span
+class="math inline">\(x\)</span>’s), the fitted value (<span
+class="math inline">\(\hat{y}\)</span>) and some information about the
+residuals (<span class="math inline">\(e\)</span>).
+<code>augment()</code> will also take a <code>newdata</code> argument
+that allows you to make predictions.</p>
+<p>The fitted model <code>mod</code> is already in your environment.</p>
+<ul>
+<li>Compute the fitted values of the model as a vector using
+<code>predict()</code>.</li>
+<li>Compute the fitted values of the model as one column in a
+<code>data.frame</code> using <code>augment()</code>.</li>
+</ul>
+<div class="tutorial-exercise" data-label="ex2" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code># return a vector
+
+
+# return a data frame</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<details>
+<summary>
+<strong>Hint</strong>
+</summary>
+You can get predictions with <code>predict(mod)</code>, and
+<code>augment()</code> works similarly as well.
+</details>
+<div class="tutorial-exercise-support" data-label="ex2-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code># return a vector
+predict(mod)
+
+# return a data frame
+augment(mod)</code></pre>
+</div>
+</div>
+</div>
+<div id="section-understanding-interaction" class="section level2">
+<h2>Understanding Interaction</h2>
+<div id="section-interaction" class="section level3">
+<h3>Interaction</h3>
+<pre class="r"><code>ggplot(data = mpg, aes(x = displ, y = hwy, color = factor(year))) +
+  geom_point() + 
+  geom_smooth(method = &quot;lm&quot;, se = 0)</code></pre>
+<p><img src="03-07-lesson_files/figure-html/mpg-interaction-1.png" width="624" /></p>
+<p>Thus far we have considered models where the regression lines were
+constrained to be parallel. But what if the lines didn’t have to be
+parallel? In this plot, we illustrate the model when the lines are
+allowed to have their own slopes. Now, the relationship between fuel
+economy and engine size is not the same for the newer cars as it is for
+the older cars. The slope of that relationship now changes based on the
+year. Thus, engine size and year are allowed to <em>interact</em> in
+their relationship with fuel economy.</p>
+</div>
+<div id="section-adding-interaction-terms" class="section level3">
+<h3>Adding interaction terms</h3>
+<p><span class="math display">\[
+    \hat{mpg} = \hat{\beta}_0 + \hat{\beta}_1 \cdot displ +
+\hat{\beta}_2 \cdot is\_newer + \hat{\beta}_3 \cdot displ \cdot
+is\_newer
+\]</span></p>
+<ul>
+<li>For older cars</li>
+</ul>
+<p><span class="math display">\[ \hat{mpg} = \hat{\beta}_0 +
+\hat{\beta}_1 \cdot displ \]</span></p>
+<ul>
+<li>For newer cars,</li>
+</ul>
+<p><span class="math display">\[ \hat{mpg} = (\hat{\beta}_0 +
+\hat{\beta}_2) + (\hat{\beta}_1 + \hat{\beta}_3) \cdot displ
+\]</span></p>
+<p>Mathematically, we achieve this by adding yet another term to our
+model. This third explanatory variable is the product of
+<code>displ</code> and <code>is_newer</code>, and it is called an
+<strong>interaction</strong> term.</p>
+<p>The addition of this term results in the two regression lines shown
+above. Note that unlike in the previous model, now both the intercepts
+and the slopes are different.</p>
+</div>
+<div id="section-interaction-syntax" class="section level3">
+<h3>Interaction syntax</h3>
+<pre class="r"><code># add interaction term manually
+lm(hwy ~ displ + factor(year) + displ:factor(year), data = mpg)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = hwy ~ displ + factor(year) + displ:factor(year), 
+##     data = mpg)
+## 
+## Coefficients:
+##            (Intercept)                   displ        factor(year)2008  
+##                35.7922                 -3.7684                  0.3445  
+## displ:factor(year)2008  
+##                 0.3052</code></pre>
+<p>In R, we can add an interaction term using some new syntax. Here, we
+simply add a third term to our model, using the colon to denote
+multiplication of the explanatory variables in the interaction term.
+This produces a model with four coefficients:</p>
+<ul>
+<li>one for the intercept,</li>
+<li>one for displacement,</li>
+<li>one for the year, and</li>
+<li>one for the interaction of displacement with year.</li>
+</ul>
+</div>
+<div id="section-reasoning-about-interaction" class="section level3">
+<h3>Reasoning about interaction</h3>
+<p>Here is the no interaction (parallel slopes) model.</p>
+<pre class="r"><code>lm(hwy ~ displ + factor(year), data = mpg)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = hwy ~ displ + factor(year), data = mpg)
+## 
+## Coefficients:
+##      (Intercept)             displ  factor(year)2008  
+##           35.276            -3.611             1.402</code></pre>
+<p>And here is the interaction model.</p>
+<pre class="r"><code>lm(hwy ~ displ + factor(year) + displ:factor(year), data = mpg)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = hwy ~ displ + factor(year) + displ:factor(year), 
+##     data = mpg)
+## 
+## Coefficients:
+##            (Intercept)                   displ        factor(year)2008  
+##                35.7922                 -3.7684                  0.3445  
+## displ:factor(year)2008  
+##                 0.3052</code></pre>
+<p>Interpreting the coefficients in an interaction model becomes more
+complicated. Note the difference between the fitted coefficients of the
+parallel slopes model with the interaction model. The original slope of
+-3.61 mpg per liter for all cars is now separated into two slopes: -3.77
+mpg per liter for older cars, and -3.46 (-3.77 + 0.31 = -3.46) mpg per
+liter for newer cars. Thus, fuel economy for the older cars is not only
+lower overall, but it also declines more rapidly as a function of engine
+size. This importantly changes the interpretation of the model. It
+suggests that the greater fuel economy of the 2008 cars is not just
+related to the fact that they had smaller engines, on average – a
+function mainly of consumer choice. It suggests that the 2008 cars were
+also engineered better, in that they were able to maintain fuel economy
+slightly better even with larger engine sizes.</p>
+<p>Now, the size of that difference is small, and as the plot suggests,
+it doesn’t appear to make a practical difference. In this case, the
+difference is not statistically significant, and thus the parallel
+slopes model is probably a better representation of the data, but you
+will tackle that subtlety in another tutorial.</p>
+</div>
+<div id="section-thought-experiments" class="section level3">
+<h3>Thought experiments</h3>
+<p>Suppose that after going apple picking you have 12 apples left over.
+You decide to conduct an experiment to investigate how quickly they will
+rot under certain conditions. You place six apples in a cool spot in
+your basement, and leave the other six on the window sill in the
+kitchen. Every week, you estimate the percentage of the surface area of
+the apple that is rotten or moldy.</p>
+<p>Consider the following models:</p>
+<p><span class="math display">\[
+    rot = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot temp \,,
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+    rot = \beta_0 + \beta_1 \cdot t + \beta_2 \cdot temp + \beta_3 \cdot
+temp \cdot t \,,
+\]</span></p>
+<p>where <span class="math inline">\(t\)</span> is time, measured in
+weeks, and <span class="math inline">\(temp\)</span> is a binary
+variable indicating either cool or warm.</p>
+<p>If you decide to keep the interaction term present in the second
+model, you are implicitly assuming that:</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="letter-w" class="tutorial-question panel-body">
+<div id="letter-w-answer_container" class="shiny-html-output"></div>
+<div id="letter-w-message_container" class="shiny-html-output"></div>
+<div id="letter-w-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+<details>
+<summary>
+<strong>Hint</strong>
+</summary>
+An interaction term allows the two lines representing the amount of rot
+in each location to have different slopes.
+</details>
+</div>
+<div id="section-fitting-a-model-with-interaction"
+class="section level3">
+<h3>Fitting a model with interaction</h3>
+<p>Including an interaction term in a model is easy - we just have to
+tell <code>lm()</code> that we want to include that new variable. An
+expression of the form</p>
+<pre><code>lm(y ~ x + z + x:z, data = mydata)</code></pre>
+<p>will do the trick. The use of the colon (<code>:</code>) here means
+that the interaction between <span class="math inline">\(x\)</span> and
+<span class="math inline">\(z\)</span> will be a third term in the
+model.</p>
+<p>The data frame <code>mariokart</code> is already loaded in your
+workspace.</p>
+<ul>
+<li>Use <code>lm()</code> to fit a model for the price of a MarioKart as
+a function of its condition and the duration of the auction, <em>with
+interaction</em>.</li>
+</ul>
+<p>Include the term <code>cond:duration</code> in your formula to model
+the interaction of condition and duration.</p>
+<div class="tutorial-exercise" data-label="ex3" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code># include interaction</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<details>
+<summary>
+<strong>Hint</strong>
+</summary>
+To include an interaction effect of variable A and B, use
+<code>A:B</code>.
+</details>
+<div class="tutorial-exercise-support" data-label="ex3-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code># include interaction
+lm(total_pr ~ duration + cond + cond:duration, data = mariokart)</code></pre>
+</div>
+</div>
+<div id="section-visualizing-interaction-models" class="section level3">
+<h3>Visualizing interaction models</h3>
+<p>Interaction allows the slope of the regression line in each group to
+vary. In this case, this means that the relationship between the final
+price and the length of the auction is moderated by the condition of
+each item.</p>
+<p>Interaction models are easy to visualize in the data space with
+<strong>ggplot2</strong> because they have the same coefficients as if
+the models were fit independently to each group defined by the level of
+the categorical variable. In this case, new and used MarioKarts each get
+their own regression line. To see this, we can set an aesthetic
+(e.g. <code>color</code>) to the categorical variable, and then add a
+<code>geom_smooth()</code> layer to overlay the regression line for each
+color.</p>
+<p>The dataset <code>mariokart</code> is already loaded in your
+workspace.</p>
+<ul>
+<li>Use the <code>color</code> aesthetic and the
+<code>geom_smooth()</code> function to plot the interaction model
+between duration and condition in the data space.</li>
+<li>Make sure you set the <code>method</code> and <code>se</code>
+arguments of <code>geom_smooth()</code>.</li>
+</ul>
+<div class="tutorial-exercise" data-label="ex4" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code># interaction plot
+ggplot(___, aes(___)) + 
+  geom_point() + 
+  geom_smooth(___)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<details>
+<summary>
+<strong>Hint</strong>
+</summary>
+Define groups using the color <code>aes</code>thetic in the ggplot call.
+</details>
+<div class="tutorial-exercise-support" data-label="ex4-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code># interaction plot
+ggplot(mariokart, aes(y = total_pr, x = duration, color = cond)) + 
+  geom_point() + 
+  geom_smooth(method = &quot;lm&quot;, se = FALSE)</code></pre>
+</div>
+</div>
+</div>
+<div id="section-simpsons-paradox" class="section level2">
+<h2>Simpson’s Paradox</h2>
+<div id="section-sat-scores-and-teacher-salary" class="section level3">
+<h3>SAT scores and teacher salary</h3>
+<p>It seems reasonable to think that by paying their teachers a higher
+salary, schools could attract better teachers, which would lead to
+better student outcomes. Yet if we fit a simple linear regression model
+for the average SAT score among students as a function of average
+teacher salary across all US states, we see a negative slope. This
+suggests that states that pay higher teacher salaries—on average—are
+associated with lower student performance on the SAT. What gives?</p>
+<pre class="r"><code>ggplot(data = SAT, aes(x = salary, y = total)) + 
+  geom_point() + 
+  geom_smooth(method = &quot;lm&quot;, se = 0)</code></pre>
+<p><img src="03-07-lesson_files/figure-html/sat-salary-1.png" width="624" /></p>
+</div>
+<div id="section-percentage-taking-the-sat" class="section level3">
+<h3>Percentage taking the SAT</h3>
+<p>How about the percentage (<code>frac</code>tion) of students eligible
+for taking the SAT? Let’s try turning the SAT score into an ordinal
+variable with 3 levels.</p>
+<p>First, we use the <code>cut()</code> function to add a new
+<code>sat_bin</code> variable to our data frame. Then we fit the
+parallel slopes model.</p>
+<pre class="r"><code>SAT_bin &lt;- SAT |&gt;
+  mutate(sat_bin = cut(frac, 3))</code></pre>
+<pre class="r"><code>mod &lt;- lm(formula = total ~ salary + sat_bin, data = SAT_bin)
+mod</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = total ~ salary + sat_bin, data = SAT_bin)
+## 
+## Coefficients:
+##        (Intercept)              salary  sat_bin(29.7,55.3]  sat_bin(55.3,81.1]  
+##          1000.7173              0.8697           -116.3174           -143.5428</code></pre>
+<p>Note that in this case the categorical variable <code>sat_bin</code>
+is not binary—it has three levels. This results in another
+coefficient.</p>
+<p>It turns out that the rate at which students take the SAT has a
+moderating effect on this relationship. Consider how things change when
+we add a categorical variable to make this a parallel slopes model. In
+this case, we want to separate states into three groups based on how
+many of their students take the SAT.</p>
+<p>How many lines do you think we will see in the plot?</p>
+</div>
+<div id="section-simpsons-paradox-1" class="section level3">
+<h3>Simpson’s paradox</h3>
+<p>If you guess three, you were correct.</p>
+<pre class="r"><code>ggplot(data = SAT_bin, aes(x = salary, y = total, color = sat_bin)) + 
+  geom_point() + 
+  geom_line(data = broom::augment(mod), aes(y = .fitted))</code></pre>
+<p><img src="03-07-lesson_files/figure-html/sat-binned-1.png" width="624" /></p>
+<p>But wait, now all three lines have a positive slope!</p>
+<p>This phenomenon is known as <strong>Simpson’s paradox</strong>, and
+it occurs widely in the social and natural sciences. When Simpson’s
+paradox is present the direction of the relationship between two
+variables changes if subgroups are considered. Although the y variable
+may be positively associated with x within multiple groups, it may be
+the case that y is negatively associated with x when those groups are
+ignored. When Simpson’s paradox occurs, the group membership is an
+important confounder that must be controlled for in order to build an
+appropriate model.</p>
+</div>
+<div id="section-consequences-of-simpsons-paradox"
+class="section level3">
+<h3>Consequences of Simpson’s paradox</h3>
+<pre class="r"><code>lm(formula = total ~ salary, data = SAT)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = total ~ salary, data = SAT)
+## 
+## Coefficients:
+## (Intercept)       salary  
+##     1158.86        -5.54</code></pre>
+<p>In the simple linear regression model for average SAT score,
+(<code>total</code>) as a function of average teacher salary
+(<code>salary</code>), the fitted coefficient was -5.54 points per
+thousand dollars. This suggests that for every additional thousand
+dollars of salary for teachers in a particular state, the expected SAT
+score for a student from that state is about 5.5 points lower.</p>
+<pre class="r"><code>lm(formula = total ~ salary + salary:sat_bin, data = SAT_bin)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = total ~ salary + salary:sat_bin, data = SAT_bin)
+## 
+## Coefficients:
+##               (Intercept)                     salary  
+##                   928.329                      3.093  
+## salary:sat_bin(29.7,55.3]  salary:sat_bin(55.3,81.1]  
+##                    -3.348                     -4.017</code></pre>
+<p>But in the model that includes the percentage of students taking the
+SAT, the coefficient on <code>salary</code> becomes 3.09 points per
+thousand dollars.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="letter-z" class="tutorial-question panel-body">
+<div id="letter-z-answer_container" class="shiny-html-output"></div>
+<div id="letter-z-message_container" class="shiny-html-output"></div>
+<div id="letter-z-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+<details>
+<summary>
+<strong>Hint</strong>
+</summary>
+The coefficient on the new term is positive.
+</details>
+</div>
+<div id="section-simpsons-paradox-in-action" class="section level3">
+<h3>Simpson’s paradox in action</h3>
+<p>A mild version of Simpson’s paradox can be observed in the MarioKart
+auction data. Consider the relationship between the final auction price
+and the length of the auction. It seems reasonable to assume that longer
+auctions would result in higher prices, since - other things being equal
+- a longer auction gives more bidders more time to see the auction and
+bid on the item.</p>
+<p>However, a simple linear regression model reveals the opposite:
+longer auctions are associated with lower final prices. The problem is
+that all other things are <em>not</em> equal. In this case, the new
+MarioKarts - which people pay a premium for - were mostly sold in
+one-day auctions, while a plurality of the used MarioKarts were sold in
+the standard seven-day auctions.</p>
+<pre class="r"><code>slr &lt;- ggplot(mariokart, aes(y = total_pr, x = duration)) + 
+  geom_point() + 
+  geom_smooth(method = &quot;lm&quot;, se = FALSE)
+slr</code></pre>
+<p><img src="03-07-lesson_files/figure-html/mariokart-plot-1.png" width="624" /></p>
+<p>Our simple linear regression model is misleading, in that it suggests
+a negative relationship between final auction price and duration.
+However, <em>for the used</em> MarioKarts, the relationship is
+positive.</p>
+<p>The object <code>slr</code> is already defined for you.</p>
+<ul>
+<li>Fit a simple linear regression model for final auction price
+(<code>total_pr</code>) as a function of duration
+(<code>duration</code>).</li>
+<li>Use <code>aes()</code> to add a color aesthetic that’s mapped to the
+condition variable to the <code>slr</code> object, which is the plot
+shown below.</li>
+</ul>
+<div class="tutorial-exercise" data-label="ex5" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code># model with one slope
+___
+
+# plot with two slopes
+slr + aes(___)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<details>
+<summary>
+<strong>Hint</strong>
+</summary>
+You can add layers to an existing plot with <code>+</code>.
+</details>
+<div class="tutorial-exercise-support" data-label="ex5-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code># model with one slope
+lm(formula = total_pr ~ duration, data = mariokart)
+
+# plot with two slopes
+slr + aes(color = cond)</code></pre>
+</div>
+</div>
+</div>
+<div id="section-hash-and-submit" class="section level2">
+<h2>Hash and submit</h2>
+<div class="encoder_ui">
+<div>
+If you have completed this tutorial and are happy with all of your
+solutions, please enter your identifying information, then click the button below to generate your hash
+<div class="form-group shiny-input-container">
+<label class="control-label" id="name-label" for="name">What's your name?</label>
+<input id="name" type="text" class="shiny-input-text form-control" value=""/>
+</div>
+<div class="form-group shiny-input-container">
+<label class="control-label" id="studentID-label" for="studentID">What is your student ID (Gebruikersnaam  s-/p-nummer)?</label>
+<input id="studentID" type="text" class="shiny-input-text form-control" value=""/>
+</div>
+<div id="outa3d3e77857e52e29" class="shiny-text-output"></div>
+</div>
+<div class="row" style="padding-bottom: 0.5em;">
+<div class="col-sm-3">
+<button id="hash_generate" type="button" class="btn btn-default action-button" title="Generate hash">Generate</button>
+</div>
+<div class="col-sm-7"></div>
+<div class="col-sm-2">
+<div class="btn-group btn-group-sm pull-right" role="group" aria-label="Clipboard buttons">
+<button id="hash_select" class="btn btn-default" type="button" title="Select hash"><svg
+      aria-hidden="true" focusable="false"
+      data-prefix="fas" data-icon="i-cursor"
+      class="svg-inline--fa fa-i-cursor fa-w-8"
+      role="img" xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 256 512" style="height: 16px;">
+      <path fill="currentColor" d="M256 52.048V12.065C256 5.496 250.726.148 244.158.066 211.621-.344 166.469.011 128 37.959 90.266.736 46.979-.114 11.913.114 5.318.157 0 5.519 0 12.114v39.645c0 6.687 5.458 12.078 12.145 11.998C38.111 63.447 96 67.243 96 112.182V224H60c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12h36v112c0 44.932-56.075 48.031-83.95 47.959C5.404 447.942 0 453.306 0 459.952v39.983c0 6.569 5.274 11.917 11.842 11.999 32.537.409 77.689.054 116.158-37.894 37.734 37.223 81.021 38.073 116.087 37.845 6.595-.043 11.913-5.405 11.913-12V460.24c0-6.687-5.458-12.078-12.145-11.998C217.889 448.553 160 444.939 160 400V288h36c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12h-36V112.182c0-44.932 56.075-48.213 83.95-48.142 6.646.018 12.05-5.346 12.05-11.992z">
+      </path>
+    </svg></button>
+<span class="btn-separator"></span>
+<button id="hash_copy" class="btn btn-default" type="button" title="Copy hash to clipboard"><svg
+      aria-hidden="true" focusable="false"
+      data-prefix="far" data-icon="clipboard"
+      class="svg-inline--fa fa-clipboard fa-w-12"
+      role="img" xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 384 512" style="height: 16px;">
+      <path fill="currentColor" d="M336 64h-80c0-35.3-28.7-64-64-64s-64 28.7-64 64H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zM192 40c13.3 0 24 10.7 24 24s-10.7 24-24 24-24-10.7-24-24 10.7-24 24-24zm144 418c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V118c0-3.3 2.7-6 6-6h42v36c0 6.6 5.4 12 12 12h168c6.6 0 12-5.4 12-12v-36h42c3.3 0 6 2.7 6 6z">
+      </path>
+    </svg></button>
+</div>
+</div>
+</div>
+<pre id="hash_output" class="shiny-text-output" style="white-space: pre-wrap;"></pre>
+<br/>
+<script>selectText = function(node) {
+        node = document.getElementById(node);
+
+        if (document.body.createTextRange) {
+          const range = document.body.createTextRange();
+          range.moveToElementText(node);
+          range.select();
+        } else if (window.getSelection) {
+          const selection = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        } else {
+          console.warn('Could not select text in node: Unsupported browser.');
+        }
+      }</script>
+<script>document.getElementById('hash_select').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        selectText('hash_output');
+      });</script>
+<script>document.getElementById('hash_copy').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        selectText('hash_output');
+        document.execCommand('copy');
+      });</script>
+</div>
+<div id="section-submit-your-hash-in-a-form" class="section level3">
+<h3>Submit your hash in a form</h3>
+<p>After creating the hash, please copy it, navigate to <a
+href="https://forms.gle/uxn1MkCSNkmiHcnB6" target="_blank">this form</a>
+and fill it in and submit. You will need to submit the form once for
+every lesson you complete in this tutorial.</p>
+<p><img src="images/Submit-hash.jpg" width="50%" style="display: block; margin: auto;" />
+
+<script type="application/shiny-prerendered" data-context="server-start">
+# https://oferengel-posit.shinyapps.io/chisquare-test/
+
+library(dplyr)
+library(purrr)
+library(openintro)
+library(broom)
+try_paths <- c(
+  here::here("R", "header-include.R"), 
+  here::here("tutorials", "03-models", "R", "header-include.R")
+  )
+
+
+hdr_path <- try_paths[map_lgl(try_paths, file.exists)]
+  
+
+source(hdr_path)
+
+theme_set(theme_minimal())
+
+
+library(learnr)
+library(openintro)
+library(tidyverse)
+library(broom)
+library(emo)
+library(mosaicData)
+
+
+mpg_manuals <- mpg |>
+  filter(grepl("manual", trans))
+
+mariokart <- filter(mariokart, total_pr < 100)
+
+SAT <- mosaicData::SAT |>
+  rename(total = sat)
+
+mariokart <- mariokart |>
+  filter(total_pr < 100)
+
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::register_http_handlers(session, metadata = NULL)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::prepare_tutorial_state(session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::i18n_observe_tutorial_language(input, session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+session$onSessionEnded(function() {
+        learnr:::event_trigger(session, "session_stop")
+      })
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex1-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex1-code-editor`)), session)
+output$`tutorial-exercise-ex1-output` <- renderUI({
+  `tutorial-exercise-ex1-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex1", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "library(openintro)", 
+"library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_minimal())", 
+"", "", "library(learnr)", "library(openintro)", "library(tidyverse)", 
+"library(broom)", "library(emo)", "library(mosaicData)", "", 
+"", "mpg_manuals <- mpg |>", "  filter(grepl(\"manual\", trans))", 
+"", "mariokart <- filter(mariokart, total_pr < 100)", "", "SAT <- mosaicData::SAT |>", 
+"  rename(total = sat)", "", "mariokart <- mariokart |>", "  filter(total_pr < 100)", 
+""), chunk_opts = list(label = "setup", include = FALSE)), setup = "mod <- lm(total_pr ~ wheels + cond, data = mariokart)\nset.seed(1)", 
+    chunks = list(list(label = "ex1-setup", code = "mod <- lm(total_pr ~ wheels + cond, data = mariokart)\nset.seed(1)", 
+        opts = list(label = "\"ex1-setup\""), engine = "r"), 
+        list(label = "ex1", code = "# R^2 and adjusted R^2\n\n# add random noise\nmariokart_noisy <- ____\n  \n# compute new model\nmod2 <- ____\n\n# new R^2 and adjusted R^2\n_____(____)", 
+            opts = list(label = "\"ex1\"", exercise = "TRUE"), 
+            engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("# R^2 and adjusted R^2", 
+    "summary(mod)", "", "# add random noise", "mariokart_noisy <- mariokart |>", 
+    "  mutate(noise = rnorm(n = nrow(mariokart)))", "  ", "# compute new model", 
+    "mod2 <- lm(total_pr ~ wheels + cond + noise, data = mariokart_noisy)", 
+    "", "# new R^2 and adjusted R^2", "summary(mod2)"), chunk_opts = list(
+        label = "ex1-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "03-07-lesson_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "03-07-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex1", exercise = TRUE, code = c("# R^2 and adjusted R^2", 
+        "", "# add random noise", "mariokart_noisy <- ____", 
+        "  ", "# compute new model", "mod2 <- ____", "", "# new R^2 and adjusted R^2", 
+        "_____(____)"), out.width.px = 624, out.height.px = 384, 
+        params.src = "ex1, exercise=TRUE", fig.num = 0, exercise.df_print = "paged"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex2-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex2-code-editor`)), session)
+output$`tutorial-exercise-ex2-output` <- renderUI({
+  `tutorial-exercise-ex2-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex2", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "library(openintro)", 
+"library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_minimal())", 
+"", "", "library(learnr)", "library(openintro)", "library(tidyverse)", 
+"library(broom)", "library(emo)", "library(mosaicData)", "", 
+"", "mpg_manuals <- mpg |>", "  filter(grepl(\"manual\", trans))", 
+"", "mariokart <- filter(mariokart, total_pr < 100)", "", "SAT <- mosaicData::SAT |>", 
+"  rename(total = sat)", "", "mariokart <- mariokart |>", "  filter(total_pr < 100)", 
+""), chunk_opts = list(label = "setup", include = FALSE)), setup = "mod <- lm(total_pr ~ wheels + cond, data = mariokart)", 
+    chunks = list(list(label = "ex2-setup", code = "mod <- lm(total_pr ~ wheels + cond, data = mariokart)", 
+        opts = list(label = "\"ex2-setup\""), engine = "r"), 
+        list(label = "ex2", code = "# return a vector\n\n\n# return a data frame\n", 
+            opts = list(label = "\"ex2\"", exercise = "TRUE"), 
+            engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("# return a vector", 
+    "predict(mod)", "", "# return a data frame", "augment(mod)"
+    ), chunk_opts = list(label = "ex2-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "03-07-lesson_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "03-07-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex2", exercise = TRUE, code = c("# return a vector", 
+        "", "", "# return a data frame", ""), out.width.px = 624, 
+        out.height.px = 384, params.src = "ex2, exercise=TRUE", 
+        fig.num = 0, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = c("auto", "single", "multiple", "learnr_radio", 
+"learnr_checkbox", "learnr_text", "learnr_numeric"), label = "letter-w", 
+    question = structure("If you decide to keep the interaction term present in the second model, you are implicitly assuming that", html = TRUE, class = c("html", 
+    "character")), answers = list(structure(list(id = "lnr_ans_f04cc65", 
+        option = "The amount of rot will vary based on the temperature.", 
+        value = "The amount of rot will vary based on the temperature.", 
+        label = structure("The amount of rot will vary based on the temperature.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("What about the time of exposure?", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_14f3d0", 
+        option = "The amount of rot will vary based on the temperature, after controlling for the length of time they have been left out.", 
+        value = "The amount of rot will vary based on the temperature, after controlling for the length of time they have been left out.", 
+        label = structure("The amount of rot will vary based on the temperature, after controlling for the length of time they have been left out.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("How does the temperature affect the amount of rot?", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_92314aa", 
+        option = "The *rate* at which apples rot will vary based on the temperature.", 
+        value = "The *rate* at which apples rot will vary based on the temperature.", 
+        label = structure("The <em>rate<\u002fem> at which apples rot will vary based on the temperature.", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = structure("Right!", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b664510", 
+        option = "Time and temperature are independent.", value = "Time and temperature are independent.", 
+        label = structure("Time and temperature are independent.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Try again", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Superb work!\nCorrect!", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Please try again.\nIncorrect", html = TRUE, class = c("html", 
+    "character")), incorrect = structure("Please try again.\nIncorrect", html = TRUE, class = c("html", 
+    "character")), message = NULL, post_message = NULL), ids = list(
+        answer = "letter-w-answer", question = "letter-w"), loading = NULL, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 1607854548.25128, 
+    options = list()), class = c("auto", "single", "multiple", 
+"learnr_radio", "learnr_checkbox", "learnr_text", "learnr_numeric", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex3-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex3-code-editor`)), session)
+output$`tutorial-exercise-ex3-output` <- renderUI({
+  `tutorial-exercise-ex3-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex3", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "library(openintro)", 
+"library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_minimal())", 
+"", "", "library(learnr)", "library(openintro)", "library(tidyverse)", 
+"library(broom)", "library(emo)", "library(mosaicData)", "", 
+"", "mpg_manuals <- mpg |>", "  filter(grepl(\"manual\", trans))", 
+"", "mariokart <- filter(mariokart, total_pr < 100)", "", "SAT <- mosaicData::SAT |>", 
+"  rename(total = sat)", "", "mariokart <- mariokart |>", "  filter(total_pr < 100)", 
+""), chunk_opts = list(label = "setup", include = FALSE)), setup = NULL, 
+    chunks = list(list(label = "ex3", code = "# include interaction\n", 
+        opts = list(label = "\"ex3\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("# include interaction", 
+    "lm(total_pr ~ duration + cond + cond:duration, data = mariokart)"
+    ), chunk_opts = list(label = "ex3-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "03-07-lesson_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "03-07-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex3", exercise = TRUE, code = c("# include interaction", 
+        ""), out.width.px = 624, out.height.px = 384, params.src = "ex3, exercise=TRUE", 
+        fig.num = 0, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex4-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex4-code-editor`)), session)
+output$`tutorial-exercise-ex4-output` <- renderUI({
+  `tutorial-exercise-ex4-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex4", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "library(openintro)", 
+"library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_minimal())", 
+"", "", "library(learnr)", "library(openintro)", "library(tidyverse)", 
+"library(broom)", "library(emo)", "library(mosaicData)", "", 
+"", "mpg_manuals <- mpg |>", "  filter(grepl(\"manual\", trans))", 
+"", "mariokart <- filter(mariokart, total_pr < 100)", "", "SAT <- mosaicData::SAT |>", 
+"  rename(total = sat)", "", "mariokart <- mariokart |>", "  filter(total_pr < 100)", 
+""), chunk_opts = list(label = "setup", include = FALSE)), setup = NULL, 
+    chunks = list(list(label = "ex4", code = "# interaction plot\nggplot(___, aes(___)) + \n  geom_point() + \n  geom_smooth(___)", 
+        opts = list(label = "\"ex4\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("# interaction plot", 
+    "ggplot(mariokart, aes(y = total_pr, x = duration, color = cond)) + ", 
+    "  geom_point() + ", "  geom_smooth(method = \"lm\", se = FALSE)"
+    ), chunk_opts = list(label = "ex4-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "03-07-lesson_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "03-07-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex4", exercise = TRUE, code = c("# interaction plot", 
+        "ggplot(___, aes(___)) + ", "  geom_point() + ", "  geom_smooth(___)"
+        ), out.width.px = 624, out.height.px = 384, params.src = "ex4, exercise=TRUE", 
+        fig.num = 0, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = c("auto", "single", "multiple", "learnr_radio", 
+"learnr_checkbox", "learnr_text", "learnr_numeric"), label = "letter-z", 
+    question = structure("Choose the correct interpretation of this slope coefficient.", html = TRUE, class = c("html", 
+    "character")), answers = list(structure(list(id = "lnr_ans_bc364", 
+        option = "For every additional thousand dollars of salary for teachers in a particular state, the expected SAT score for a student from that state is about 3 points lower.", 
+        value = "For every additional thousand dollars of salary for teachers in a particular state, the expected SAT score for a student from that state is about 3 points lower.", 
+        label = structure("For every additional thousand dollars of salary for teachers in a particular state, the expected SAT score for a student from that state is about 3 points lower.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Was there another variable?", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_f4a3efb", 
+        option = "For every additional thousand dollars of salary for teachers in a particular state, the expected SAT score for a student from that state is about 3 points higher, after controlling for the percentage of students taking the SAT.", 
+        value = "For every additional thousand dollars of salary for teachers in a particular state, the expected SAT score for a student from that state is about 3 points higher, after controlling for the percentage of students taking the SAT.", 
+        label = structure("For every additional thousand dollars of salary for teachers in a particular state, the expected SAT score for a student from that state is about 3 points higher, after controlling for the percentage of students taking the SAT.", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = structure("Right!", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_20606f9", 
+        option = "The average SAT score in richer states is about 3 points higher.", 
+        value = "The average SAT score in richer states is about 3 points higher.", 
+        label = structure("The average SAT score in richer states is about 3 points higher.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("It’s not that simple…", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Wicked smaht!\nCorrect!", html = TRUE, class = c("html", 
+    "character")), try_again = structure("That’s okay: you learn more from mistakes than successes. Let’s do it one more time.\nIncorrect", html = TRUE, class = c("html", 
+    "character")), incorrect = structure("That’s okay: you learn more from mistakes than successes. Let’s do it one more time.\nIncorrect", html = TRUE, class = c("html", 
+    "character")), message = NULL, post_message = NULL), ids = list(
+        answer = "letter-z-answer", question = "letter-z"), loading = NULL, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 143738618.433066, 
+    options = list()), class = c("auto", "single", "multiple", 
+"learnr_radio", "learnr_checkbox", "learnr_text", "learnr_numeric", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex5-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex5-code-editor`)), session)
+output$`tutorial-exercise-ex5-output` <- renderUI({
+  `tutorial-exercise-ex5-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex5", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "library(openintro)", 
+"library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_minimal())", 
+"", "", "library(learnr)", "library(openintro)", "library(tidyverse)", 
+"library(broom)", "library(emo)", "library(mosaicData)", "", 
+"", "mpg_manuals <- mpg |>", "  filter(grepl(\"manual\", trans))", 
+"", "mariokart <- filter(mariokart, total_pr < 100)", "", "SAT <- mosaicData::SAT |>", 
+"  rename(total = sat)", "", "mariokart <- mariokart |>", "  filter(total_pr < 100)", 
+""), chunk_opts = list(label = "setup", include = FALSE)), setup = "slr <- ggplot(mariokart, aes(y = total_pr, x = duration)) + \n  geom_point() + \n  geom_smooth(method = \"lm\", se = FALSE)\nslr", 
+    chunks = list(list(label = "ex5-setup", code = "slr <- ggplot(mariokart, aes(y = total_pr, x = duration)) + \n  geom_point() + \n  geom_smooth(method = \"lm\", se = FALSE)\nslr", 
+        opts = list(label = "\"ex5-setup\""), engine = "r"), 
+        list(label = "ex5", code = "# model with one slope\n___\n\n# plot with two slopes\nslr + aes(___)", 
+            opts = list(label = "\"ex5\"", exercise = "TRUE"), 
+            engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("# model with one slope", 
+    "lm(formula = total_pr ~ duration, data = mariokart)", "", 
+    "# plot with two slopes", "slr + aes(color = cond)"), chunk_opts = list(
+        label = "ex5-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "03-07-lesson_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "03-07-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex5", exercise = TRUE, code = c("# model with one slope", 
+        "___", "", "# plot with two slopes", "slr + aes(___)"
+        ), out.width.px = 624, out.height.px = 384, params.src = "ex5, exercise=TRUE", 
+        fig.num = 0, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+encoder_logic()
+</script>
+</p>
+<!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="dependencies">
+{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["header-attrs"]},{"type":"character","attributes":{},"value":["2.29"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/pandoc"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["header-attrs.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.6.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/3.6.0"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery-3.6.0.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquerylib"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.1.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootstrap"]},{"type":"character","attributes":{},"value":["3.3.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/bootstrap"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["viewport"]}},"value":[{"type":"character","attributes":{},"value":["width=device-width, initial-scale=1"]}]},{"type":"character","attributes":{},"value":["js/bootstrap.min.js","shim/html5shiv.min.js","shim/respond.min.js"]},{"type":"character","attributes":{},"value":["css/cerulean.min.css"]},{"type":"character","attributes":{},"value":["<style>h1 {font-size: 34px;}\n       h1.title {font-size: 38px;}\n       h2 {font-size: 30px;}\n       h3 {font-size: 24px;}\n       h4 {font-size: 18px;}\n       h5 {font-size: 16px;}\n       h6 {font-size: 12px;}\n       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}\n       pre:not([class]) { background-color: white }<\/style>"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["pagedtable"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/pagedtable-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/pagedtable.js"]},{"type":"character","attributes":{},"value":["css/pagedtable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["highlightjs"]},{"type":"character","attributes":{},"value":["9.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/highlightjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["highlight.js"]},{"type":"character","attributes":{},"value":["textmate.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.11.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["i18n"]},{"type":"character","attributes":{},"value":["21.6.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/i18n"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["i18next.min.js","tutorial-i18n-init.js"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["<script id=\"i18n-cstm-trns\" type=\"application/json\">{\"language\":\"en\",\"resources\":{\"en\":{\"translation\":{\"button\":{\"runcode\":\"Run Code\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Hint\",\"hint_plural\":\"Hints\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Next Hint\",\"hintprev\":\"Previous Hint\",\"solution\":\"Solution\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copy to Clipboard\",\"startover\":\"Start Over\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continue\",\"submitanswer\":\"Submit Answer\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Previous Topic\",\"nexttopic\":\"Next Topic\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Try Again\"},\"text\":{\"startover\":\"Start Over\",\"areyousure\":\"Are you sure you want to start over? (all exercise progress will be reset)\",\"youmustcomplete\":\"You must complete the\",\"exercise\":\"exercise\",\"exercise_plural\":\"exercises\",\"inthissection\":\"in this section before continuing.\",\"code\":\"Code\",\"enginecap\":\"{{engine}} $t(text.code)\",\"quiz\":\"Quiz\",\"blank\":\"blank\",\"blank_plural\":\"blanks\",\"exercisecontainsblank\":\"This exercise contains {{count}} $t(text.blank).\",\"pleasereplaceblank\":\"Please replace {{blank}} with valid code.\",\"unparsable\":\"It looks like this might not be valid R code. R cannot determine how to turn your text into a complete command. You may have forgotten to fill in a blank, to remove an underscore, to include a comma between arguments, or to close an opening <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> or <code>{<\\/code> with a matching <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code> or <code>}<\\/code>.\\n\",\"unparsablequotes\":\"<p>It looks like your R code contains specially formatted quotation marks or &quot;curly&quot; quotes (<code>{{character}}<\\/code>) around character strings, making your code invalid. R requires character values to be contained in straight quotation marks (<code>&quot;<\\/code> or <code>'<\\/code>).<\\/p> {{code}} <p>Don't worry, this is a common source of errors when you copy code from another app that applies its own formatting to text. You can try replacing the code on that line with the following. There may be other places that need to be fixed, too.<\\/p> {{suggestion}}\\n\",\"unparsableunicode\":\"<p>It looks like your R code contains an unexpected special character (<code>{{character}}<\\/code>) that makes your code invalid.<\\/p> {{code}} <p>Sometimes your code may contain a special character that looks like a regular character, especially if you copy and paste the code from another app. Try deleting the special character from your code and retyping it manually.<\\/p>\\n\",\"unparsableunicodesuggestion\":\"<p>It looks like your R code contains an unexpected special character (<code>{{character}}<\\/code>) that makes your code invalid.<\\/p> {{code}} <p>Sometimes your code may contain a special character that looks like a regular character, especially if you copy and paste the code from another app. You can try replacing the code on that line with the following. There may be other places that need to be fixed, too.<\\/p> {{suggestion}}\\n\",\"and\":\"and\",\"or\":\"or\",\"listcomma\":\", \",\"oxfordcomma\":\",\"}}},\"fr\":{\"translation\":{\"button\":{\"runcode\":\"Lancer le Code\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Indication\",\"hint_plural\":\"Indications\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Indication Suivante\",\"hintprev\":\"Indication Précédente\",\"solution\":\"Solution\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copier dans le Presse-papier\",\"startover\":\"Recommencer\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuer\",\"submitanswer\":\"Soumettre\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Chapitre Précédent\",\"nexttopic\":\"Chapitre Suivant\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Réessayer\"},\"text\":{\"startover\":\"Recommencer\",\"areyousure\":\"Êtes-vous certains de vouloir recommencer? (La progression sera remise à zéro)\",\"youmustcomplete\":\"Vous devez d'abord compléter\",\"exercise\":\"l'exercice\",\"exercise_plural\":\"des exercices\",\"inthissection\":\"de cette section avec de continuer.\",\"code\":\"Code\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"and\":\"et\",\"or\":\"ou\",\"oxfordcomma\":\"\"}}},\"es\":{\"translation\":{\"button\":{\"runcode\":\"Ejecutar código\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Pista\",\"hint_plural\":\"Pistas\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Siguiente pista\",\"hintprev\":\"Pista anterior\",\"solution\":\"Solución\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copiar al portapapeles\",\"startover\":\"Reiniciar\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuar\",\"submitanswer\":\"Enviar respuesta\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Tema anterior\",\"nexttopic\":\"Tema siguiente\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Volver a intentar\"},\"text\":{\"startover\":\"Reiniciar\",\"areyousure\":\"¿De verdad quieres empezar de nuevo? (todo el progreso del ejercicio se perderá)\",\"youmustcomplete\":\"Debes completar\",\"exercise\":\"el ejercicio\",\"exercise_plural\":\"los ejercicios\",\"inthissection\":\"en esta sección antes de continuar.\",\"code\":\"Código\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Cuestionario\",\"and\":\"y\",\"or\":\"o\",\"oxfordcomma\":\"\"}}},\"pt\":{\"translation\":{\"button\":{\"runcode\":\"Executar código\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Dica\",\"hint_plural\":\"Dicas\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Próxima dica\",\"hintprev\":\"Dica anterior\",\"solution\":\"Solução\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copiar para a área de transferência\",\"startover\":\"Reiniciar\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuar\",\"submitanswer\":\"Enviar resposta\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Tópico anterior\",\"nexttopic\":\"Próximo tópico\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Tentar novamente\"},\"text\":{\"startover\":\"Reiniciar\",\"areyousure\":\"Tem certeza que deseja começar novamente? (todo o progresso feito será perdido)\",\"youmustcomplete\":\"Você deve completar\",\"exercise\":\"o exercício\",\"exercise_plural\":\"os exercícios\",\"inthissection\":\"nesta seção antes de continuar.\",\"code\":\"Código\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"and\":\"e\",\"or\":\"ou\",\"oxfordcomma\":\"\"}}},\"tr\":{\"translation\":{\"button\":{\"runcode\":\"Çalıştırma Kodu\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Ipucu\",\"hint_plural\":\"İpuçları\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Sonraki İpucu\",\"hintprev\":\"Önceki İpucu\",\"solution\":\"Çözüm\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Pano'ya Kopyala\",\"startover\":\"Baştan Başlamak\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Devam et\",\"submitanswer\":\"Cevabı onayla\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Önceki Konu\",\"nexttopic\":\"Sonraki Konu\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Tekrar Deneyin\"},\"text\":{\"startover\":\"Baştan Başlamak\",\"areyousure\":\"Baştan başlamak istediğinizden emin misiniz? (tüm egzersiz ilerlemesi kaybolacak)\",\"youmustcomplete\":\"Tamamlamalısın\",\"exercise\":\"egzersiz\",\"exercise_plural\":\"egzersizler\",\"inthissection\":\"devam etmeden önce bu bölümde\",\"code\":\"Kod\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Sınav\",\"oxfordcomma\":\"\"}}},\"emo\":{\"translation\":{\"button\":{\"runcode\":\"🏃\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"💡\",\"hint_plural\":\"$t(button.hint)\",\"hinttitle\":\"$t(button.hint)\",\"solution\":\"🎯\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"📋\",\"startover\":\"⏮\",\"startovertitle\":\"Start Over\",\"continue\":\"✅\",\"submitanswer\":\"🆗\",\"submitanswertitle\":\"Submit Answer\",\"previoustopic\":\"⬅\",\"nexttopic\":\"➡\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"🔁\"},\"text\":{\"startover\":\"⏮\",\"areyousure\":\"🤔\",\"youmustcomplete\":\"⚠️ 👉 🧑‍💻\",\"exercise\":\"\",\"exercise_plural\":\"\",\"inthissection\":\"\",\"code\":\"💻\",\"enginecap\":\"$t(text.code) {{engine}}\",\"oxfordcomma\":\"\"}}},\"eu\":{\"translation\":{\"button\":{\"runcode\":\"Kodea egikaritu\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Laguntza\",\"hint_plural\":\"Laguntza\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Aurreko laguntza\",\"hintprev\":\"Hurrengo laguntza\",\"solution\":\"Ebazpena\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Arbelean kopiatu\",\"startover\":\"Berrabiarazi\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Jarraitu\",\"submitanswer\":\"Erantzuna bidali\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Aurreko atala\",\"nexttopic\":\"Hurrengo atala\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Berriro saiatu\"},\"text\":{\"startover\":\"Berrabiarazi\",\"areyousure\":\"Berriro hasi nahi duzu? (egindako lana galdu egingo da)\",\"youmustcomplete\":\"Aurrera egin baino lehen atal honetako\",\"exercise\":\"ariketa egin behar duzu.\",\"exercise_plural\":\"ariketak egin behar dituzu.\",\"inthissection\":\"\",\"code\":\"Kodea\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Galdetegia\",\"oxfordcomma\":\"\"}}},\"de\":{\"translation\":{\"button\":{\"runcode\":\"Code ausführen\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Tipp\",\"hint_plural\":\"Tipps\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Nächster Tipp\",\"hintprev\":\"Vorheriger Tipp\",\"solution\":\"Lösung\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"In die Zwischenablage kopieren\",\"startover\":\"Neustart\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Weiter\",\"submitanswer\":\"Antwort einreichen\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Vorheriges Kapitel\",\"nexttopic\":\"Nächstes Kapitel\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Nochmal versuchen\"},\"text\":{\"startover\":\"Neustart\",\"areyousure\":\"Bist du sicher, dass du neustarten willst? (der gesamte Lernfortschritt wird gelöscht)\",\"youmustcomplete\":\"Vervollstädinge\",\"exercise\":\"die Übung\",\"exercise_plural\":\"die Übungen\",\"inthissection\":\"in diesem Kapitel, bevor du fortfährst.\",\"code\":\"Code\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"blank\":\"Lücke\",\"blank_plural\":\"Lücken\",\"pleasereplaceblank\":\"Bitte ersetze {{blank}} mit gültigem Code.\",\"unparsable\":\"Dies scheint kein gültiger R Code zu sein. R kann deinen Text nicht in einen gültigen Befehl übersetzen. Du hast vielleicht vergessen, die Lücke zu füllen, einen Unterstrich zu entfernen, ein Komma zwischen Argumente zu setzen oder ein eröffnendes <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> oder <code>{<\\/code> mit einem zugehörigen <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code> oder <code>}<\\/code> zu schließen.\\n\",\"and\":\"und\",\"or\":\"oder\",\"listcomma\":\", \",\"oxfordcomma\":\",\"}}},\"ko\":{\"translation\":{\"button\":{\"runcode\":\"코드 실행\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"힌트\",\"hint_plural\":\"힌트들\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"다음 힌트\",\"hintprev\":\"이전 힌트\",\"solution\":\"솔루션\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"클립보드에 복사\",\"startover\":\"재학습\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"다음 학습으로\",\"submitanswer\":\"정답 제출\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"이전 토픽\",\"nexttopic\":\"다음 토픽\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"재시도\"},\"text\":{\"startover\":\"재학습\",\"areyousure\":\"다시 시작 하시겠습니까? (모든 예제의 진행 정보가 재설정됩니다)\",\"youmustcomplete\":\"당신은 완료해야 합니다\",\"exercise\":\"연습문제\",\"exercise_plural\":\"연습문제들\",\"inthissection\":\"이 섹션을 실행하기 전에\",\"code\":\"코드\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"퀴즈\",\"blank\":\"공백\",\"blank_plural\":\"공백들\",\"exercisecontainsblank\":\"이 연습문제에는 {{count}}개의 $t(text.blank)이 포함되어 있습니다.\",\"pleasereplaceblank\":\"{{blank}}를 유효한 코드로 바꾸십시오.\",\"unparsable\":\"이것은 유효한 R 코드가 아닐 수 있습니다. R은 텍스트를 완전한 명령으로 변환하는 방법을 결정할 수 없습니다. 당신은 공백이나 밑줄을 대체하여 채우기, 인수를 컴마로 구분하기, 또는 <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> , <code>{<\\/code>로 시작하는 구문을 닫는 <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code>, <code>}<\\/code>을 잊었을 수도 있습니다.\\n\",\"and\":\"그리고\",\"or\":\"혹은\",\"listcomma\":\", \",\"oxfordcomma\":\"\"}}},\"zh\":{\"translation\":{\"button\":{\"runcode\":\"运行代码\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"提示\",\"hint_plural\":\"提示\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"下一个提示\",\"hintprev\":\"上一个提示\",\"solution\":\"答案\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"复制到剪切板\",\"startover\":\"重新开始\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"继续\",\"submitanswer\":\"提交答案\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"上一专题\",\"nexttopic\":\"下一专题\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"再试一次\"},\"text\":{\"startover\":\"重置\",\"areyousure\":\"你确定要重新开始吗? (所有当前进度将被重置)\",\"youmustcomplete\":\"你必须完成\",\"exercise\":\"练习\",\"exercise_plural\":\"练习\",\"inthissection\":\"在进行本节之前\",\"code\":\"代码\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"测试\",\"blank\":\"空\",\"blank_plural\":\"空\",\"exercisecontainsblank\":\"本练习包含{{count}}个$t(text.blank)\",\"pleasereplaceblank\":\"请在{{blank}}内填写恰当的代码\",\"unparsable\":\"这似乎不是有效的R代码。 R不知道如何将您的文本转换为完整的命令。 您是否忘了填空，忘了删除下划线，忘了在参数之间包含逗号，或者是忘了用<code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code>,<code>}<\\/code>来封闭<code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code>。 or <code>{<\\/code>。\\n\",\"unparsablequotes\":\"<p>您的R代码中似乎含有特殊格式的引号，或者弯引号(<code>{{character}}<\\/code>) 在字符串前后，在R中字符串应该被直引号(<code>&quot;<\\/code> 或者 <code>'<\\/code>)包裹。<\\/p> {{code}} <p>别担心，该错误经常在复制粘贴包含格式的代码时遇到， 您可以尝试将该行中的代码替换为以下代码，也许还有其他地方需要修改。<\\/p> {{suggestion}}\\n\",\"unparsableunicode\":\"<p>您的代码中似乎包含有异常字符(<code>{{character}}<\\/code>),导致代码无效。<\\/p> {{code}} <p>有时候你的代码可能含有看似正常字符的特殊字符，特别是当你复制粘贴其他来源代码的时候。 请试着删除这些特殊字符,重新输入<\\/p>\\n\",\"unparsableunicodesuggestion\":\"<p>您的代码中似乎包含有异常字符(<code>{{character}}<\\/code>),导致代码无效。<\\/p> {{code}} <p>有时候你的代码可能含有看似正常字符的特殊字符，特别是当你复制粘贴其他来源代码的时候。 请试着删除这些特殊字符,重新输入<\\/p>\\n\",\"and\":\"且\",\"or\":\"或\",\"listcomma\":\",\",\"oxfordcomma\":\",\"}}},\"pl\":{\"translation\":{\"button\":{\"runcode\":\"Uruchom kod\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Podpowiedź\",\"hint_plural\":\"Podpowiedzi\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Następna podpowiedź\",\"hintprev\":\"Poprzednia podpowiedź\",\"solution\":\"Rozwiązanie\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Kopiuj do schowka\",\"startover\":\"Zacznij od początku\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Kontynuuj\",\"submitanswer\":\"Wyślij\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Poprzednia sekcja\",\"nexttopic\":\"Następna sekcja\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Spróbuj ponownie\"},\"text\":{\"startover\":\"Zacznij od początku\",\"areyousure\":\"Czy na pewno chcesz zacząć od początku? (cały postęp w zadaniu zostanie utracony)\",\"youmustcomplete\":\"Musisz ukończyć\",\"exercise\":\"ćwiczenie\",\"exercise_plural\":\"ćwiczenia\",\"inthissection\":\"w tej sekcji przed kontynuowaniem\",\"code\":\"Kod\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"blank\":\"luka\",\"blank_plural\":\"luk(i)\",\"exercisecontainsblank\":\"To ćwiczenie zawiera {{count}} $t(text.blank).\",\"pleasereplaceblank\":\"Proszę uzupełnić {{blank}} prawidłowym kodem.\",\"unparsable\":\"Wygląda na to, że może to nie być prawidłowy kod R. R nie jest w stanie przetworzyć Twojego tekstu na polecenie. Mogłeś(-aś) zapomnieć wypełnić luki, usunąć podkreślnik, umieścić przecinka między argumentami, lub zamknąć znak <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> lub <code>{<\\/code> odpowiadającym <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code> lub <code>}<\\/code>.\\n\",\"unparsablequotes\":\"<p>Wygląda na to, że Twój kod zawiera szczególnie sformatowane cudzysłowy lub cudzysłowy typograficzne (<code>{{character}}<\\/code>) przy ciągach znaków, co sprawia, że kod jest niepoprawny. R wymaga cudzysłowów prostych (<code>&quot;<\\/code> albo <code>'<\\/code>).<\\/p> {{code}} <p>Nie martw się, to powszechne źródło błędów, gdy kopiuje się kod z innego programu, który sam formatuje teskt. Możesz spróbować zastąpić swój kod następującym kodem. Mogą być też inne miejsca, które wymagają poprawienia.<\\/p> {{suggestion}}\\n\",\"unparsableunicode\":\"<p>Wygląda na to, że Twój kod zawiera niespodziewany znak specjalny (<code>{{character}}<\\/code>), co sprawia, że kod jest niepoprawny.<\\/p> {{code}} <p>Czasami Twój kod może zawierać znak specjalny, który wygląda jak zwykły znak, zwłaszcza jeśli kopiujesz kod z innego programu. Spróbuj usunąć znak specjalny i wpisać do ponownie ręcznie.<\\/p>\\n\",\"unparsableunicodesuggestion\":\"<p>Wygląda na to, że Twój kod zawiera niespodziewany znak specjalny (<code>{{character}}<\\/code>), co sprawia, że kod jest niepoprawny.<\\/p> {{code}} <p>Czasami Twój kod może zawierać znak specjalny, który wygląda jak zwykły znak, zwłaszcza jeśli kopiujesz kod z innego programu. Możesz spróbować zastąpić swój kod następującym kodem. Mogą być też inne miejsca, które wymagają poprawienia.<\\/p> {{suggestion}}\\n\",\"and\":\"i\",\"or\":\"lub\",\"listcomma\":\", \",\"oxfordcomma\":\"\"}}}}}<\/script>"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-format"]},{"type":"character","attributes":{},"value":["0.11.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmarkdown/templates/tutorial/resources"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-format.js"]},{"type":"character","attributes":{},"value":["tutorial-format.css","rstudio-theme.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.6.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/3.6.0"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery-3.6.0.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquerylib"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.1.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["navigation"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/navigation-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tabsets.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["highlightjs"]},{"type":"character","attributes":{},"value":["9.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/highlightjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["highlight.js"]},{"type":"character","attributes":{},"value":["default.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.6.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/3.6.0"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery-3.6.0.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquerylib"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.1.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["font-awesome"]},{"type":"character","attributes":{},"value":["6.5.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fontawesome"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/all.min.css","css/v4-shims.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fontawesome"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.3"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootbox"]},{"type":"character","attributes":{},"value":["5.5.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/bootbox"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["bootbox.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["idb-keyvalue"]},{"type":"character","attributes":{},"value":["3.2.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/idb-keyval"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["idb-keyval-iife-compat.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.11.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]}]}
+</script>
+<!--/html_preserve-->
+<!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="execution_dependencies">
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89]}},"value":[{"type":"character","attributes":{},"value":["airports","assertthat","backports","base","broom","bslib","cachem","checkmate","cherryblossom","cli","colorspace","commonmark","compiler","crayon","datasets","digest","dplyr","ellipsis","emo","evaluate","farver","fastmap","fontawesome","forcats","generics","ggplot2","glue","gradethis","graphics","grDevices","grid","gtable","here","hms","htmltools","htmlwidgets","httpuv","jquerylib","jsonlite","knitr","labeling","later","lattice","learnr","learnrhash","lifecycle","lubridate","magrittr","markdown","Matrix","methods","mgcv","mime","mosaicData","munsell","nlme","openintro","pillar","pkgconfig","promises","purrr","R6","Rcpp","readr","rlang","rmarkdown","rprojroot","rstudioapi","sass","scales","shiny","splines","stats","stringi","stringr","tibble","tidyr","tidyselect","tidyverse","timechange","tools","tzdb","usdata","utils","vctrs","withr","xfun","xtable","yaml"]},{"type":"character","attributes":{},"value":["0.1.0","0.2.1","1.5.0","4.4.2","1.0.7","0.8.0","1.1.0","2.3.2","0.1.0","3.6.3","2.1-1","1.9.2","4.4.2","1.5.3","4.4.2","0.6.37","1.1.4","0.3.2","0.0.0.9000","1.0.1","2.1.2","1.2.0","0.5.3","1.0.0","0.1.3","3.5.1","1.8.0","0.2.14","4.4.2","4.4.2","4.4.2","0.3.6","1.0.1","1.1.3","0.5.8.1","1.6.4","1.6.15","0.1.4","1.8.9","1.49","0.4.3","1.4.1","0.22-6","0.11.5","0.2.0","1.0.4","1.9.4","2.0.3","1.13","1.7-1","4.4.2","1.9-1","0.12","0.20.4","0.5.1","3.1-166","2.5.0","1.10.0","2.0.3","1.3.2","1.0.2","2.5.1","1.0.13-1","2.1.5","1.1.4","2.29","2.0.4","0.17.1","0.4.9","1.3.0","1.10.0","4.4.2","4.4.2","1.8.4","1.5.1","3.2.1","1.3.1","1.2.1","2.0.0","0.3.0","4.4.2","0.4.0","0.3.1","4.4.2","0.6.5","3.0.2","0.49","1.8-4","2.3.10"]}]}]}
+</script>
+<!--/html_preserve-->
+</div>
+</div>
+
+</article> <!-- topics -->
+
+<div class="topicsContainer">
+<div class="topicsPositioner">
+<div class="band">
+<div class="bandContent topicsListContainer">
+
+<!-- begin doc-metadata -->
+<div id="doc-metadata">
+<h1 class="title toc-ignore" style="display:none;">Regression modeling:
+7 - Evaluating and extending parallel slopes model</h1>
+</div>
+<!-- end doc-metadata -->
+
+</div> <!-- bandContent.topicsListContainer -->
+</div> <!-- band -->
+</div> <!-- topicsPositioner -->
+</div> <!-- topicsContainer -->
+
+
+</main> <!-- bandContent page -->
+</div> <!-- pageContent band -->
+
+
+
+<!-- Build Tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("section-TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<script>
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+
+</body>
+
+</html>
