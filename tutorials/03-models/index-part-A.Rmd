@@ -1,0 +1,86 @@
+---
+title: "Regression modeling"
+output: html_document
+params:
+  shiny_url: "https://oferengel-posit.shinyapps.io/"
+---
+
+<meta http-equiv='cache-control' content='no-cache'> 
+<meta http-equiv='expires' content='0'> 
+<meta http-equiv='pragma' content='no-cache'>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(glue)
+shiny_url <- params$shiny_url
+```
+
+<img style="float: right; margin: 0px 0px 20px 20px" src="../../logo/umcg.png" alt="Tutorial illustration" width="20%" height="20%">
+
+
+
+Ultimately, data analysis is about understanding relationships among variables. Exploring data with multiple variables requires new, more complex tools, but enables a richer set of comparisons. In this tutorial, you will learn how to describe relationships between two numerical quantities. You will characterize these relationships graphically, in the form of summary statistics, and through simple linear regression models.
+
+In this tutorial you'll also take your skills with simple linear regression to the next level. By learning multiple and logistic regression techniques you will gain the skills to model and predict both numeric and categorical outcomes using multiple input variables. You'll also learn how to fit, visualize, and interpret these models. Then you'll apply your skills to learn about Italian restaurants in New York City!
+
+## Learning objectives
+
+* Visualize, measure, and characterize bivariate relationships
+* Fit, interpret, and assess simple linear regression models
+* Measure and interpret model fit
+* Identify and attend to the disparate impact that unusual data observations may have on a regression model
+* Compute with `lm` objects in R
+* Compute and visualize model predictions
+* Visualize, fit, interpret, and assess a variety of multiple regression models, including those with interaction terms
+* Visualize, fit, interpret, and assess logistic regression models
+* Understand the relationship between R modeling syntax and geometric and mathematical specifications for models
+
+## Lessons
+
+### 1 - [Visualizing two variables](`r glue("{shiny_url}03-01-lesson/")`){target="_blank"}
+
+* Explore [bivariate relationships](https://en.wikipedia.org/wiki/Bivariate_analysis) graphically
+* Characterize bivariate relationships
+* Create and interpret [scatterplots](https://en.wikipedia.org/wiki/Scatter_plot)
+* Discuss transformations
+* Identify [outliers](https://en.wikipedia.org/wiki/Outlier)
+
+### 2 - [Correlation](`r glue("{shiny_url}03-02-lesson/")`){target="_blank"}
+
+* Quantify the strength of a linear relationship
+* Compute and interpret Pearson Product-Moment [correlation](https://en.wikipedia.org/wiki/Correlation_and_dependence)
+* Identify spurious correlations
+
+### 3 - [Simple linear regression](`r glue("{shiny_url}03-03-lesson/")`){target="_blank"}
+
+* Visualize a simple linear model as "best fit" line
+* Conceptualize simple [linear regression](https://en.wikipedia.org/wiki/Linear_regression)
+* Fit and describe simple linear regression models
+* Internalize [regression to the mean](https://en.wikipedia.org/wiki/Regression_toward_the_mean)
+
+### 4 - [Interpreting regression models](`r glue("{shiny_url}03-04-lesson/")`){target="_blank"}
+
+* Interpret the meaning of coefficients in a regression model
+* Understand the impact of units and scales
+* Work with `lm` objects in R
+* Make predictions from regression models
+* Overlay a regression model on a scatterplot
+
+
+## Additional references
+
+* Unwin, Anthony. *Graphical Data Analysis with R*.
+* Velleman, Paul and Hoaglin, David. *Exploratory Data Analysis*.
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+#### Andrew Bray
+
+Andrew Bray is an Assistant Professor of Statistics at Reed College and lover of all things statistics and R.
+
+
+

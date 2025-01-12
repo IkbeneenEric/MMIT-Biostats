@@ -510,16 +510,6 @@ After creating the hash, please copy it, navigate to [this form](`r submit_hash_
 
 ```{r img-submit, message=FALSE, warning=FALSE, fig.align='center', out.width="50%"}
 
-
-# p_img <- ifelse(
-#   file.exists(
-#     here("tutorials", "images", "Submit-hash.jpg")
-#     ),
-#   here("tutorials", "images", "Submit-hash.jpg"),
-#   here("images", "Submit-hash.jpg")
-#   )
-
-
 knitr::include_graphics(here("images", "Submit-hash.jpg"))
 
 ```
