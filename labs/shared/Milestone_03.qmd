@@ -1,0 +1,390 @@
+---
+title: Simple Linear Regression
+author: Your name here
+date: The date here
+format: 
+  html: 
+    highlight: pygments
+    theme: cerulean
+    toc: true
+    toc_float: true
+editor: source
+---
+
+For this exercise you will need to load the following packages:
+
+- `tidyverse` for data wrangling and the visualisation
+- `palmerpenguins` for the `penguin` dataset 
+- `table1` to create the famouls `Table1`
+- The `broom` package for tidy representation of your models
+
+
+```{r}
+#| label: setup
+#| include: false
+
+# Load your packages here: tidyverse, palmerpenguins, table1, broom
+
+
+
+
+```
+
+
+
+
+Between 2007 and 2009, data were collected about penguins in three islands of the Palmer Archipelago in Antarctica: the islands of Biscoe, Dream, and Torgersen. Data were collected and made available by [Dr. Kristen Gorman](https://www.uaf.edu/cfos/people/faculty/detail/kristen-gorman.php) and the [Palmer Station, Antarctica LTER](https://pallter.marine.rutgers.edu/), a member of the [Long Term Ecological Research Network](https://lternet.edu/). The `penguins` data-set is a collection of data for 342 penguins from 3 different species: Chinstrap, Gentoo, and Adélie. 
+
+From the package `palmerpenguins` we will use the `penguins` dataset, a dataset consisting of the following variables:
+
+- `species`: The penguin's species (Chinstrap, Gentoo, and Adélie)
+- `island`: The island where the penguin lives (Biscoe, Dream, and Torgersen)
+- `bill_length_mm`: The length of the penguin's bill, in millimeters (distance from the penguin's face to the tip of the bill)
+- `bill_depth_mm`: The depth of the penguin's bill, in millimeters (height of the bill; distance from the bottom of the bill to the top of the bill)
+- `flipper_length_mm`: The length of the penguin's flippers, in millimeters
+- `body_mass_g`: The weight of the penguin, in grams
+- `sex`: The sex of the penguin
+- `year`: The year the observation was made
+
+
+To see a picture of the map of the area and to understand how the bill depth and length are conceptualized, see the pictures in the code chunk shown below: 
+
+```{r}
+#| label: images
+#| out-width: 50%
+#| echo: false
+
+# Three types of penguin: the Chinstrap, Gentoo and Adélie
+knitr::include_graphics("images/lab3-penguins.png")
+
+# Bill length and bill depth
+knitr::include_graphics("images/lab3-culmen_depth.png")
+
+# Map of the three palmer archipelego
+knitr::include_graphics("images/lab3-islands.png")
+
+```
+
+
+
+## Creating Table1
+
+In most published articles, there is a "Table 1" containing descriptive statistics for the sample. This may include, for example, the mean and standard deviation for continuous variables, the frequency and proportion for categorical variables, and perhaps also the number of missing values.
+
+The brute force method of creating such a table would be to compute each statistic for each variable of interest and then copy and paste the results into a table. Having done this even once you will wish for an easier method! There are many possible solutions, but one that is quick and easy to use the `table1` package described in the [following vignette](https://cran.r-project.org/web/packages/table1/vignettes/table1-examples.html){target="_blank"}
+
+Use the `table1` package to replicate the table below. Use the examples provided in the [following vignette](https://cran.r-project.org/web/packages/table1/vignettes/table1-examples.html){target="_blank"}. 
+
+To see the table1 you need to recreate, run the code chunk below: 
+
+```{r}
+#| label: recreate this table1
+#| echo: false
+knitr::include_graphics("images/lab3-table1.png")
+
+
+```
+
+Use the code chunk below to recreate table1. 
+
+```{r table1, echo=FALSE}
+#| label: recreation-solution
+#| eval: false
+#| include: false
+
+
+
+
+```
+
+
+QUESTIONS about Table 1: What do you notice from the table? 
+
+- Which species of penguin is the heaviest? Which has the shortest bill depth?
+- How are the different species distributed across the three islands?
+
+
+
+YOUR ANSWERS HERE: 
+
+- ...
+- ...
+
+
+
+
+
+## Modelling the penguin's body mass
+
+In what follows, we try to model the penguin's body mass (grams) using various other measures such as its flipper length, its bill length and depth. When we model a variable such as the body mass, we treat it as our outcome (or dependent) variable, and we use other (explanatory) variables in order to predict it. 
+
+### Using bill depth to model body mass
+
+Observe the scatter plot below, each species associated with a different color: 
+
+```{r}
+#| label: recreate this scatterplot
+#| echo: false
+knitr::include_graphics("images/lab3-mass-depth.png")
+
+```
+
+QUESTIONS: 
+
+-   What can you tell about the relationship between bill depth and penguin weight?
+-   Do different species have similar intercepts? Slopes? Add your comments here.
+-   Is the correlation between bill-depth and body-mass positive or negative? 
+
+Your answer to the last question should depend on whether or not you are conditioning on the penguin species. So one answer when conditioning (i.e., taking each specie separately) and another answer when marginalizing (i.e., when looking at the entire dataset).
+
+
+YOUR ANSWERS HERE: 
+
+- ...
+- ...
+
+
+
+
+
+### Simple linear model
+
+Our simplest linear model ignores the different species, looking only at the relationship between body mass and bill depth, without taking the species into account. To create the model, use the `lm()` function, using with the formula `body_mass_g ~ bill_depth_mm`. You will also have to tell the function that you will be using the `penguin` dataset.  
+
+Store your first model in the object `M1` and print out the results of your model using the following functions: 
+
+- `summary(M1)` - to see an *untidy* output of your model
+- `tidy(M1, conf.int = TRUE)` - to see a tidy output of the estimates, standard errors, t-statistics, p-values and confidence intervals. 
+- `glance(M1)` to see the performance indicators of your model, also known as goodness of fit. 
+
+
+
+```{r}
+#| label: simple linear model
+
+# To create your first model, use the code below
+# M1 <- lm(___ ~ ___, data = ___)
+
+# Write code to print out the results of your model
+
+
+
+```
+
+
+The picture below explains how to read the output of your `summary()` function. 
+
+```{r}
+#| label: how to read summary model
+#| echo: false
+knitr::include_graphics("images/lab3-lm-summary.jpg")
+
+```
+
+Now fill in the blanks in this formal description of your results. 
+
+>  A linear regression model was used to test the association between _____ (gram) and _____ (mm) using data from n = _____ Penguins. _____% of the variation in _____ was explained by _____ ($R^2$= _____). There was a significant _____ (positive/negative) association between _____ and _____ (B = _____; 95% CI = _____, _____; p < .001). On average, for every 1-_____ difference in _____, penguins differ in mean _____ by _____ _____.
+
+
+### Parallel slope model
+
+For our second model, use two variables to model the body mass: the `bill_depth_mm` and the `species`. The formula in the `lm()` function should look like this `body_mass_g ~ bill_depth_mm + species`. Store your model as `M2`, and print out the results using the three functions we used above. 
+
+
+```{r}
+#| label: parallel slopes model
+# Create your second model here
+
+
+# Print out the results of your model
+
+
+
+```
+
+
+### Diagnositcs
+
+Before writing our conclusions, we need to first run a couple of diagnostics checks to see if the regression assumptions hold. Specifically, we will look at four different diagnostic tests for the second model M2. 
+
+
+```{r}
+#| label: diagnostics for M2
+
+# Residuals vs. fitted
+# plot(M2, which = 1)
+
+# QQ Residuals
+# plot(M2, which = 2)
+
+# Scale Location
+# plot(M2, which = 3)
+
+# Cook’s distance
+# plot(M2, which = 4)
+
+
+```
+
+
+QUESTIONS: 
+
+Search online for an explanation of the various plots (for example, [this](https://library.virginia.edu/data/articles/diagnostic-plots) is a good resource, but you may find others). Create a plot for each of the four diagnostic tests, and describe in words what is the purpose of each diagnostic plot. Then interpret the plot: what can we learn from it?
+
+
+YOUR ANSWERS HERE: 
+
+- ...
+- ...
+
+
+
+### Model 3: Conclusions
+
+Now fill in the blanks in this formal description of your results. 
+
+>  A linear regression model was used to test the association between _____ (gram) and _____ (mm), while conditioning on the penguin species and using data from n = _____ Penguins. _____% of the variation in _____ was explained by _____ ($R^2$= _____). There was a significant _____ (positive/negative) association between _____ and _____ (B = _____; 95% CI = _____, _____; p < .001). On average, for every 1-_____ difference in _____, penguins differ in mean _____ by _____ _____.
+
+
+This model is in fact three linear models in one: one for modelling the body mass of the Adélie species, another for the the Chinstrap and one for the Gentoo species. This kind of model is sometimes called the parallel slopes model, because each of the three species have different intercepts but the very same slope.
+
+QUESTIONS: 
+- What is the common slope for all the species? 
+- For each of the penguin species, what is its intercept? Are the intercepts different from one another? 
+- In the previous model we found a negative (significant) relationship between bill depth and body mass, and in this model we find a positive (significant) relationship between the two. How do you explain this difference? 
+
+YOUR ANSWERS HERE: 
+
+- ...
+- ...
+
+
+### Visualize the parallel slope model
+
+
+We now want to visualise the parallel slope and recreate the figure shown in the following chunk: 
+
+```{r}
+#| label: recreate parallel slope viz
+#| echo: false
+knitr::include_graphics("images/lab3-parallel-slope.png")
+
+```
+
+
+
+To visualise the parallel slope model, we will use the function `augment(M2, interval = "confidence")`. This function uses the original penguin dataset, and adds to it new variables (columns).  Most importantly, it adds the following: 
+
+- The `.fitted` variable shows the penguin's body mass, as predicted by the model. You will need these variables for the `geom_line()` layer. 
+- The `.resid` variable is the difference between the observed `body_mass_g` and the predicted `.fitted` value. 
+- The `.lower` and `.upper` variables show the lower and upper limit of the confidence interval. You will need these variables for the `geom_ribbon()` layer. 
+
+
+
+
+```{r}
+#| label: parallel slope visualisation
+
+# Use this code to explore the augment function
+# augment(M2, interval = "confidence") 
+
+
+# Use this code to create the visualisation
+# augment(M2, interval = "confidence") |> 
+#   ggplot() + 
+#     geom_point(aes(___, ___, color = ___)) + 
+#     geom_line(aes(___, ___, color = ___)) 
+
+
+
+```
+
+
+One thing we can clearly see from this image is that the linear model for the Adélie and for the Chinstrap species are nearly overlapping. It is hard to see a difference between the two species, besides perhaps the fact that the range of the observed bill depth is somewhat wider for Adélie than for the Chinstrap species. 
+
+
+### Modelling with interactions = no parallel slopes
+
+Finally, we are going to repeat the process, allowing each penguin species to have their own intercept **and** their own slope. To do this, use the following formula in your `lm()` function: `body_mass_g ~ bill_depth_mm + species + bill_depth_mm * species`. 
+
+Create the model like we did in the previous section, and use the `augment` function to recreate a visualization of the no-parallel slope model, as shown below. 
+
+```{r}
+#| label: recreate no-parallel slope viz
+#| echo: false
+
+knitr::include_graphics("images/lab3-no-parallel-slope.png")
+
+```
+
+Although the slopes are very close to each other, you can see that `Gentoo` is associated with a slightly steeper slope than the other species. Create the model with an interaction, just like we did in the previous section, and use the `augment` function to recreate a visualization of the no-parallel slope model. Use the chunk below to create the no-paralel slope visualization:
+
+
+```{r}
+#| label: no-parallel slope viz
+
+
+
+
+
+```
+
+In this case we can see that the parallel slopes model and the no-parallel slopes models are very similar, and it is an open question whether we should bother using the more complicated no-parallel slopes model at all? But before answering that question, a couple of questions for you: 
+
+QUESTIONS: 
+
+-   Write down the linear equations for the three penguin species, one equation for each species. Each equation needs to have an intercept and a slope. 
+
+
+YOUR ANSWERS HERE: 
+
+- ...
+- ...
+
+
+## Which of the three models is the best?
+
+Now we want to compare the three models: `M1`, `M2` and `M3`. When choosing between models, we face a tradeoff: on the one hand, complex models are associated with a better prediction performance. On the other hand, a model that is too complex might be [overfitting](https://en.wikipedia.org/wiki/Overfitting) the data. There are several ways to compare the models. First, we can compare their performance indicators, as shown in the `glance()` function. 
+
+- When the models are nested, we may compare the adjusted $R^2$ (bigger is better)
+- We can use the `AIC` indicator to compare between any two models, whether they are nested or not (smaller is better)
+
+
+Another method is to use the `anova` function to compare nested models by performing an Analysis of Variance (ANOVA). It helps evaluate whether adding additional predictors to a model significantly improves its explanatory power. To use this method, models must be nested, meaning each subsequent model builds on the previous one by adding predictors or interactions. It works by calculating the reduction in Residual Sum of Squares (RSS) when moving from one model to the next. For each such reduction, it computes F-statistics to test whether the additional predictors significantly improve the model fit. The p-value (Pr(>F)) indicates whether the improvement in model fit is statistically significant.
+
+
+```{r}
+#| label: comparing the performance of models
+
+# Use the code shown below
+# 
+# glance(M1)
+# glance(M2)
+# glance(M3)
+
+# anova(M1, M2, M3)
+
+```
+
+
+To understand the anova output, consider the following: 
+
+- Model 1 vs Model 2: Adding `species` reduces RSS significantly (from ~17,046,692 to ~4,439,967).
+The F-statistic (500.39) and p-value (<2.2e-16) indicate a highly significant improvement.
+- Model 2 vs Model 3: Adding the interaction term (`bill_depth_mm * species`) further reduces RSS slightly (from ~4,439,967 to ~4,232,519). The F-statistic (8.234) and p-value (0.0003227) indicate this improvement is also significant, though less dramatic. 
+- Each step (adding `species`, then the interaction term) significantly improves the model's ability to explain the variance in `body_mass_g`
+
+
+
+QUESTIONS: 
+
+-   Convince yourself that the three models are nested in one another, so we can use all three methods: the adjusted adjusted $R^2$, the `AIC` and the `ANOVA` method. 
+-   When comparing the adjusted $R^2$ of the three models, which appears to be the best model?
+-   When comparing the adjusted `AIC` of the three models, which appears to be the best model?
+-   When comparing the ANOVA for the three models, which appears to be the best model?
+
+
+YOUR ANSWERS HERE: 
+
+- ...
+- ...

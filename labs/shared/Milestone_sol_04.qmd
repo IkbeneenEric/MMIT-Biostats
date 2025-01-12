@@ -1,0 +1,60 @@
+---
+title: "Multiple linear least squares regression"
+author: Your name here
+date: The date here
+format: 
+  html: 
+    highlight: pygments
+    theme: cerulean
+    toc: true
+    toc_float: true
+editor: source
+---
+
+
+For this exercise you will need to load the following packages:
+
+- `tidyverse` for data wrangling and the visualisation
+- `table1` to create the famouls `Table1`
+- The `broom` package for tidy representation of your models
+- `marginaleffects` package helps with the interpretation of linear models
+
+
+```{r}
+#| label: setup
+#| include: false
+
+# Load your packages here: tidyverse, palmerpenguins, table1, broom
+
+
+
+# SOLUTION REMOVE
+library(tidyverse) 
+library(palmerpenguins)
+library(table1)
+library(broom)
+here <- function(...) {
+  args <- list(...)
+  here::here("labs", "shared", args)
+}
+
+natality <- read_rds(here("data/natality.rds"))
+
+
+```
+
+
+
+The [2018 United States Birth Data](https://www.cdc.gov/nchs/nvss/births.htm) were compiled from information on birth certificates by the National Vital Statistics System, part of the National Center for Health Statistics, in cooperation with States ([National Center for Health Statistics 2022](https://bookdown.org/rwnahhas/RMPH/appendix-natality.html#ref-natality_about_2022)). The dataset consists of a random sample from the original dataset, registering births in the United States in the year 2018. Specifically, we will be looking at the following variables: 
+
+- DBWT - birth weight (g) `r emo::ji("baby")`. This will be the outcome we will be predicting using a variety of linear regression models
+- CIG_REC - smoked during pregnancy `r emo::ji("no_smoking")`
+- risks - risk factors reported
+- MAGER - mother’s age `r emo::ji("clock")`
+- MRACEHISP - mother’s race/ethnicity
+- DMAR - marital status`r emo::ji("ring")`
+- MEDUC - mother’s education
+- PRIORLIVE - prior births now living 
+- PRIORDEAD - prior births now dead
+- BMI  - mother’s body mass index, (kg/m2)
+

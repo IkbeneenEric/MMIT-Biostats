@@ -28,10 +28,16 @@ In the code chunk below, use a command from the readr package to read in the dat
 #| include: false
 
 # Load your packages here
-library(tidyverse) # TODO
+# REPLACE
+library(tidyverse) 
 
 # Load the dataset from the file
-arbuthnot <- read_csv(here::here("labs/shared/data/arbuthnot.csv"))  # TODO
+# REPLACE
+here <- function(...) {
+  args <- list(...)
+  here::here("labs", "shared", args)
+}
+arbuthnot <- read_csv(here("data", "arbuthnot.csv"))  
 
 
 ```
@@ -73,9 +79,20 @@ To transform a table to a longer format, we will use the `pivot_longer()` comman
 arbuthnot_longer <- arbuthnot |> 
   pivot_longer(
     cols = boys:girls, 
+    names_to  = "_____", 
+    values_to = "_____"
+    )
+
+
+# REPLACE
+arbuthnot_longer <- arbuthnot |> 
+  pivot_longer(
+    cols = boys:girls, 
     names_to = "sex", 
     values_to = "births"
     )
+
+
 
 ```
 
@@ -83,12 +100,23 @@ arbuthnot_longer <- arbuthnot |>
 
 ### Part 3 - Visualize
 
-Run the code chunk below to see a plot. Your task is to recreate this plot.
+In this section you will try to recreate two plots. 
+
+-   Plot A: shows the births of boys and females over time. 
+-   Plot BL shows a boxplot comparing the distribution of the births of boys and girls. 
+
+Run the code chunk below to see the two plots. Your task is to recreate these plots. 
 
 
 ```{r}
 #| label: recreate this
-knitr::include_graphics(here::here("labs/shared/images/milestone02.png"))
+
+# Plot a: the births of boys and girls over time
+knitr::include_graphics(here::here("labs/shared/images/milestone02_a.png"))
+
+# Plot b: distribution of births of boys and girls
+knitr::include_graphics(here::here("labs/shared/images/milestone02_b.png"))
+
 
 ```
 
@@ -98,27 +126,37 @@ Use `ggplot()` in the chunk below to re-create the plot above. Before plotting, 
 ```{r}
 #| label: recreation-visualize
 
+
+# REPLACE
+arbuthnot_longer |>
+  ggplot(aes(x = year, y = births, color = sex)) +
+  geom_line() + 
+  scale_y_continuous(breaks = seq(2000, 10000, 1000)) +
+  scale_x_continuous(breaks = seq(1630, 1710, 10)) +
+  labs(title = "Male and female christenings (births)", subtitle = "London, 1629-1710.") + 
+  theme(legend.position = "bottom")
+# ggsave(here::here("labs/shared/images/milestone02_a.png"))
+
+
 arbuthnot_longer |>
   ggplot(aes(x = sex, y = births)) +
   geom_boxplot() + 
-  scale_y_continuous(breaks = seq(2000, 10000, 1000)) + 
-  theme(
-    text = element_text(size = 14, color = "black", face = "bold"), # make text clearer and darker
-    )
+  scale_y_continuous(breaks = seq(2000, 10000, 1000)) +
+  labs(title = "Distribution of births", subtitle = "Arbuthnot dataset, London 1629-1710.") +  
+  theme(legend.position = "bottom")
 
-# ggsave(here::here("labs/shared/images/milestone02.png"))
+# ggsave(here::here("labs/shared/images/milestone02_b.png"))
 
 ```
 
-## Extension
+## Extension 
 
 Using the code chunk below, investigate a research question about this data, using the visualization skills you learned this week. Some ideas:
 
 1. Try to compare the two distributions in other ways: for example, you can experiment with `geom_violin` or with [`geom_density_ridges`](https://cran.r-project.org/web/packages/ggridges/vignettes/introduction.html). 
-2. See if you can replicate the same visualisation using the `present.csv`. Does the 
-3. You may want to use statistical tests to compare the two distributions. Search the web on how to run a `t-test` in R and try running both independent and dependent t-tests. What did you find? 
-4. Try running the nonparametric version of the independent-samples t-test (Mann-Whitney U-Test) and the nonparametric version of the paired-samples t-test (the Wilcoxon Signed-Rank Test).
-5. Do the same using `ggstatsplot`, an extension of `ggplot2` package for creating graphics with details from statistical tests included in the information-rich plots themselves.  You can find examples here https://indrajeetpatil.github.io/ggstatsplot/
+2. You may want to use statistical tests to compare the two distributions. Search the web on how to run a `t-test` in R and try running both independent and dependent t-tests. What did you find? 
+3. Try running the nonparametric version of the independent-samples t-test (Mann-Whitney U-Test) and the nonparametric version of the paired-samples t-test (the Wilcoxon Signed-Rank Test).
+4. Do the same using `ggstatsplot`, an extension of `ggplot2` package for creating graphics with details from statistical tests included in the information-rich plots themselves.  You can find examples here https://indrajeetpatil.github.io/ggstatsplot/
 
 
 
@@ -148,14 +186,6 @@ p1 <- ggbetweenstats(
 # ) + theme(text = element_text(size = 14))
 
 
-p2 <- ggwithinstats(
-  arbuthnot_longer, 
-  x = sex, 
-  y = births, 
-  type = "parametric", 
-  bf.message = FALSE
-) + theme(text = element_text(size = 14))
-
 library(patchwork)
 p1 / p2
 ggsave(here::here("labs", "shared", "images", "between-within.png"))
@@ -167,8 +197,37 @@ arbuthnot_longer |>
   theme(legend.position = "bottom", text = element_text(size = 14)) + 
   labs(title = "The Arbuthnot birth count")
 
-ggsave(here::here("labs", "shared", "images", "arbuthnot.png"))
+# ggsave(here::here("labs", "shared", "images", "arbuthnot.png"))
 
 
 ```
+
+###. The `present` dataset
+
+You can find the `present` dataset in the `data` folder. It consists of an updated version of the historical Arbuthnot dataset. Numbers of boys and girls born in the United States between 1940 and 2002. 
+
+1. See if you can replicate the same visualisation using the `present.csv`. Do you see any difference 
+2. Since the number of births in this dataset are way greater, we cannot just combine the data, we can, however, 
+
+```{r}
+
+present <- read_csv(here::here("labs/shared/data/present.csv")) |> 
+  mutate(prop = boys / (boys + girls))
+
+arbuthnot <- arbuthnot |> mutate(prop = boys / (boys + girls))
+
+df <- arbuthnot |> bind_rows(present) |> 
+  mutate(source = ifelse(year < 1800, "arbuthnot", "present"))
+
+df |> 
+  ggplot(aes(year, prop)) + 
+  geom_line() + 
+  facet_wrap(~source, scale = "free")
+
+df |> group_by(source) |> 
+  summarise(mn.prop = mean(prop), sd.prop = sd(prop))
+
+```
+
+
 

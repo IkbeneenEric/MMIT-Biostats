@@ -81,6 +81,8 @@ Some questions you might want to explore (but feel free to ignore them and explo
 1. Functions such as `mean()`, `median()` and `mode()` are known as measures of central tendency. Which group has a larger measure of central tendency: boys or girls? 
 2. Function such as `range()`, `var()`, `sd()`, `range()`, `IQR()` are known as measures of dispersion. Which group has a larger measure of dispersion: boys or girls?
 3. Is the distribution of births right skewed or left skewed? How can we tell? What does this mean?
+4. Which year(s). have the lowest birthrate? The highest birthrate? 
+5. Does the year that have the highest (lowest) birthrate for males also have the highest (lowest) for females?
 
 Write your extension code in the following chunk:
 
