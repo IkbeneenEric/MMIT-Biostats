@@ -1,5 +1,5 @@
 ---
-title: "Regression modeling"
+title: "Regression modeling - PART A"
 output: html_document
 params:
   shiny_url: "https://oferengel-posit.shinyapps.io/"

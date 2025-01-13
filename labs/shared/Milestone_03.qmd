@@ -55,13 +55,14 @@ To see a picture of the map of the area and to understand how the bill depth and
 #| echo: false
 
 # Three types of penguin: the Chinstrap, Gentoo and Adélie
-knitr::include_graphics("images/lab3-penguins.png")
+knitr::include_graphics("https://imgur.com/2RhbRHR")
+
 
 # Bill length and bill depth
-knitr::include_graphics("images/lab3-culmen_depth.png")
+knitr::include_graphics("https://imgur.com/FYCc80E")
 
 # Map of the three palmer archipelego
-knitr::include_graphics("images/lab3-islands.png")
+knitr::include_graphics("https://imgur.com/Y1RVoQt")
 
 ```
 
@@ -80,7 +81,7 @@ To see the table1 you need to recreate, run the code chunk below:
 ```{r}
 #| label: recreate this table1
 #| echo: false
-knitr::include_graphics("images/lab3-table1.png")
+knitr::include_graphics("https://imgur.com/73vNjNu")
 
 
 ```
@@ -125,7 +126,7 @@ Observe the scatter plot below, each species associated with a different color:
 ```{r}
 #| label: recreate this scatterplot
 #| echo: false
-knitr::include_graphics("images/lab3-mass-depth.png")
+knitr::include_graphics("https://imgur.com/Hc1T3m9")
 
 ```
 
@@ -177,7 +178,7 @@ The picture below explains how to read the output of your `summary()` function.
 ```{r}
 #| label: how to read summary model
 #| echo: false
-knitr::include_graphics("images/lab3-lm-summary.jpg")
+knitr::include_graphics("https://imgur.com/VcCfMUN")
 
 ```
 
@@ -267,7 +268,7 @@ We now want to visualise the parallel slope and recreate the figure shown in the
 ```{r}
 #| label: recreate parallel slope viz
 #| echo: false
-knitr::include_graphics("images/lab3-parallel-slope.png")
+knitr::include_graphics("https://imgur.com/lMQrg3C")
 
 ```
 
@@ -313,7 +314,7 @@ Create the model like we did in the previous section, and use the `augment` func
 #| label: recreate no-parallel slope viz
 #| echo: false
 
-knitr::include_graphics("images/lab3-no-parallel-slope.png")
+knitr::include_graphics("https://imgur.com/zK8pb0x")
 
 ```
 

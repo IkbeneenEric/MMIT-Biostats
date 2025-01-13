@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Your name here">
+
+<title>Simple Linear Regression</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Milestone_03_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Milestone_03_files/libs/quarto-html/quarto.js"></script>
+<script src="Milestone_03_files/libs/quarto-html/popper.min.js"></script>
+<script src="Milestone_03_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Milestone_03_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Milestone_03_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Milestone_03_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Milestone_03_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Milestone_03_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Milestone_03_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#creating-table1" id="toc-creating-table1" class="nav-link active" data-scroll-target="#creating-table1">Creating Table1</a></li>
+  <li><a href="#modelling-the-penguins-body-mass" id="toc-modelling-the-penguins-body-mass" class="nav-link" data-scroll-target="#modelling-the-penguins-body-mass">Modelling the penguin’s body mass</a>
+  <ul class="collapse">
+  <li><a href="#using-bill-depth-to-model-body-mass" id="toc-using-bill-depth-to-model-body-mass" class="nav-link" data-scroll-target="#using-bill-depth-to-model-body-mass">Using bill depth to model body mass</a></li>
+  <li><a href="#simple-linear-model" id="toc-simple-linear-model" class="nav-link" data-scroll-target="#simple-linear-model">Simple linear model</a></li>
+  <li><a href="#parallel-slope-model" id="toc-parallel-slope-model" class="nav-link" data-scroll-target="#parallel-slope-model">Parallel slope model</a></li>
+  <li><a href="#diagnositcs" id="toc-diagnositcs" class="nav-link" data-scroll-target="#diagnositcs">Diagnositcs</a></li>
+  <li><a href="#model-3-conclusions" id="toc-model-3-conclusions" class="nav-link" data-scroll-target="#model-3-conclusions">Model 3: Conclusions</a></li>
+  <li><a href="#visualize-the-parallel-slope-model" id="toc-visualize-the-parallel-slope-model" class="nav-link" data-scroll-target="#visualize-the-parallel-slope-model">Visualize the parallel slope model</a></li>
+  <li><a href="#modelling-with-interactions-no-parallel-slopes" id="toc-modelling-with-interactions-no-parallel-slopes" class="nav-link" data-scroll-target="#modelling-with-interactions-no-parallel-slopes">Modelling with interactions = no parallel slopes</a></li>
+  </ul></li>
+  <li><a href="#which-of-the-three-models-is-the-best" id="toc-which-of-the-three-models-is-the-best" class="nav-link" data-scroll-target="#which-of-the-three-models-is-the-best">Which of the three models is the best?</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Simple Linear Regression</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Your name here </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">Invalid Date</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>For this exercise you will need to load the following packages:</p>
+<ul>
+<li><code>tidyverse</code> for data wrangling and the visualisation</li>
+<li><code>palmerpenguins</code> for the <code>penguin</code> dataset</li>
+<li><code>table1</code> to create the famouls <code>Table1</code></li>
+<li>The <code>broom</code> package for tidy representation of your models</li>
+</ul>
+<p>Between 2007 and 2009, data were collected about penguins in three islands of the Palmer Archipelago in Antarctica: the islands of Biscoe, Dream, and Torgersen. Data were collected and made available by <a href="https://www.uaf.edu/cfos/people/faculty/detail/kristen-gorman.php">Dr.&nbsp;Kristen Gorman</a> and the <a href="https://pallter.marine.rutgers.edu/">Palmer Station, Antarctica LTER</a>, a member of the <a href="https://lternet.edu/">Long Term Ecological Research Network</a>. The <code>penguins</code> data-set is a collection of data for 342 penguins from 3 different species: Chinstrap, Gentoo, and Adélie.</p>
+<p>From the package <code>palmerpenguins</code> we will use the <code>penguins</code> dataset, a dataset consisting of the following variables:</p>
+<ul>
+<li><code>species</code>: The penguin’s species (Chinstrap, Gentoo, and Adélie)</li>
+<li><code>island</code>: The island where the penguin lives (Biscoe, Dream, and Torgersen)</li>
+<li><code>bill_length_mm</code>: The length of the penguin’s bill, in millimeters (distance from the penguin’s face to the tip of the bill)</li>
+<li><code>bill_depth_mm</code>: The depth of the penguin’s bill, in millimeters (height of the bill; distance from the bottom of the bill to the top of the bill)</li>
+<li><code>flipper_length_mm</code>: The length of the penguin’s flippers, in millimeters</li>
+<li><code>body_mass_g</code>: The weight of the penguin, in grams</li>
+<li><code>sex</code>: The sex of the penguin</li>
+<li><code>year</code>: The year the observation was made</li>
+</ul>
+<p>To see a picture of the map of the area and to understand how the bill depth and length are conceptualized, see the pictures in the code chunk shown below:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://imgur.com/2RhbRHR.png" class="img-fluid figure-img" style="width:50.0%"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://imgur.com/FYCc80E.png" class="img-fluid figure-img" style="width:50.0%"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://imgur.com/Y1RVoQt.png" class="img-fluid figure-img" style="width:50.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="creating-table1" class="level2">
+<h2 class="anchored" data-anchor-id="creating-table1">Creating Table1</h2>
+<p>In most published articles, there is a “Table 1” containing descriptive statistics for the sample. This may include, for example, the mean and standard deviation for continuous variables, the frequency and proportion for categorical variables, and perhaps also the number of missing values.</p>
+<p>The brute force method of creating such a table would be to compute each statistic for each variable of interest and then copy and paste the results into a table. Having done this even once you will wish for an easier method! There are many possible solutions, but one that is quick and easy to use the <code>table1</code> package described in the <a href="https://cran.r-project.org/web/packages/table1/vignettes/table1-examples.html" target="_blank">following vignette</a></p>
+<p>Use the <code>table1</code> package to replicate the table below. Use the examples provided in the <a href="https://cran.r-project.org/web/packages/table1/vignettes/table1-examples.html" target="_blank">following vignette</a>.</p>
+<p>To see the table1 you need to recreate, run the code chunk below:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://imgur.com/73vNjNu.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Use the code chunk below to recreate table1.</p>
+<p>QUESTIONS about Table 1: What do you notice from the table?</p>
+<ul>
+<li>Which species of penguin is the heaviest? Which has the shortest bill depth?</li>
+<li>How are the different species distributed across the three islands?</li>
+</ul>
+<p>YOUR ANSWERS HERE:</p>
+<ul>
+<li>…</li>
+<li>…</li>
+</ul>
+</section>
+<section id="modelling-the-penguins-body-mass" class="level2">
+<h2 class="anchored" data-anchor-id="modelling-the-penguins-body-mass">Modelling the penguin’s body mass</h2>
+<p>In what follows, we try to model the penguin’s body mass (grams) using various other measures such as its flipper length, its bill length and depth. When we model a variable such as the body mass, we treat it as our outcome (or dependent) variable, and we use other (explanatory) variables in order to predict it.</p>
+<section id="using-bill-depth-to-model-body-mass" class="level3">
+<h3 class="anchored" data-anchor-id="using-bill-depth-to-model-body-mass">Using bill depth to model body mass</h3>
+<p>Observe the scatter plot below, each species associated with a different color:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://imgur.com/Hc1T3m9.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>QUESTIONS:</p>
+<ul>
+<li>What can you tell about the relationship between bill depth and penguin weight?</li>
+<li>Do different species have similar intercepts? Slopes? Add your comments here.</li>
+<li>Is the correlation between bill-depth and body-mass positive or negative?</li>
+</ul>
+<p>Your answer to the last question should depend on whether or not you are conditioning on the penguin species. So one answer when conditioning (i.e., taking each specie separately) and another answer when marginalizing (i.e., when looking at the entire dataset).</p>
+<p>YOUR ANSWERS HERE:</p>
+<ul>
+<li>…</li>
+<li>…</li>
+</ul>
+</section>
+<section id="simple-linear-model" class="level3">
+<h3 class="anchored" data-anchor-id="simple-linear-model">Simple linear model</h3>
+<p>Our simplest linear model ignores the different species, looking only at the relationship between body mass and bill depth, without taking the species into account. To create the model, use the <code>lm()</code> function, using with the formula <code>body_mass_g ~ bill_depth_mm</code>. You will also have to tell the function that you will be using the <code>penguin</code> dataset.</p>
+<p>Store your first model in the object <code>M1</code> and print out the results of your model using the following functions:</p>
+<ul>
+<li><code>summary(M1)</code> - to see an <em>untidy</em> output of your model</li>
+<li><code>tidy(M1, conf.int = TRUE)</code> - to see a tidy output of the estimates, standard errors, t-statistics, p-values and confidence intervals.</li>
+<li><code>glance(M1)</code> to see the performance indicators of your model, also known as goodness of fit.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To create your first model, use the code below</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># M1 &lt;- lm(___ ~ ___, data = ___)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Write code to print out the results of your model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The picture below explains how to read the output of your <code>summary()</code> function.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://imgur.com/VcCfMUN.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now fill in the blanks in this formal description of your results.</p>
+<blockquote class="blockquote">
+<p>A linear regression model was used to test the association between _____ (gram) and _____ (mm) using data from n = _____ Penguins. _____% of the variation in _____ was explained by _____ (<span class="math inline">\(R^2\)</span>= _____). There was a significant _____ (positive/negative) association between _____ and _____ (B = _____; 95% CI = _____, _____; p &lt; .001). On average, for every 1-_____ difference in _____, penguins differ in mean _____ by _____ _____.</p>
+</blockquote>
+</section>
+<section id="parallel-slope-model" class="level3">
+<h3 class="anchored" data-anchor-id="parallel-slope-model">Parallel slope model</h3>
+<p>For our second model, use two variables to model the body mass: the <code>bill_depth_mm</code> and the <code>species</code>. The formula in the <code>lm()</code> function should look like this <code>body_mass_g ~ bill_depth_mm + species</code>. Store your model as <code>M2</code>, and print out the results using the three functions we used above.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create your second model here</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print out the results of your model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="diagnositcs" class="level3">
+<h3 class="anchored" data-anchor-id="diagnositcs">Diagnositcs</h3>
+<p>Before writing our conclusions, we need to first run a couple of diagnostics checks to see if the regression assumptions hold. Specifically, we will look at four different diagnostic tests for the second model M2.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Residuals vs. fitted</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(M2, which = 1)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># QQ Residuals</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(M2, which = 2)</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Scale Location</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(M2, which = 3)</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Cook’s distance</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(M2, which = 4)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>QUESTIONS:</p>
+<p>Search online for an explanation of the various plots (for example, <a href="https://library.virginia.edu/data/articles/diagnostic-plots">this</a> is a good resource, but you may find others). Create a plot for each of the four diagnostic tests, and describe in words what is the purpose of each diagnostic plot. Then interpret the plot: what can we learn from it?</p>
+<p>YOUR ANSWERS HERE:</p>
+<ul>
+<li>…</li>
+<li>…</li>
+</ul>
+</section>
+<section id="model-3-conclusions" class="level3">
+<h3 class="anchored" data-anchor-id="model-3-conclusions">Model 3: Conclusions</h3>
+<p>Now fill in the blanks in this formal description of your results.</p>
+<blockquote class="blockquote">
+<p>A linear regression model was used to test the association between _____ (gram) and _____ (mm), while conditioning on the penguin species and using data from n = _____ Penguins. _____% of the variation in _____ was explained by _____ (<span class="math inline">\(R^2\)</span>= _____). There was a significant _____ (positive/negative) association between _____ and _____ (B = _____; 95% CI = _____, _____; p &lt; .001). On average, for every 1-_____ difference in _____, penguins differ in mean _____ by _____ _____.</p>
+</blockquote>
+<p>This model is in fact three linear models in one: one for modelling the body mass of the Adélie species, another for the the Chinstrap and one for the Gentoo species. This kind of model is sometimes called the parallel slopes model, because each of the three species have different intercepts but the very same slope.</p>
+<p>QUESTIONS: - What is the common slope for all the species? - For each of the penguin species, what is its intercept? Are the intercepts different from one another? - In the previous model we found a negative (significant) relationship between bill depth and body mass, and in this model we find a positive (significant) relationship between the two. How do you explain this difference?</p>
+<p>YOUR ANSWERS HERE:</p>
+<ul>
+<li>…</li>
+<li>…</li>
+</ul>
+</section>
+<section id="visualize-the-parallel-slope-model" class="level3">
+<h3 class="anchored" data-anchor-id="visualize-the-parallel-slope-model">Visualize the parallel slope model</h3>
+<p>We now want to visualise the parallel slope and recreate the figure shown in the following chunk:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://imgur.com/lMQrg3C.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>To visualise the parallel slope model, we will use the function <code>augment(M2, interval = "confidence")</code>. This function uses the original penguin dataset, and adds to it new variables (columns). Most importantly, it adds the following:</p>
+<ul>
+<li>The <code>.fitted</code> variable shows the penguin’s body mass, as predicted by the model. You will need these variables for the <code>geom_line()</code> layer.</li>
+<li>The <code>.resid</code> variable is the difference between the observed <code>body_mass_g</code> and the predicted <code>.fitted</code> value.</li>
+<li>The <code>.lower</code> and <code>.upper</code> variables show the lower and upper limit of the confidence interval. You will need these variables for the <code>geom_ribbon()</code> layer.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use this code to explore the augment function</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># augment(M2, interval = "confidence") </span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Use this code to create the visualisation</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># augment(M2, interval = "confidence") |&gt; </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot() + </span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     geom_point(aes(___, ___, color = ___)) + </span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     geom_line(aes(___, ___, color = ___)) </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>One thing we can clearly see from this image is that the linear model for the Adélie and for the Chinstrap species are nearly overlapping. It is hard to see a difference between the two species, besides perhaps the fact that the range of the observed bill depth is somewhat wider for Adélie than for the Chinstrap species.</p>
+</section>
+<section id="modelling-with-interactions-no-parallel-slopes" class="level3">
+<h3 class="anchored" data-anchor-id="modelling-with-interactions-no-parallel-slopes">Modelling with interactions = no parallel slopes</h3>
+<p>Finally, we are going to repeat the process, allowing each penguin species to have their own intercept <strong>and</strong> their own slope. To do this, use the following formula in your <code>lm()</code> function: <code>body_mass_g ~ bill_depth_mm + species + bill_depth_mm * species</code>.</p>
+<p>Create the model like we did in the previous section, and use the <code>augment</code> function to recreate a visualization of the no-parallel slope model, as shown below.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://imgur.com/zK8pb0x.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Although the slopes are very close to each other, you can see that <code>Gentoo</code> is associated with a slightly steeper slope than the other species. Create the model with an interaction, just like we did in the previous section, and use the <code>augment</code> function to recreate a visualization of the no-parallel slope model. Use the chunk below to create the no-paralel slope visualization:</p>
+<p>In this case we can see that the parallel slopes model and the no-parallel slopes models are very similar, and it is an open question whether we should bother using the more complicated no-parallel slopes model at all? But before answering that question, a couple of questions for you:</p>
+<p>QUESTIONS:</p>
+<ul>
+<li>Write down the linear equations for the three penguin species, one equation for each species. Each equation needs to have an intercept and a slope.</li>
+</ul>
+<p>YOUR ANSWERS HERE:</p>
+<ul>
+<li>…</li>
+<li>…</li>
+</ul>
+</section>
+</section>
+<section id="which-of-the-three-models-is-the-best" class="level2">
+<h2 class="anchored" data-anchor-id="which-of-the-three-models-is-the-best">Which of the three models is the best?</h2>
+<p>Now we want to compare the three models: <code>M1</code>, <code>M2</code> and <code>M3</code>. When choosing between models, we face a tradeoff: on the one hand, complex models are associated with a better prediction performance. On the other hand, a model that is too complex might be <a href="https://en.wikipedia.org/wiki/Overfitting">overfitting</a> the data. There are several ways to compare the models. First, we can compare their performance indicators, as shown in the <code>glance()</code> function.</p>
+<ul>
+<li>When the models are nested, we may compare the adjusted <span class="math inline">\(R^2\)</span> (bigger is better)</li>
+<li>We can use the <code>AIC</code> indicator to compare between any two models, whether they are nested or not (smaller is better)</li>
+</ul>
+<p>Another method is to use the <code>anova</code> function to compare nested models by performing an Analysis of Variance (ANOVA). It helps evaluate whether adding additional predictors to a model significantly improves its explanatory power. To use this method, models must be nested, meaning each subsequent model builds on the previous one by adding predictors or interactions. It works by calculating the reduction in Residual Sum of Squares (RSS) when moving from one model to the next. For each such reduction, it computes F-statistics to test whether the additional predictors significantly improve the model fit. The p-value (Pr(&gt;F)) indicates whether the improvement in model fit is statistically significant.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the code shown below</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># glance(M1)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># glance(M2)</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># glance(M3)</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># anova(M1, M2, M3)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To understand the anova output, consider the following:</p>
+<ul>
+<li>Model 1 vs Model 2: Adding <code>species</code> reduces RSS significantly (from ~17,046,692 to ~4,439,967). The F-statistic (500.39) and p-value (&lt;2.2e-16) indicate a highly significant improvement.</li>
+<li>Model 2 vs Model 3: Adding the interaction term (<code>bill_depth_mm * species</code>) further reduces RSS slightly (from ~4,439,967 to ~4,232,519). The F-statistic (8.234) and p-value (0.0003227) indicate this improvement is also significant, though less dramatic.</li>
+<li>Each step (adding <code>species</code>, then the interaction term) significantly improves the model’s ability to explain the variance in <code>body_mass_g</code></li>
+</ul>
+<p>QUESTIONS:</p>
+<ul>
+<li>Convince yourself that the three models are nested in one another, so we can use all three methods: the adjusted adjusted <span class="math inline">\(R^2\)</span>, the <code>AIC</code> and the <code>ANOVA</code> method.</li>
+<li>When comparing the adjusted <span class="math inline">\(R^2\)</span> of the three models, which appears to be the best model?</li>
+<li>When comparing the adjusted <code>AIC</code> of the three models, which appears to be the best model?</li>
+<li>When comparing the ANOVA for the three models, which appears to be the best model?</li>
+</ul>
+<p>YOUR ANSWERS HERE:</p>
+<ul>
+<li>…</li>
+<li>…</li>
+</ul>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

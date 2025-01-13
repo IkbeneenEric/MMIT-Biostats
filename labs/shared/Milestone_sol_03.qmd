@@ -400,7 +400,8 @@ augment(M3, interval = "confidence") |>
   geom_line(aes(bill_depth_mm, .fitted, color = species)) + 
   geom_ribbon(aes(x = bill_depth_mm, ymin = .lower, ymax = .upper, fill = species), alpha = .5) + 
   labs(
-    title = "Modelling body mass: no-parallel slopes model", 
+    title = "Modelling body mass: interaction model", 
+    subtitle = "Interaction = no-parallel slopes",
     x = "Bill depth (mm)", 
     y = "body mass (g)") + 
   scale_x_continuous(breaks = 13:21) + 
