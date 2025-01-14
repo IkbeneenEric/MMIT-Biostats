@@ -63,6 +63,20 @@ In this tutorial you'll also take your skills with simple linear regression to t
 * Recognize [Simpson's paradox](https://en.wikipedia.org/wiki/Simpson%27s_paradox)
 
 
+
+### 8 - [Multiple regression](`r glue("{shiny_url}03-08-lesson/")`){target="_blank"}
+
+* Visualize, fit, and interpret a multiple regression model with two numeric explanatory variables
+* Visualize, fit, and interpret a parallel planes model with two numeric explanatory variables and a categorical variable
+* Fit and interpret multiple regression models in higher dimensions
+* Understand and identify [multicollinearity](https://en.wikipedia.org/wiki/Multicollinearity)
+
+### 9 - [Logistic regression](`r glue("{shiny_url}03-09-lesson/")`){target="_blank"}
+
+* Visualize, fit, and interpret logistic regression models
+* Interpret coefficients on three different scales
+* Make predictions from a logistic regression model
+
 ## Additional references
 
 * Unwin, Anthony. *Graphical Data Analysis with R*.

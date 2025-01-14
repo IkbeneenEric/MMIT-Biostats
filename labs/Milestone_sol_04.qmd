@@ -9,6 +9,8 @@ format:
     toc: true
     toc_float: true
 editor: source
+editor_options: 
+  chunk_output_type: console
 ---
 
 
@@ -18,6 +20,7 @@ For this exercise you will need to load the following packages:
 - `table1` to create the famouls `Table1`
 - The `broom` package for tidy representation of your models
 - `marginaleffects` package helps with the interpretation of linear models
+- `modelsummary` to present models next to one another 
 
 
 ```{r}
@@ -30,15 +33,25 @@ For this exercise you will need to load the following packages:
 
 # SOLUTION REMOVE
 library(tidyverse) 
-library(palmerpenguins)
+library(marginaleffects)
 library(table1)
 library(broom)
+library(ggstatsplot)
+library(modelsummary)
+library(tinytable)
+
 here <- function(...) {
   args <- list(...)
-  here::here("labs", "shared", args)
+  here::here("labs", args)
 }
 
-natality <- read_rds(here("data/natality.rds"))
+
+natality <- read_rds(here("data/natality.rds")) |> 
+  mutate(CIG_REC = if_else(CIG_REC == "Yes", "Smoker", "Non smoker")) |> 
+  mutate(PRIORLIVE = fct_collapse(PRIORLIVE, "0" = "0", "1" = "1", other_level = "2+"))
+
+label(natality$PRIORLIVE) = "Prior births (living)"
+label(natality$PRIORDEAD) = "Prior births (dead)"
 
 
 ```
@@ -58,3 +71,189 @@ The [2018 United States Birth Data](https://www.cdc.gov/nchs/nvss/births.htm) we
 - PRIORDEAD - prior births now dead
 - BMI  - mother’s body mass index, (kg/m2)
 
+
+We will be using R Markdown to create reproducible lab reports. In RStudio, you will find the file `lab05.Rmd` in the `Files` panel. Double click it to show the script in the code panel.
+
+-   In the file, update the YAML with your name, the date and the name of the lab.
+-   Load the `tidyverse`, `broom`, `table1`, `GGally`, `car`, `easystats`, `datawizard`, `marginaleffects` and the `modelsummary`  packages.
+-   Load the `natality.rds` data set into your workspace, and save it as `natality`. 
+-   Knit your file to see that everything is working. 
+-   For each question, please add the text of the question, the code chunks and your answer. 
+
+
+
+## Descriptive statistics
+
+1. Use the `table1` package to create a table with appropriate descriptive information about the data set. Use the examples provided in the [following vignette](https://cran.r-project.org/web/packages/table1/vignettes/table1-examples.html){target="_blank"} to help you build a table. Feel free to try a different table with other variables. 
+
+```{r}
+#| label: recreate this table
+knitr::include_graphics(here("images/lab3-table1.png"))
+
+
+```
+
+Use the code chunk below to recreate table1.
+
+```{r table1, echo=FALSE}
+#| label: recreation-solution
+
+
+# SOLUTION REMOVE
+natality <- natality |> mutate(across(where(is.factor), as.character)) |> 
+  mutate(across(where(is.numeric), as.numeric))
+label(natality$DBWT) <- "Birth Weight (g)"
+label(natality$risks) <- "Risk factors reported"
+label(natality$MAGER) <- "Mother's Age"
+label(natality$MRACEHISP) <- "Mother's race"
+label(natality$DMAR) <- "Marital status"
+label(natality$MEDUC) <- "Mother's education"
+
+
+
+
+table1(~DBWT +
+       risks +
+       MAGER +
+       MRACEHISP +
+       DMAR +
+       MEDUC +
+       PRIORLIVE +
+       PRIORDEAD +
+       BMI + MEDUC   | CIG_REC, 
+       data = natality, 
+       overall = FALSE, 
+       caption = "Table 1: Maternal demographics stratified by smoking", 
+       topclass="Rtable1-zebra"
+       )
+
+
+
+```
+
+
+
+
+
+QUESTIONS What do you notice from this table? What research questions might it raise? Run a t-test to check if there is a re
+
+YOUR ANSWERS HERE:
+
+-   ...
+-   ...
+
+
+
+```{r}
+
+ggbetweenstats(
+  natality, 
+  CIG_REC, 
+  DBWT, 
+  type = "nonparametric"
+)
+
+ggbetweenstats(
+  natality, 
+  MRACEHISP, 
+  DBWT, 
+  type = "nonparametric"
+)
+
+
+ggbetweenstats(
+  natality, 
+  MEDUC, 
+  DBWT, 
+  type = "nonparametric"
+)
+
+
+ggbetweenstats(
+  natality, 
+  PRIORDEAD, 
+  DBWT, 
+  type = "nonparametric"
+)
+
+ggbarstats(
+  natality, 
+  MRACEHISP, 
+  CIG_REC, 
+  type = "parametric"
+)
+
+natality  |> 
+ggbarstats(
+  DMAR, 
+  MRACEHISP, 
+  type = "nonparametric"
+)
+
+natality |> 
+ggbarstats(
+  DMAR, 
+  MRACEHISP, 
+  type = "nonparametric"
+)
+
+natality |> 
+ggbarstats(
+  DMAR, 
+  MEDUC, 
+  type = "nonparametric"
+)
+
+natality |> 
+ggbarstats(
+  MRACEHISP, 
+  PRIORLIVE, 
+  type = "nonparametric"
+)
+
+
+```
+
+
+## Linear Regression
+
+In the following exercises, you will assess the association between birth weight (the outcome) and smoking during pregnancy (the primary predictor), adjusted for risk factors reported, mother’s age, mother’s race/ethnicity, marital status, mother’s education, prior births now living and prior births now dead, and mother’s body mass index.
+
+
+
+Fit four linear models, each nested within the other: the null model, the unadjusted model, the full model and the optimal model. Use the step function find the optimal model using the stepwise method. Then use anova to compare the four models. 
+
+```{r}
+M.NULL <- lm(DBWT ~ 1, natality)
+M.UNADJUSTED <- lm(DBWT ~ CIG_REC, natality)
+# The dot represents all variables except the outcome DBWT
+M.FULL <- lm(DBWT ~ ., natality)  
+
+# Finding the optimal model
+M.OPT <- step(M.NULL,
+     scope = list(upper = M.FULL),
+     direction="both",
+     data=natality)
+
+
+# Displaying the four models by each other
+modelsummary(
+  list(
+    "null" = M.NULL, 
+    "unadjasted" = M.UNADJUSTED,
+    "full" = M.FULL, 
+    "optimal" = M.OPT
+    ), 
+  stars = TRUE, 
+  output = "kableExtra"
+  ) 
+
+
+
+modelsummary(models)
+
+```
+
+
+
+What is your conclusion? Now compare your models using modelsummary function. What does the number in the (brackets) mean? How can you identify the optimal model just by looking at the $R^2$ and the AIC?
