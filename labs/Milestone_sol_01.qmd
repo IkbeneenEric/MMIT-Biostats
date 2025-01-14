@@ -22,7 +22,7 @@ this is my qmd file, it consists of texts for humans like this, and it consists 
 library(tidyverse)
 
 # This code loads the data-set and stores it in an object
-arbuthnot <- read_csv(here::here("labs/shared/data/arbuthnot.csv"))  # Ctrl + Enter
+arbuthnot <- read_csv(here::here("labs/data/arbuthnot.csv"))  # Ctrl + Enter
 
 ```
 
