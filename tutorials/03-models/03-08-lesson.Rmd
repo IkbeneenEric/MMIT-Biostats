@@ -817,7 +817,7 @@ The interpretation of the coefficients in larger models remains the same. We can
 
 ### Interpretation of coefficient in a big model
 
-This time you will throw even more variables into your `mariokart` model, including the number of bids in each auction (`nBids`) and the number of `wheels`. 
+This time you will throw even more variables into your `mariokart` model, including the number of bids in each auction (`n_bids`) and the number of `wheels`. 
 
 ```{r ex7-mariokart, exercise=TRUE}
 lm(formula = ___ ~ ___ + ___ + ___ + ___ + ___, data = ___)

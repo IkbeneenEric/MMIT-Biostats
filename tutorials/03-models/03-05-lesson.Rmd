@@ -37,6 +37,15 @@ library(openintro)
 library(Lahman)
 library(emo)
 
+
+# Model: predict weight from height
+wgt_hgt_mod <- lm(wgt ~ hgt, data = bdims)
+
+# Model: predict SLG from OBP
+mod_slg_obp <- lm(slg ~ obp, data = filter(mlbbat10, at_bat >= 10))
+
+
+
 ```
 
 

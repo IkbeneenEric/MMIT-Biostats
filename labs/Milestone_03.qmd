@@ -90,8 +90,7 @@ Use the code chunk below to recreate table1.
 
 ```{r table1, echo=FALSE}
 #| label: recreation-solution
-#| eval: false
-#| include: false
+
 
 
 
@@ -121,12 +120,22 @@ In what follows, we try to model the penguin's body mass (grams) using various o
 
 ### Using bill depth to model body mass
 
-Observe the scatter plot below, each species associated with a different color: 
+To see the scatter plot you need to recreate, run the chunk below: each species associated with a different color: 
 
 ```{r}
 #| label: recreate this scatterplot
 #| echo: false
 knitr::include_graphics("https://imgur.com/Hc1T3m9")
+
+```
+
+
+```{r}
+#| label: code in this chunk
+#| echo: false
+
+
+
 
 ```
 

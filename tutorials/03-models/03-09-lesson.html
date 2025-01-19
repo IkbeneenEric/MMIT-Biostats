@@ -1307,7 +1307,7 @@ solutions, please enter your identifying information, then click the button belo
 <label class="control-label" id="studentID-label" for="studentID">What is your student ID (Gebruikersnaam  s-/p-nummer)?</label>
 <input id="studentID" type="text" class="shiny-input-text form-control" value=""/>
 </div>
-<div id="out279dbb83d84de6aa" class="shiny-text-output"></div>
+<div id="out21c2978e9dfb0692" class="shiny-text-output"></div>
 </div>
 <div class="row" style="padding-bottom: 0.5em;">
 <div class="col-sm-3">
@@ -1378,7 +1378,7 @@ every lesson you complete in this tutorial.</p>
 <p><img src="images/Submit-hash.jpg" width="50%" style="display: block; margin: auto;" />
 
 <script type="application/shiny-prerendered" data-context="server-start">
-# https://oferengel-posit.shinyapps.io/chisquare-test/
+# https://oferengel-posit.shinyapps.io/03-09-lesson/
 
 library(dplyr)
 library(purrr)
@@ -1438,7 +1438,7 @@ output$`tutorial-exercise-ex1-output` <- renderUI({
 
 
 <script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache(structure(list(label = "ex1", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+learnr:::store_exercise_cache(structure(list(label = "ex1", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/03-09-lesson/", 
 "", "library(dplyr)", "library(purrr)", "library(openintro)", 
 "library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
 "  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
@@ -1489,7 +1489,7 @@ output$`tutorial-exercise-ex2-output` <- renderUI({
 
 
 <script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache(structure(list(label = "ex2", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+learnr:::store_exercise_cache(structure(list(label = "ex2", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/03-09-lesson/", 
 "", "library(dplyr)", "library(purrr)", "library(openintro)", 
 "library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
 "  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
@@ -1542,7 +1542,7 @@ output$`tutorial-exercise-ex3-output` <- renderUI({
 
 
 <script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache(structure(list(label = "ex3", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+learnr:::store_exercise_cache(structure(list(label = "ex3", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/03-09-lesson/", 
 "", "library(dplyr)", "library(purrr)", "library(openintro)", 
 "library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
 "  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
@@ -1590,7 +1590,7 @@ output$`tutorial-exercise-ex4-output` <- renderUI({
 
 
 <script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache(structure(list(label = "ex4", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+learnr:::store_exercise_cache(structure(list(label = "ex4", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/03-09-lesson/", 
 "", "library(dplyr)", "library(purrr)", "library(openintro)", 
 "library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
 "  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
@@ -1639,7 +1639,7 @@ output$`tutorial-exercise-ex5-output` <- renderUI({
 
 
 <script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache(structure(list(label = "ex5", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+learnr:::store_exercise_cache(structure(list(label = "ex5", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/03-09-lesson/", 
 "", "library(dplyr)", "library(purrr)", "library(openintro)", 
 "library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
 "  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
@@ -1648,9 +1648,14 @@ learnr:::store_exercise_cache(structure(list(label = "ex5", global_setup = struc
 "", "", "library(learnr)", "library(openintro)", "library(Stat2Data)", 
 "library(tidyverse)", "library(broom)", "library(emo)", "data(MedGPA)", 
 "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
-    setup = NULL, chunks = list(list(label = "ex5", code = "# binned points and line\ndata_space <- ___\n\n# augmented model\nMedGPA_plus <- ___\n\n# logistic model on probability scale\ndata_space +\n  geom_line(data = ___, aes(___), color = \"red\")", 
-        opts = list(label = "\"ex5\"", exercise = "TRUE"), engine = "r")), 
-    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("# binned points and line", 
+    setup = "mod <- glm(Acceptance ~ GPA, data = MedGPA, family = binomial)\n\ngpa_bins <- quantile(MedGPA$GPA, probs = 0:6/6)\nMedGPA_binned <- MedGPA |>\n  mutate(bin = cut(GPA, breaks = gpa_bins, include.lowest = TRUE)) |>\n  group_by(bin) |>\n  summarize(mean_GPA = mean(GPA), \n            acceptance_rate = mean(Acceptance))", 
+    chunks = list(list(label = "create gpa_bins", code = "mod <- glm(Acceptance ~ GPA, data = MedGPA, family = binomial)\n\ngpa_bins <- quantile(MedGPA$GPA, probs = 0:6/6)\nMedGPA_binned <- MedGPA |>\n  mutate(bin = cut(GPA, breaks = gpa_bins, include.lowest = TRUE)) |>\n  group_by(bin) |>\n  summarize(mean_GPA = mean(GPA), \n            acceptance_rate = mean(Acceptance))", 
+        opts = list(label = "\"create gpa_bins\"", eval = "TRUE", 
+            include = "FALSE"), engine = "r"), list(label = "ex5", 
+        code = "# binned points and line\ndata_space <- ___\n\n# augmented model\nMedGPA_plus <- ___\n\n# logistic model on probability scale\ndata_space +\n  geom_line(data = ___, aes(___), color = \"red\")", 
+        opts = list(label = "\"ex5\"", exercise = "TRUE", exercise.setup = "\"create gpa_bins\""), 
+        engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("# binned points and line", 
     "data_space <- ggplot(data = MedGPA_binned, aes(x = mean_GPA, y = acceptance_rate)) + ", 
     "  geom_point() + ", "  geom_line()", "", "# augmented model", 
     "MedGPA_plus <- mod |>", "  augment(type.predict = \"response\")", 
@@ -1675,11 +1680,11 @@ learnr:::store_exercise_cache(structure(list(label = "ex5", global_setup = struc
         engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
         max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
         exercise.error.check.code = "gradethis_error_checker()", 
-        label = "ex5", exercise = TRUE, code = c("# binned points and line", 
-        "data_space <- ___", "", "# augmented model", "MedGPA_plus <- ___", 
-        "", "# logistic model on probability scale", "data_space +", 
-        "  geom_line(data = ___, aes(___), color = \"red\")"), 
-        out.width.px = 624, out.height.px = 384, params.src = "ex5, exercise=TRUE", 
+        label = "ex5", exercise = TRUE, exercise.setup = "create gpa_bins", 
+        code = c("# binned points and line", "data_space <- ___", 
+        "", "# augmented model", "MedGPA_plus <- ___", "", "# logistic model on probability scale", 
+        "data_space +", "  geom_line(data = ___, aes(___), color = \"red\")"
+        ), out.width.px = 624, out.height.px = 384, params.src = "ex5, exercise=TRUE, exercise.setup = \"create gpa_bins\"", 
         fig.num = 0, exercise.df_print = "paged"), engine = "r", 
     version = "4"), class = c("r", "tutorial_exercise")))
 </script>
@@ -1693,7 +1698,7 @@ output$`tutorial-exercise-ex6-output` <- renderUI({
 
 
 <script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache(structure(list(label = "ex6", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+learnr:::store_exercise_cache(structure(list(label = "ex6", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/03-09-lesson/", 
 "", "library(dplyr)", "library(purrr)", "library(openintro)", 
 "library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
 "  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
@@ -1752,7 +1757,7 @@ output$`tutorial-exercise-ex7-output` <- renderUI({
 
 
 <script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache(structure(list(label = "ex7", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+learnr:::store_exercise_cache(structure(list(label = "ex7", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/03-09-lesson/", 
 "", "library(dplyr)", "library(purrr)", "library(openintro)", 
 "library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
 "  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
@@ -1812,7 +1817,7 @@ output$`tutorial-exercise-ex8-output` <- renderUI({
 
 
 <script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache(structure(list(label = "ex8", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+learnr:::store_exercise_cache(structure(list(label = "ex8", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/03-09-lesson/", 
 "", "library(dplyr)", "library(purrr)", "library(openintro)", 
 "library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
 "  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
@@ -1821,8 +1826,12 @@ learnr:::store_exercise_cache(structure(list(label = "ex8", global_setup = struc
 "", "", "library(learnr)", "library(openintro)", "library(Stat2Data)", 
 "library(tidyverse)", "library(broom)", "library(emo)", "data(MedGPA)", 
 "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
-    setup = NULL, chunks = list(list(label = "ex8", code = "# create new data frame\nnew_data <- ___\n\n# make predictions\n", 
-        opts = list(label = "\"ex8\"", exercise = "TRUE"), engine = "r")), 
+    setup = "\nmod <- glm(Acceptance ~ GPA, data = MedGPA, family = binomial)", 
+    chunks = list(list(label = "prob-pred", code = "\nmod <- glm(Acceptance ~ GPA, data = MedGPA, family = binomial)", 
+        opts = list(label = "\"prob-pred\""), engine = "r"), 
+        list(label = "ex8", code = "# create new data frame\nnew_data <- ___\n\n# make predictions\n", 
+            opts = list(label = "\"ex8\"", exercise = "TRUE", 
+                exercise.setup = "\"prob-pred\""), engine = "r")), 
     code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("# create new data frame", 
     "new_data <- data.frame(GPA = 3.51)", "", "# make predictions", 
     "augment(mod, newdata = new_data, type.predict = \"response\")"
@@ -1845,9 +1854,10 @@ learnr:::store_exercise_cache(structure(list(label = "ex8", global_setup = struc
         engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
         max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
         exercise.error.check.code = "gradethis_error_checker()", 
-        label = "ex8", exercise = TRUE, code = c("# create new data frame", 
-        "new_data <- ___", "", "# make predictions", ""), out.width.px = 624, 
-        out.height.px = 384, params.src = "ex8, exercise=TRUE", 
+        label = "ex8", exercise = TRUE, exercise.setup = "prob-pred", 
+        code = c("# create new data frame", "new_data <- ___", 
+        "", "# make predictions", ""), out.width.px = 624, out.height.px = 384, 
+        params.src = "ex8, exercise=TRUE, exercise.setup = \"prob-pred\"", 
         fig.num = 0, exercise.df_print = "paged"), engine = "r", 
     version = "4"), class = c("r", "tutorial_exercise")))
 </script>
@@ -1861,7 +1871,7 @@ output$`tutorial-exercise-ex9-output` <- renderUI({
 
 
 <script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache(structure(list(label = "ex9", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+learnr:::store_exercise_cache(structure(list(label = "ex9", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/03-09-lesson/", 
 "", "library(dplyr)", "library(purrr)", "library(openintro)", 
 "library(broom)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
 "  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
@@ -1870,8 +1880,12 @@ learnr:::store_exercise_cache(structure(list(label = "ex9", global_setup = struc
 "", "", "library(learnr)", "library(openintro)", "library(Stat2Data)", 
 "library(tidyverse)", "library(broom)", "library(emo)", "data(MedGPA)", 
 "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
-    setup = NULL, chunks = list(list(label = "ex9", code = "# data frame with binary predictions\ntidy_mod <- ___\n  \n# confusion matrix\ntidy_mod |>\n  select(___, ___) |> \n  ___()", 
-        opts = list(label = "\"ex9\"", exercise = "TRUE"), engine = "r")), 
+    setup = "mod <- glm(Acceptance ~ GPA, data = MedGPA, family = binomial)", 
+    chunks = list(list(label = "mod-bin-pred", code = "mod <- glm(Acceptance ~ GPA, data = MedGPA, family = binomial)", 
+        opts = list(label = "\"mod-bin-pred\""), engine = "r"), 
+        list(label = "ex9", code = "# data frame with binary predictions\ntidy_mod <- ___\n  \n# confusion matrix\ntidy_mod |>\n  select(___, ___) |> \n  ___()", 
+            opts = list(label = "\"ex9\"", exercise = "TRUE", 
+                exercise.setup = "\"mod-bin-pred\""), engine = "r")), 
     code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("# data frame with binary predictions", 
     "tidy_mod <- augment(mod, type.predict = \"response\") |> ", 
     "  mutate(Acceptance_hat = round(.fitted)) ", "  ", "# confusion matrix", 
@@ -1895,10 +1909,11 @@ learnr:::store_exercise_cache(structure(list(label = "ex9", global_setup = struc
         engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
         max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
         exercise.error.check.code = "gradethis_error_checker()", 
-        label = "ex9", exercise = TRUE, code = c("# data frame with binary predictions", 
-        "tidy_mod <- ___", "  ", "# confusion matrix", "tidy_mod |>", 
-        "  select(___, ___) |> ", "  ___()"), out.width.px = 624, 
-        out.height.px = 384, params.src = "ex9, exercise=TRUE", 
+        label = "ex9", exercise = TRUE, exercise.setup = "mod-bin-pred", 
+        code = c("# data frame with binary predictions", "tidy_mod <- ___", 
+        "  ", "# confusion matrix", "tidy_mod |>", "  select(___, ___) |> ", 
+        "  ___()"), out.width.px = 624, out.height.px = 384, 
+        params.src = "ex9, exercise=TRUE, exercise.setup = \"mod-bin-pred\"", 
         fig.num = 0, exercise.df_print = "paged"), engine = "r", 
     version = "4"), class = c("r", "tutorial_exercise")))
 </script>

@@ -1,0 +1,360 @@
+---
+title: "Logistic regression models"
+author: Your name here
+date: The date here
+format: 
+  html: 
+    highlight: pygments
+    theme: cerulean
+    toc: true
+    toc_float: true
+    df_print: paged
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+```{r}
+#| label: setup
+#| include: false
+
+# Load your packages here: tidyverse, palmerpenguins, table1, broom
+library(tidyverse) 
+library(marginaleffects)
+library(table1)
+library(broom)
+library(ggstatsplot)
+library(modelsummary)
+library(gt)
+
+
+# load your data here
+nsduh <- read_csv(
+  "https://raw.githubusercontent.com/OferEngel/MMIT-Biostats/refs/heads/master/labs/data/nsduh.csv"
+  ) 
+
+
+```
+
+
+
+
+## The data: NSDUH (2019)
+
+The teaching dataset `nsduh` includes a random subset of 1000 observations of adults, and variables that have been renamed for clarity. Sampling was done with replacement using sampling weights in order to approximate a nationally representative distribution. This sampling method is solely for the purpose of creating a teaching dataset to illustrate regression methods. The [National Survey on Drug Use and Health (NSDUH)](https://www.samhsa.gov/data/data-we-collect/nsduh-national-survey-drug-use-and-health), a product of the Substance Abuse and Mental Health Services Administration (SAMHSA) under the U.S. Department of Health and Human Services, measures the use of illegal substances, the use and misuse of prescribed substances, substance use disorder and treatment, and mental health outcomes ( [Substance Abuse and Mental Health Services Administration 2022](https://bookdown.org/rwnahhas/RMPH/appendix-nsduh.html#ref-nsduh_about_2022)). Downloadable data and documentation are freely available from SAMHSA ([U.S. Department of Health and Human Services, Substance Abuse and Mental Health Services Administration, Center for Behavioral Health Statistics and Quality 2019](https://bookdown.org/rwnahhas/RMPH/appendix-nsduh.html#ref-nsduh2019)) for research and statistical purposes. Documentation for the 2019 data can be found in the [2019 NSDUH Public Use File Codebook](https://www.datafiles.samhsa.gov/sites/default/files/field-uploads-protected/studies/NSDUH-2019/NSDUH-2019-datasets/NSDUH-2019-DS0001/NSDUH-2019-DS0001-info/NSDUH-2019-DS0001-info-codebook.pdf). See also [Policies](https://www.samhsa.gov/). The variables in this dataset include: 
+
+- `mj_lifetime`: if the subject never used marijuana (0), otherwise (1)
+- `alc_agefirst`: the age at which the subject first started drinking alcohol
+- `age_cat`: age category
+- `sex`: sex assigned at birth
+- `income`: subject's income bracket
+
+
+
+
+## Descriptive statistics
+
+Use the `table1` package to create a table with appropriate descriptive information about the data set. Use the examples provided in the [following vignette](https://cran.r-project.org/web/packages/table1/vignettes/table1-examples.html){target="_blank"} to help you build a table. Feel free to try a different table with other variables. 
+Please make sure your table 1 looks professional and tidy: 
+
+- Your table needs a title
+- Every column header has a meaningful label
+- Each row header has a meaningful label
+
+```{r}
+#| label: recreate this table1
+#| echo: false
+#| out-width: "50%"
+knitr::include_graphics("https://i.imgur.com/TFuf4fL.png")
+
+```
+
+Use the code chunk below to recreate table1.
+
+```{r}
+#| label: recreation table1 solution
+#| echo: false
+
+
+
+
+
+```
+
+### Predictions and comparisons
+
+Who is more likely to use marijuana throughout their lives, males or females? And if we find a difference between the sexes in our sample, how likely is it that this difference exists in the population as well? In this section we are going to calculate some predictions and comparisons. We will do this twice: once by hand, from the data, and once using statistical models. Hopefull, the two methods will yield similar answers. Let's see!
+
+QUESTION: Using the information in table1 above, calculate the following: 
+
+- The probability of lifetime marijuana among sample subjects (independent of sex), the probability among sample females and among sample males, 
+- The odds of lifetime marijuana use among sample subjects, among sample females and among sample males. 
+- The risk difference, the risk ratio and the odds ratio when comparing lifetime marijuana use among males and females in our sample. 
+
+As an answer to these questions, please fill in the blanks in the tables found in the code below: 
+
+
+```{r}
+#| label: predictions and comparisons without models
+#| echo: false
+
+# Replace the blanks below with appropriate values
+tribble(
+  ~Prediction, ~Margin, ~Female, ~Male, 
+  "Probability", "___", "___", "___", 
+  "Odds",        "___", "___", "___", 
+  "Log Odds",    "___", "___", "___"
+) |> gt()
+
+# Replace the blanks below with appropriate values
+tribble(
+  ~Comparison, ~`Males vs. Females`, 
+  "Risk difference", "___", 
+  "Risk Ratio",      "___",
+  "Odds ratio",      "___", 
+  "Log odds ratio",  "___"
+) |> gt()
+
+
+```
+
+We can calculate those figures by hand, but how do we find the standard errors and confidence intervals? For this, we need statistical models! 
+We will create two models: the null model and a crude model to find how the use of marijuana depends on sex. Then we can use 
+
+- The `avg_predictions()` function to calculate probability, odds and log odds
+- The `avg_comparisons()` function to calculate difference in probabilities, odds ratio and log odds ratio 
+
+```{r}
+#| label: predictions and comparisons with models
+#| include: false 
+
+M.NULL  <- glm(mj_lifetime ~ 1, nsduh, family = binomial)
+# Calculate probabilities, odds and log-odds
+M.NULL |> 
+  avg_predictions () # Calculate probability of lifetime marijuana at the margin
+M.NULL |> 
+  avg_predictions (transform = function(x) x / (1- x)) # Odds  at the margin
+M.NULL |> 
+  avg_predictions (transform = function(x) log(x / (1- x))) # log odds  at the margin
+
+
+
+M.SEX  <- glm(mj_lifetime ~ sex, nsduh, family = binomial)
+# Calculate probabilities, odds and log-odds
+M.SEX |> 
+  avg_predictions(by = "sex") # probabilities conditional on sex
+M.SEX |> 
+  avg_predictions(by = "sex", transform = function(x) x / (1- x)) # odds conditional
+M.SEX |> 
+  avg_predictions (transform = function(x) log(x / (1- x))) # log odds conditional
+
+
+# Calculate risk differences, risk ratio, odds-ratio and log-odds ratios
+M.SEX |> 
+  avg_comparisons(variables = "sex", comparison = "difference")
+M.SEX |> 
+  avg_comparisons(variables = "sex", comparison = "ratio")
+M.SEX |> 
+  avg_comparisons(
+  variables = "sex", 
+  comparison = 	function(hi, lo) ((hi/(1 - hi))/(lo/(1 - lo)))
+  )
+M.SEX |> 
+  avg_comparisons(variables = "sex", comparison = "lnor")
+
+
+
+```
+
+
+
+
+```{r}
+#| label: sex-lifetime-ci
+#| echo: false
+
+# Replace the blanks below with appropriate values
+tribble(
+  ~Prediction,    ~Margin, ~Female, ~Male, 
+  "Probability", "XX CI [XX, XX]", "XX CI [XX, XX]", "XX CI [XX, XX]", 
+  "Odds",        "XX CI [XX, XX]", "XX CI [XX, XX]", "XX CI [XX, XX]", 
+  "Log Odds",    "XX CI [XX, XX]", "XX CI [XX, XX]", "XX CI [XX, XX]"
+) |> gt()
+
+# Replace the blanks below with appropriate values
+tribble(
+  ~Comparison,       ~`Males vs. Females`, 
+  "Risk difference", "XX CI [XX, XX]", 
+  "Risk Ratio",      "XX CI [XX, XX]",
+  "Odds ratio",      "XX CI [XX, XX]", 
+  "Log odds ratio",  "XX CI [XX, XX]"
+) |> gt()
+
+```
+
+
+QUESTION: COMPARE the predictions and the comparisons you have done without the models, to those you have done with the models. How are they similar, and how are they different? 
+
+YOUR ANSWER HERE: 
+
+-   ...
+-   ... 
+
+QUESTION: Write up your results using the template shown below (fill the blanks).
+
+YOUR ANSWER HERE: 
+
+> Conclusion: Males have significantly ___ (higher/lower) odds of lifetime marijuana use than females (OR = ___ ; 95% CI = ___ , ___ p = ___ ). Males have ___% (higher/lower) odds of lifetime marijuana use than females.
+
+
+## Modelling lifetime marijuana from alcohol_agefirst
+
+QUESTION: Whereas in the previous questions we explored the relationship between lifetime marijuana use and sex, we will now explore the association between lifetime marijuana use (`mj_lifetime`) and age at first use of alcohol (`alc_agefirst`)? Fit a logistic regression and print out the results, then interpret your analysis using the code chunk shown below:
+
+
+```{r}
+#| label: marijuana use from alcohol_agefirst
+
+
+
+
+
+
+
+```
+
+
+> Age at first alcohol use is significantly ___ (negatively/positively) associated with lifetime marijuana use (OR = ___ ; 95% CI = ___ , ___ ; p < ___ ). Individuals who first used alcohol at age 19 years have ___ % ___ (lower/higher) odds of having ever used marijuana than those who first used alcohol at age 18 years. In contrast, the reduction in odds associated with starting drinking alcohol 3 years later is ___ % ___ (lower/higher) odds.
+
+ 
+### Adjusted logistic regression model 
+
+The main reason for combining multiple predictors is to address the problem of confounding bias. Confounding bias occurs when a predictor affects both outcome and exposure. Adding a confounder to as a predictor to the model removes this bias.
+
+With multiple predictors in a logistic regression model, the resulting odds ratios are called Adjusted Odds Ratio (AOR).
+
+
+### Adjusted logistic regression
+
+The main reason for combining multiple predictors is to address the problem of confounding bias. Confounding bias occurs when a predictor affects both outcome and exposure. Adding a confounder to as a predictor to the model removes this bias. 
+
+With multiple predictors in a logistic regression model, the resulting odds ratios are called Adjusted Odds Ratio (AOR).
+
+QUESTION: What is the association between lifetime marijuana use (`mj_lifetime`) and age at first use of alcohol (`alc_agefirst`), adjusted for age (`age_cat`), sex (`sex`), and income (`income`)? Fit a model with and without an interaction term (`alc_agefirst:demog_sex`) and compute the AOR, its 95% CI, and the p-value that tests the significance of age at first use of alcohol. Report also their AORs of the other predictors, their 95% CIs and p-values. Use the code chunk below for your calculations and fill the blanks in the template below to summarize your findings. 
+
+```{r}
+#| label: adjusted model
+
+
+
+
+
+
+```
+
+ANSWER: FILL IN THE BLANKS
+
+> Interpreting the output:
+
+> The AOR for our primary predictor `alc_agefirst` is ___. This represents the Odds Ratio for lifetime marijuana use comparing those with a one-year difference in age at first use of alcohol, adjusted for age, sex, and income.
+
+> The remaining AORs compare levels of categorical predictors to their reference level, adjusted for the other predictors in the model. For example, comparing individuals with the same age of first alcohol use, sex, and income, 35-49 year-olds have ___ %  (lower/higher) odds of lifetime marijuana use than 18-25 year-olds (OR = ___ ; 95% CI = ___ , ___ ; p = ___ ). 
+
+
+> Conclusion: After adjusting for age, sex, and income, age at first alcohol use is significantly ___ (negatively/positively) associated with lifetime marijuana use (AOR = ___ ; 95% CI = ___ , ___ ; p < ___ ). Individuals who first used alcohol at a given age have ___ % (lower/higher) odds of having ever used marijuana than those who first used alcohol one year earlier. The association between age of first alcohol use and lifetime marijuana use differs significantly between males and females (p = ___ ). A likelihood ratio test shows that the adjusted model with the interaction is ___ (superior/not superior) to the one without the interaction (p = ___)
+
+
+
+### Adding an interaction term
+
+Our final model will add an interaction term to the full model, the interaction between `sex` and `alc_agefirst`. 
+
+QUESTION: Create the interaction model and call it `M.INT`. Then replicate the model summary shown below, and discuss its main features. Use the likelihood ratio test to determine which model is best, and discuss the association between age of first alcohol and lifetime marijuana use, when comparing males to females. Feel free to experiment with other models. Your result should look like the table shown in the chunk below: 
+
+
+```{r}
+#| label: recreate this modelsummary
+#| echo: false
+#| out-width: "75%"
+knitr::include_graphics("https://i.imgur.com/OjrgPpd.png")
+
+```
+
+
+Use the chunk below to create your code: 
+
+```{r}
+#| label: use this to recreate modelsummary
+#| echo: false
+
+
+
+```
+
+
+#### Visualizing the model with the interactions
+
+To visualize the interaction, we want to replicate the following graphs
+
+```{r}
+#| label: visualize interaction - final plots
+#| echo: false
+#| out-width: "75%"
+knitr::include_graphics("https://i.imgur.com/xd47dTa.png")
+knitr::include_graphics("https://i.imgur.com/rCDlaCx.png")
+knitr::include_graphics("https://i.imgur.com/pFUY8Mr.png")
+
+```
+
+
+The first graph compares the predicted probabilities for males and females along time of alcohol’s first use. The code to create it looks something like the following:
+
+
+```{r}
+#| label: predicted probabilities
+#| eval: false
+
+# Create your model. Do not forget the interaction term!
+M.INT <- glm(mj_lifetime ~ ___, family = ___, data = ___)
+
+# Now let us plot it!
+M.INT |> plot_predictions(
+  condition = c("alc_agefirst", "sex")
+  )
+
+```
+
+
+The second graph shows the difference between the predicted probabilities for males and females along age of alcohol’s first use. The code to create it looks something like the following:
+
+```{r}
+#| label: Comparisons
+#| eval: false
+
+
+M.INT |> plot_comparisons(
+  variables = list(
+    sex = c("Male", "Female")
+    ), 
+  comparison = ___,
+  condition = "alc_agefirst")
+
+```
+
+
+For the comparison argument you can choose a variety of indicators, indicators for log-odd ratios, difference in probability, odds ratio and many more. Please consult the help files for more information. Use the chunk below to replicate the plots. 
+
+
+
+```{r}
+#| label: visualize interaction - your code here
+#| echo: false
+
+
+
+
+
+
+```

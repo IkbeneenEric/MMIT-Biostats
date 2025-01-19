@@ -1,0 +1,223 @@
+---
+title: "Multiple linear regression models"
+author: Your name here
+date: The date here
+format: 
+  html: 
+    highlight: pygments
+    theme: cerulean
+    toc: true
+    toc_float: true
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+
+For this exercise you will need to load the following packages:
+
+- `tidyverse` for data wrangling and the visualisation
+- `table1` to create the famouls `Table1`
+- The `broom` package for tidy representation of your models
+- `marginaleffects` package helps with the interpretation of linear models
+- `modelsummary` to present models next to one another 
+- `ggstatsplot` to run and visualize statistical tests
+- `datawizard` to centralize and standardize your data
+- `tinytable` to create beautiful tables 
+
+
+
+```{r}
+#| label: setup
+#| include: false
+
+# Load your packages here: tidyverse, table1, broom
+
+
+# Download our data
+natality <- readr::read_csv("https://raw.githubusercontent.com/OferEngel/MMIT-Biostats/refs/heads/master/labs/data/natality.csv")
+
+```
+
+
+
+The [2018 United States Birth Data](https://www.cdc.gov/nchs/nvss/births.htm) were compiled from information on birth certificates by the National Vital Statistics System, part of the National Center for Health Statistics, in cooperation with States ([National Center for Health Statistics 2022](https://bookdown.org/rwnahhas/RMPH/appendix-natality.html#ref-natality_about_2022)). The dataset consists of a random sample from the original dataset, registering births in the United States in the year 2018. Specifically, we will be looking at the following variables: 
+
+- DBWT - birth weight (g). This will be the outcome we will be predicting using a variety of linear regression models
+- CIG_REC - smoked during pregnancy 
+- risks - risk factors reported
+- MAGER - mother’s age 
+- MRACEHISP - mother’s race/ethnicity
+- DMAR - marital status
+- MEDUC - mother’s education
+- PRIORLIVE - prior births now living 
+- PRIORDEAD - prior births now dead
+- BMI  - mother’s body mass index, (kg/m2)
+
+
+## Descriptive statistics
+
+Use the `table1` package to create a table with appropriate descriptive information about the data set. Use the examples provided in the [following vignette](https://cran.r-project.org/web/packages/table1/vignettes/table1-examples.html){target="_blank"} to help you build a table. Feel free to try a different table with other variables. 
+
+```{r}
+#| label: recreate this table1
+#| echo: false
+#| out-width: "50%"
+knitr::include_graphics("https://i.imgur.com/gaTH4ne.png")
+
+
+```
+
+Use the code chunk below to recreate table1.
+
+```{r table1, echo=FALSE}
+#| label: recreation table1 solution
+
+
+
+
+```
+
+
+
+
+QUESTION: What do you notice from this table? What research questions might it raise?
+
+YOUR ANSWERS HERE:
+
+-   ...
+-   ...
+
+
+## Statistical tests
+
+Use the `ggstatsplot` package to test the following questions, and summarize your findings in a paragraph or two. You will need to use the `ggbetweenstats` function from this package. Use the parametric or non-parametric version appropriately.
+
+- What is the difference between birthweight of babies when comparing smoking to non-smoking mothers? Is this difference significant?
+- What are the (significant) differences between birthweight of babies when comparing mothers of different racial backgrounds?
+- What are the (significant) differences between birthweight of babies when comparing mothers with or without previous children?
+- What are the (significant) differences between mothers' ages or BMI when comparing smoking to non-smoking mothers?
+- Explore any other questions of interest, and discuss your findings
+
+
+Use the `ggbarstats` function to test independence of categorical variables. For example, you can explore the following questions: 
+
+- Is there a significant link between smoking and the mother's racial background? 
+- Is there a significant link between marital status and smoking? 
+- Is there a significant link between smoking and educational background? 
+- Explore any other questions of interest, and discuss your findings
+
+Use the code chunk below for your experiments!
+
+
+```{r}
+#| label: statistical tests 
+
+
+
+
+```
+
+
+YOUR ANSWERS HERE:
+
+-   ...
+-   ...
+
+
+
+
+## Linear Regression: model selection
+
+In the following exercises, you will assess the association between birth weight (the outcome) and smoking during pregnancy (the primary predictor), adjusting for a variety of variables. You will start off with the following three models: 
+
+- The null model `DBWT ~ 1`
+- The full model `DBWT ~ .`
+- The crude model `DBWT ~ CIG_REC`
+
+Starting with these three models, we can now use the preform the stepwise model selection by AIC (Akaike Information Criterion). This is a common approach to select a parsimonious model that balances model fit and complexity. This can be implemented in R using the `step()` function. After finding the stepwise model, present all four models side by side, and then use anova to compare the four models. You can see how this is done in [this gist](https://gist.github.com/OferEngel/b89290601479357d8e6a4ff80ed89149). Finally, you can run an `anova` to make sure that the model you found is not performing worse than the full model. 
+
+
+```{r}
+#| label: recreate this stepwise summary
+#| echo: false
+knitr::include_graphics("https://i.imgur.com/NY62bwB.png")
+
+
+```
+
+Use the code chunk below for your experiments!
+
+
+
+```{r}
+#| label: preform stepwise method and side-by-side model presentation
+
+
+
+
+```
+
+
+QUESTION: What is your conclusion? What do we learn from variables omitted from the stepwise model? 
+
+YOUR ANSWERS HERE:
+
+-   ...
+-   ...
+
+
+
+If you would like to learn more about ways to discover and select an optimal model, watch [this](https://www.youtube.com/watch?v=Im293ClFen4) video about the [glmulti](https://www.jstatsoft.org/article/view/v034i12) function.
+
+{{< video https://www.youtube.com/watch?v=Im293ClFen4 >}}
+
+
+
+
+
+
+## Exploring interactions
+
+In linear regression, interactions allow the effect of one predictor variable on the outcome to depend on the level of another predictor variable. This leads to models where the slope of one variable changes depending on the value of another variable, effectively creating "different slopes" for different conditions or groups.
+
+For example, we know that cigarette smoking during pregnancy is associated with birth weight. But perhaps this association is different for mothers with different levels of education? Modify the FULL model appropriately to be able to answer this question. Use anova to test whether the model with the interaction is significantly better than the one without it. Regardless of statistical significance, create (at least ONE of) the [dumbell plots](https://r-charts.com/distribution/dumbbell-plot-ggplot2/) shown below, illustrating the smoking effect at each level of mother’s education. Hint: See the code below, which will be using the [marginaleffects package](https://marginaleffects.com/) to create the plots.
+
+
+The plot below was created using the `marginaleffects` package, standardized variables and the following formula for the linear regression: `DBWT ~ CIG_REC + risks + MAGER + MRACEHISP + DMAR + MEDUC + PRIORLIVE + PRIORDEAD + BMI + CIG_REC * MEDUC + MEDUC * MRACEHISP`. Feel free to experiment with other formula and create your own dumbbell plots to visualise interactions. You can see an example of creating this kind of plot in [this gist](https://gist.github.com/OferEngel/415b25094a84947d9eb800ffe074adbb).
+
+
+```{r}
+#| label: recreate this interaction dumbbell plot
+#| echo: false
+knitr::include_graphics("https://i.imgur.com/SgCwXsv.png")
+
+knitr::include_graphics("https://i.imgur.com/EilJafE.png")
+
+knitr::include_graphics("https://i.imgur.com/YhMx8Lm.png")
+
+
+```
+
+
+
+Please use the code chunk below for your code. 
+
+```{r}
+#| label: your dumbbell plots here
+
+
+
+
+
+```
+
+
+
+
+QUESTION: Discuss what we can learn from these plots, any ideas for further research and any other thoughts you might have about this lab exercise. 
+
+YOUR ANSWERS HERE:
+
+-   ...
+-   ...
