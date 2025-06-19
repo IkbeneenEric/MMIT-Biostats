@@ -31,7 +31,9 @@ knitr::opts_chunk$set(warning = FALSE,
                       fig.width = 5,
                       fig.align = "center")
 
-comics <- read_csv(here::here("tutorials", "02-explore", "04-lesson","data", "comics.csv")) |>
+print(getwd())
+
+comics <- read_csv(here::here("data", "comics.csv")) |>
   filter(!is.na(appearances)) |> 
   filter(!is.na(align), 
          !is.na(id), 
