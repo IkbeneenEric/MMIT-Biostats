@@ -272,7 +272,7 @@ In this scatterplot, we see what is known as a "fan shape." The direction is cer
 
 ```{r img5, echo=FALSE, out.width=300}
 # http://i.stack.imgur.com/c4afj.jpg
-knitr::include_graphics(here("images/plotpng.png"))
+#knitr::include_graphics(here("images/plotpng.png"))
 ```
 
 In these next exercises, you'll get more practice creating scatterplots and characterizing what you see in them.

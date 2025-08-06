@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<meta name="progressive" content="true" />
+<meta name="allow-skip" content="true" />
+<meta name="learnr-version-prerender" content="0.11.5" />
+
+<title>Regression modeling: 1 - Visualizing two variables</title>
+
+<!-- header-includes START -->
+<!-- HEAD_CONTENT -->
+<!-- header-includes END -->
+<!-- HEAD_CONTENT -->
+
+<!-- highlightjs -->
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+<!-- taken from https://github.com/rstudio/rmarkdown/blob/de8a9c38618903627ca509f5401d50a0876079f7/inst/rmd/h/default.html#L293-L343 -->
+<!-- tabsets -->
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+<!-- end tabsets -->
+
+
+</head>
+
+<body>
+<a class='sr-only sr-only-focusable visually-hidden-focusable' href='#learnr-tutorial-content'>Skip to Tutorial Content</a>
+
+
+
+<div class="pageContent band">
+<main class="bandContent page">
+
+<article class="topics" id="learnr-tutorial-content">
+
+<div id="section-welcome" class="section level2">
+<h2>Welcome</h2>
+<p>In the previous tutorials, you’ve learned how to describe the
+distribution of a single variable. This is useful, but in many cases,
+what we are more interested in is understanding the relationship between
+two variables.</p>
+</div>
+<div id="section-visualizing-two-variables" class="section level2">
+<h2>Visualizing two variables</h2>
+<p>In particular, in these tutorials you will learn techniques for
+characterizing and quantifying the relationship between two numeric
+variables.</p>
+<p>In a statistical model, we generally have one variable that is the
+output and one or more variables that are the inputs. We will refer to
+the output variable as the response and we will denote it with the
+letter <span class="math inline">\(y\)</span>. In other disciplines or
+contexts, you may hear this quantity called the dependent variable. More
+generally, the response variable is a quantity that we think might be
+related to the input or explanatory variable in some way. In other
+fields, these can be called “independent” or “predictor” variables. We
+typically denote any explanatory variables with the letter <span
+class="math inline">\(x\)</span>. In these tutorials, we will focus on
+the case of a single explanatory variable. In the next tutorials,
+however, we will allow for several explanatory variables.</p>
+<ul>
+<li><em>Response</em> variable
+<ul>
+<li>a.k.a. <span class="math inline">\(y\)</span>, dependent</li>
+<li>A variable you wish to understand</li>
+</ul></li>
+<li><em>Explanatory</em> variable
+<ul>
+<li>a.k.a. <span class="math inline">\(x\)</span>, independent,
+predictor</li>
+<li>A variable you think might be related to the response</li>
+</ul></li>
+<li>Both variables are (continuous) <em>numerical</em></li>
+</ul>
+<div id="section-graphical-representations" class="section level3">
+<h3>Graphical representations</h3>
+<p>Just as you learned to visualize the distribution of one variable
+with a histogram or density plot, statisticians have developed a
+commonly used framework for visualizing the relationship between two
+numeric variables: the scatterplot. The scatterplot has been called the
+most “<a
+href="http://onlinelibrary.wiley.com/doi/10.1002/jhbs.20078/abstract">generally
+useful invention in the history of statistical graphics</a>.” It is a
+simple two-dimensional plot in which the two coordinates of each dot
+represent the values of two variables measured on a single
+observation.</p>
+<ul>
+<li>Put the response variable on vertical axis</li>
+<li>Put the explanatory variable on horizontal axis</li>
+</ul>
+<p><img src="03-01-lesson_files/figure-html/2-1.png" width="624" /></p>
+<!--
+> TODO: do you want geom_point() here? Also, are you intentionally using a different dataset than you do below?  Can we connect to the next plot?
+-->
+<p>By convention, we always put the response variable on the vertical,
+or <span class="math inline">\(y\)</span>-axis, and the explanatory
+variable on the horizontal, or <span
+class="math inline">\(x\)</span>-axis.</p>
+</div>
+<div id="section-scatterplot" class="section level3">
+<h3>Scatterplot</h3>
+<p>In <code>ggplot</code>, we bind the <code>x</code> and <code>y</code>
+aesthetics to our explanatory and response variables, and then use the
+<code>geom_point()</code> function to actually draw the points. Here we
+can see a scatterplot of the total length of a possum’s body as a
+function of the length of its tail.</p>
+<pre class="r"><code>ggplot(data = possum, aes(y = total_l, x = tail_l)) +
+  geom_point()</code></pre>
+<p><img src="03-01-lesson_files/figure-html/3-1.png" width="624" /></p>
+<p>Note that the axes have been labeled with the names of the variables
+automatically, based on the names of the variables in the dataset.</p>
+</div>
+<div id="section-labeling-axes" class="section level3">
+<h3>Labeling Axes</h3>
+<p>For clarity, it is important to give your axes human-readable labels.
+We can do that with the <code>labs()</code> function. It is a good data
+visualization practice to include any necessary units in axis
+labels!</p>
+<pre class="r"><code>ggplot(data = possum, aes(y = total_l, x = tail_l)) +
+  geom_point() +
+  labs(x = &quot;Length of Possum Tail (cm)&quot;,
+       y = &quot;Length of Possum Body (cm)&quot;)</code></pre>
+<p><img src="03-01-lesson_files/figure-html/4-1.png" width="624" /></p>
+<p>Note that the names of the axis labels must include quotations
+(<code>""</code>), indicating to <code>ggplot()</code> that these are
+names <strong>not</strong> variables.</p>
+</div>
+</div>
+<div id="section-connection-to-boxplots" class="section level2">
+<h2>Connection to boxplots</h2>
+<p>Since you already know how a boxplot can illustrate the relationship
+between a numerical response variable and a <strong>categorical</strong>
+explanatory variable, it may be helpful to think of a scatterplot as a
+continuous generalization of side-by-side boxplots.</p>
+<ul>
+<li>Can think of boxplots as scatterplots…
+<ul>
+<li>…but with discretized explanatory variable</li>
+</ul></li>
+<li>The <code>cut()</code> function allows for us to discretize a
+continuous variable
+<ul>
+<li>Choose appropriate number of “boxes”</li>
+</ul></li>
+</ul>
+<div id="section-discretized-scatterplot" class="section level3">
+<h3>Discretized scatterplot</h3>
+<p>We can connect these ideas by discretizing our explanatory variable.
+This can be achieved in R using the <code>cut()</code> function, which
+takes a numeric variable and chops it into a specified number of
+discrete chunks. The <code>breaks</code> argument specifies the number
+of chunks.</p>
+<p>Here, we are creating a new variable named <code>tail_cut</code> from
+using the <code>cut()</code> function on the original
+<code>tail_l</code> variable. We are then saving this new variable back
+into the original <code>possum</code> dataset.</p>
+<pre class="r"><code>possum &lt;- possum |&gt;
+  mutate(tail_cut = cut(tail_l, breaks = 5))</code></pre>
+<p>We can then plot the relationship between total length and the new
+<code>tail_cut</code> variable. What we’ve done is gathered up all of
+the data points in these bins and plotted them in a vertical line,
+rather than at their original tail length value.</p>
+<pre class="r"><code>ggplot(data = possum, aes(y = total_l, x = tail_cut)) +
+  geom_point()</code></pre>
+<p><img src="03-01-lesson_files/figure-html/5-1.png" width="624" /></p>
+</div>
+<div id="section-boxplot" class="section level3">
+<h3>Boxplot</h3>
+<p>This type of dotplot is not standard. What is more common is to
+create side-by-side boxplots of the distribution of these points. If we
+change from <code>geom_point()</code> to <code>geom_boxplot()</code>, we
+will get this more “standard” visualization.</p>
+<pre class="r"><code>ggplot(data = possum, aes(y = total_l, x = tail_cut)) +
+  geom_boxplot()</code></pre>
+<p><img src="03-01-lesson_files/figure-html/6-1.png" width="624" /></p>
+<p>A notable attribute of a scatterplot is its connection to the raw
+data. A boxplot, however, is wholly disconnected from the raw data, only
+plotting summaries of the data. To re-forge this connection, we can
+overlay the original data points on top of the boxplots, by simply
+adding another layer to our <code>ggplot()</code>!</p>
+<p>Let’s walk through a few parts of the code below. First, we have
+added <code>alpha = 0</code> to the boxplots, so that the “outlier”
+points are not plotted (we don’t want to plot them twice). The
+<code>geom_jitter()</code> function instead of the
+<code>geom_point()</code> function, since the points are being plotted
+on top of each other. You can think of jittering as taking the
+overplotted graph (where the points are overlapping) and giving it a
+tiny shake. Jittering will move the points a little bit side-to-side and
+up-and-down, but their position from the original plot won’t
+dramatically change.</p>
+<pre class="r"><code>ggplot(data = possum, aes(y = total_l, x = tail_cut)) +
+  geom_boxplot(outlier.alpha = 0) +
+  geom_jitter(color = &quot;sky blue&quot;, width = 0.2)</code></pre>
+<p><img src="03-01-lesson_files/figure-html/boxdot-1.png" width="624" /></p>
+<p>Now we can see the original data points, and the boxplots of the
+different tail length groups. We can see that overall, as the median
+tail length increases the body length also increases.</p>
+<p>Now it’s time for you to get some practice making scatterplots.</p>
+</div>
+</div>
+<div id="section-your-turn" class="section level2">
+<h2>Your turn!</h2>
+<p>Scatterplots are the most common and effective tools for visualizing
+the relationship between two numeric variables.</p>
+<p>The <code>ncbirths</code> dataset is a random sample of 1,000 cases
+taken from a larger dataset collected in 2004. Each case describes the
+birth of a single child born in North Carolina, along with various
+characteristics of the child (e.g. birth weight, length of gestation,
+etc.), the child’s mother (e.g. age, weight gained during pregnancy,
+smoking habits, etc.) and the child’s father (e.g. age). You can view
+the help file for these data by running <code>?ncbirths</code> in the
+console.</p>
+<p>Using the <code>ncbirths</code> dataset, use <code>ggplot()</code> to
+make a scatterplot visualizing the relationship between birth weight and
+length of gestation of these babies.</p>
+<div class="tutorial-exercise" data-label="ex1" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code># Scatterplot of weight vs. weeks</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="ex1-hint"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code> In the `ggplot()` map `weeks` to the `x` aesthetic and `weight` to the `y` aesthetic. Remember to use the `ncbirths` dataset!</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex1-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code># Scatterplot of weight vs. weeks
+ggplot(data = ncbirths, aes(x = weeks, y = weight)) +
+  geom_point()</code></pre>
+</div>
+<div id="section-boxplots-as-discretizedconditioned-scatterplots"
+class="section level3">
+<h3>Boxplots as discretized/conditioned scatterplots</h3>
+<p>If it is helpful, you can think of boxplots as scatterplots for which
+the variable on the x-axis has been discretized.</p>
+<p>The <code>cut()</code> function takes two arguments: the continuous
+variable you want to discretize and the number of <code>breaks</code>
+that you want to make in that continuous variable in order to discretize
+it.</p>
+<p>First, we will make a new variable, named <code>weeks_cut</code>,
+which discretizes the original <code>weeks</code> variable. We will use
+the <code>cut()</code> function, specifying four breaks.</p>
+<div class="tutorial-exercise" data-label="cut-ex" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code>ncbirths &lt;- ncbirths |&gt;
+  mutate(weeks_cut = cut(___, breaks = ___))</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="cut-ex-hint"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code> The `cut()` function should cut the `weeks` variable into 4 different categories.</code></pre>
+</div>
+<p>Next, using the new <code>weeks_cut</code> variable, make
+side-by-side boxplots illustrating how the birth weight of these babies
+varies according to the number of weeks of gestation.</p>
+<div class="tutorial-exercise" data-label="ex2" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = ___,
+       aes(x = ___, y = ___)) +
+  ___</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="ex2-hint"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code> In the plot `x` is `weeks_cut` and `y` is `weight` from the `ncbirths` dataset.</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex2-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = ncbirths,
+       aes(x = weeks_cut, y = weight)) +
+  geom_boxplot()</code></pre>
+</div>
+</div>
+</div>
+<div id="section-characterizing-bivariate-relationships"
+class="section level2">
+<h2>Characterizing bivariate relationships</h2>
+<p>Scatterplots can reveal characteristics of the relationship between
+two variables. Any patterns–and deviations from those–we see in these
+plots could give us some insight into the nature of the underlying
+phenomenon. Specifically, we look for four things: form, direction,
+strength, and unusual observations.</p>
+<ul>
+<li><p>Form (e.g. linear, quadratic, non-linear)</p></li>
+<li><p>Direction (e.g. positive, negative)</p></li>
+<li><p>Strength (how much scatter/noise? sometimes characterized as weak
+or strong relationship.)</p></li>
+<li><p>Unusual observations</p></li>
+</ul>
+<p>Form is the overall shape made by the points. Since we are learning
+about linear regression, our primary concern is whether the form is
+linear or non-linear.</p>
+<p>Direction is either positive or negative. Here, the question is
+whether the two variables tend to move in the same direction–that is,
+when one goes up, the other tends to go up–or in the opposite direction.
+We’ll see examples of both in just a minute.</p>
+<p>The strength of the relationship is governed by how much scatter is
+present. Do the points seem to be clustered together in a way that
+suggests a close relationship? Or are they very loosely organized?</p>
+<p>Finally, any points that don’t fit the overall pattern, or simply lie
+far away, are important to investigate. These unusual observations,
+often called “outliers,” may be erroneous measurements, or they can be
+exceptions that help clarify the general trend. Either way, these
+observations can be revealing, and we’ll learn more about them later in
+these tutorials.</p>
+<div id="section-examples-of-scatterplots" class="section level3">
+<h3>Examples of scatterplots</h3>
+<p>We’re going to look at a bunch of scatterplots that we found “in the
+wild” and talk about what we see, so that you can start to build some
+experience in interpreting them.</p>
+<p>You can continue this exercise on your own by doing a Google image
+search for “scatterplot.”</p>
+<p>As we work through these, please keep in mind that much of what we
+are doing at this stage involves making judgment calls. This is part of
+the nature of statistics, and while it can be frustrating–especially as
+a beginner. However, it is an inescapable part of doing statistics. For
+better or for worse, statistics is not a field where there is one right
+answer. There are of course an infinite number of indefensible claims,
+but many judgments are open to interpretation.</p>
+</div>
+<div id="section-sign-legibility" class="section level3">
+<h3>Sign Legibility</h3>
+<p>Here we see a negative, slightly non-linear relationship between sign
+legibility and driver age. This makes sense to me, since people’s
+eyesight tends to get worse as they age. We would characterize the
+strength of this relationship as moderately strong, since the pattern
+seems to be pervasive. There doesn’t seem to be any outliers here.</p>
+<p>This relationship may be a good candidate for fitting a regression
+model, but the curvature in the relationship deserves attention. Indeed,
+very few relationships will be truly “linear,” but it is our
+responsibility to assess if it is reasonable to assume if a relationship
+is linear “enough.”</p>
+<p><img src="images/images-mod2-scatterplot4.gif" width="300" /></p>
+</div>
+<div id="section-nist" class="section level3">
+<h3>NIST</h3>
+<p>Conversely, in this next scatterplot we see little evidence of any
+relationship at all. The direction is neither positive nor negative, nor
+is there any clearly identifiable form. Any perceived relationship would
+be exceptionally weak.</p>
+<p><img src="images/chp1_scat3.png" width="300" /></p>
+</div>
+<div id="section-non-linear" class="section level3">
+<h3>Non-linear</h3>
+<p>In this “Example Scatter Plot” we see another clear, non-linear
+relationship. In this case, the direction is negative for negative
+values of <span class="math inline">\(x\)</span>, but positive for
+positive values of <span class="math inline">\(x\)</span>. The points
+are clustered fairly close together, so the relationship is fairly
+strong. The point in the upper-left-hand corner might be considered an
+outlier - since it is far from the other points - but it doesn’t
+represent a break from the overall pattern of the points.</p>
+<p><img src="images/scatterplot.png" width="300" /></p>
+</div>
+<div id="section-fan-shape" class="section level3">
+<h3>Fan shape</h3>
+<p>In this scatterplot, we see what is known as a “fan shape.” The
+direction is certainly positive, but the spread of the points increases
+dramatically as we get further from the origin. We will discuss this
+type of pattern more later, but it is an indicator of “non-constant”
+variance, as the variability (spread) in the y-values increases for
+larger values of x. Generally, log-transformations do a great job of
+“taming” these fan shapes, allowing for us to use a linear regression
+model on the transformed data.</p>
+<p><img src="images/plotpng.png" width="300" /></p>
+<p>In these next exercises, you’ll get more practice creating
+scatterplots and characterizing what you see in them.</p>
+</div>
+</div>
+<div id="section-your-turn-1" class="section level2">
+<h2>Your turn!</h2>
+<p>Creating scatterplots is simple and they are so useful that it is
+worthwhile to expose yourself to many examples. Over time, you will gain
+familiarity with the types of patterns that you see. You will begin to
+recognize how scatterplots can reveal the nature of the relationship
+between two variables.</p>
+<p>In this exercise, and throughout this lesson, we will be using
+several datasets listed below. These data are available through the
+<strong>openintro</strong> package.</p>
+<ul>
+<li>The <code>mammals</code> dataset contains information about 39
+different species of mammals, including their body weight, brain weight,
+gestation time, and a few other variables.</li>
+<li>The <code>mlbbat10</code> dataset contains batting statistics for
+1,199 Major League Baseball players during the 2010 season.</li>
+<li>The <code>bdims</code> dataset contains body girth and skeletal
+diameter measurements for 507 physically active individuals.</li>
+<li>The <code>smoking</code> dataset contains information on the smoking
+habits of 1,691 citizens of the United Kingdom.</li>
+</ul>
+<p>To see more thorough documentation on any of these datasets, use the
+<code>?</code> or <code>help()</code> functions.</p>
+<p>First, using the <code>mammals</code> dataset, create a scatterplot
+illustrating how the brain weight (<code>brain_wt</code>) of a mammal
+varies as a function of its body weight (<code>body_wt</code>).</p>
+<div class="tutorial-exercise" data-label="ex3" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code># Mammals scatterplot</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="ex3-hint-1"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = mammals, aes(x = ___, y = ___)) +
+  geom_point()</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex3-hint-2"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = mammals, aes(x = body_wt, y = ___)) +
+  geom_point()</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex3-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = mammals, aes(x = body_wt, y = brain_wt)) +
+  geom_point()</code></pre>
+</div>
+<div id="section-section" class="section level3">
+<h3></h3>
+<p>Next, using the <code>mlbbat10</code> dataset, create a scatterplot
+illustrating how the slugging percentage (<code>slg</code>) of a player
+varies as a function of his on-base percentage (<code>obp</code>).</p>
+<div class="tutorial-exercise" data-label="ex4" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="ex4-hint-1"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = mlbbat10, aes(x = ___, y = ___)) +
+  geom_point()</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex4-hint-2"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = mlbbat10, aes(x = obp, y = ___)) +
+  geom_point()</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex4-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = mlbbat10, aes(x = obp, y = slg)) +
+  geom_point()</code></pre>
+</div>
+</div>
+<div id="section-section-1" class="section level3">
+<h3></h3>
+<p>Next, using the <code>bdims</code> dataset, create a scatterplot
+illustrating how a person’s weight (<code>wgt</code>) varies as a
+function of their height (<code>hgt</code>). Once you’ve accomplished
+this, use color to separate individuals by <code>sex</code>.</p>
+<p><em>Hint</em>: You’ll need to coerce <code>sex</code> into a factor
+using the <code>as.factor()</code> function.</p>
+<div class="tutorial-exercise" data-label="ex5" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="ex5-hint-1"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = bdims, aes(x = ___, y = ___, color = ___)_ +
+  geom_point()</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex5-hint-2"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = bdims, aes(x = hgt, y = ___, color = ___)_ +
+  geom_point()</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex5-hint"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = bdims, aes(x = hgt, y = wgt, color = ___)_ +
+  geom_point()</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex5-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = bdims, aes(x = hgt, y = wgt, color = as.factor(sex))) +
+  geom_point()</code></pre>
+</div>
+</div>
+<div id="section-section-2" class="section level3">
+<h3></h3>
+<p>Finally, using the <code>smoking</code> dataset, create a scatterplot
+illustrating how the amount that a person smokes on weekdays
+(<code>amt_weekdays</code>) varies as a function of their age
+(<code>age</code>).</p>
+<div class="tutorial-exercise" data-label="ex6" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="ex6-hint-1"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = smoking, aes(x = ___, y = ___)) +
+  geom_point()</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex6-hint-2"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = smoking, aes(x = age, y = ___)) +
+  geom_point()</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex6-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = smoking, aes(x = age, y = amt_weekdays)) +
+  geom_point()</code></pre>
+</div>
+</div>
+<div id="section-characterizing-scatterplots" class="section level3">
+<h3>Characterizing scatterplots</h3>
+<p>This scatterplot shows the relationship between the poverty rates and
+high school graduation rates of counties in the United States.</p>
+<p><img src="03-01-lesson_files/figure-html/plotmc1-1.png" width="624" /></p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="mc1" class="tutorial-question panel-body">
+<div id="mc1-answer_container" class="shiny-html-output"></div>
+<div id="mc1-message_container" class="shiny-html-output"></div>
+<div id="mc1-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+</div>
+<div id="section-transformations" class="section level2">
+<h2>Transformations</h2>
+<p>The relationship between two variables may not be linear. In these
+cases we can sometimes see strange and even inscrutable patterns in a
+scatterplot of the data. Sometimes there really is no meaningful
+relationship between the two variables. Other times, a careful
+<em>transformation</em> of one or both of the variables can reveal a
+clear relationship.</p>
+<p>Recall the bizarre pattern that you saw in the scatterplot between
+brain weight and body weight among mammals in a previous exercise. Can
+we use transformations to clarify this relationship?</p>
+<p><strong>ggplot2</strong> provides several different mechanisms for
+viewing transformed relationships. The <code>coord_trans()</code>
+function transforms the coordinates of the plot. Alternatively, the
+<code>scale_x_log10()</code> and <code>scale_y_log10()</code> functions
+perform a log (base-10) transformation of each axis. Note the
+differences in the appearance of the axes.</p>
+<p>Let’s practice using both methods to transform our previous
+scatterplot by taking the log (base-10) of both the body weight
+(<code>body_wt</code>) and brain weight (<code>brain_wt</code>)
+variables.</p>
+<p>Fist, let’s use the <code>coord_trans()</code> function to modify our
+original scatterplot, so that both the x- and y-axis is on a
+<code>"log10"</code> scale.</p>
+<div class="tutorial-exercise" data-label="ex7" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code> ggplot(data = mammals, aes(x = body_wt, y = brain_wt)) +
+  geom_point() +
+  ___(x = &quot;log10&quot;, y = &quot;log10&quot;)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="ex7-hint"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code> The function you want to use is `coord_trans()`!</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex7-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = mammals, aes(x = body_wt, y = brain_wt)) +
+  geom_point() +
+  coord_trans(x = &quot;log10&quot;, y = &quot;log10&quot;)</code></pre>
+</div>
+<div id="section-section-3" class="section level3">
+<h3></h3>
+<p>Now, let’s use the <code>scale_x_log10()</code> and
+<code>scale_y_log10()</code> functions to achieve the same effect but
+with different axis labels and grid lines.</p>
+<div class="tutorial-exercise" data-label="ex8" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = mammals, aes(x = body_wt, y = brain_wt)) +
+  geom_point() +
+  ___ +
+  ___</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="ex8-hint"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code> Add in the `scale_x_log10()` and `scale_y_log10()` to transform the x- and y-axis!</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex8-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = mammals, aes(x = body_wt, y = brain_wt)) +
+  geom_point() +
+  scale_x_log10() +
+  scale_y_log10()</code></pre>
+</div>
+</div>
+</div>
+<div id="section-outliers" class="section level2">
+<h2>Outliers</h2>
+<p>Observations that don’t seem to fit with the rest of points may be
+considered “outliers.” There isn’t a universal, hard-and-fast definition
+of what constitutes an “outlier,” but they are often easy to spot in a
+scatterplot.</p>
+<p>In this scatterplot, we consider the relationship between the number
+of home runs hit by Major League baseball players in 2010 and the number
+of bases they stole. Home runs are a measure of batting power, while
+stolen bases are a measure of footspeed. It is not surprising that we
+see a negative relationship here, since power and speed are generally
+complementary skills.</p>
+<p><img src="03-01-lesson_files/figure-html/homerun-1.png" width="624" /></p>
+<p>Since both variables here are integer-valued, several of the
+observations have the same coordinates, and thus the corresponding
+points are plotted on top of one another. This can misrepresent the
+data!</p>
+<div id="section-add-transparency" class="section level3">
+<h3>Add transparency</h3>
+<p>To combat this, we can add transparency to the points, using the
+<code>alpha</code> argument. This allows for us to see that the
+overplotting occurs where the darker dots are.</p>
+<pre class="r"><code>ggplot(data = mlbbat10, aes(x = stolen_base, y = home_run)) +
+  geom_point(alpha = 0.5)</code></pre>
+<p><img src="03-01-lesson_files/figure-html/hr_alpha-1.png" width="624" /></p>
+</div>
+<div id="section-add-some-jitter" class="section level3">
+<h3>Add some jitter</h3>
+<p>Another approach is add some jitter to the plot, just like what we
+did with the boxplots!</p>
+<pre class="r"><code>ggplot(data = mlbbat10, aes(x = stolen_base, y = home_run)) +
+  geom_jitter(alpha = 0.5)</code></pre>
+<p><img src="03-01-lesson_files/figure-html/hr_jitter-1.png" width="624" /></p>
+</div>
+<div id="section-identifying-outliers" class="section level3">
+<h3>Identifying outliers</h3>
+<p>In this plot, there are two points that stand out as potential
+outliers: the one in the lower-right hand corner, and the one at the
+very top. We will discuss later in the course how to handle these
+outliers, but for now, it is enough to simply identify them and
+investigate them. In this case, we can use the <code>filter()</code>
+function to identify those players with <strong>at least</strong> 60
+stolen bases or <strong>at least</strong> 50 home runs. As it turns out,
+the player in the lower-right hand corner is Juan Pierre, who is one of
+the speediest and least powerful hitters in recent memory. The player at
+the top is Jose Bautista, one of the game’s most revered sluggers.</p>
+<pre class="r"><code>mlbbat10 |&gt;
+  filter(stolen_base &gt; 60 | home_run &gt; 50) |&gt;
+  select(name, team, position, stolen_base, home_run)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["name"],"name":[1],"type":["fct"],"align":["left"]},{"label":["team"],"name":[2],"type":["fct"],"align":["left"]},{"label":["position"],"name":[3],"type":["fct"],"align":["left"]},{"label":["stolen_base"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["home_run"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"J Pierre","2":"CWS","3":"OF","4":"68","5":"1"},{"1":"J Bautista","2":"TOR","3":"OF","4":"9","5":"54"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>See if you can find the outliers in the next exercise.</p>
+</div>
+</div>
+<div id="section-your-turn-2" class="section level2">
+<h2>Your turn!</h2>
+<p>In Chapter 5, we will discuss how outliers can affect the results of
+a linear regression model and how we can deal with them. For now, it is
+enough to simply identify them and note how the relationship between two
+variables may change as a result of removing outliers.</p>
+<p>Recall that in the baseball example earlier in the lesson, most of
+the points were clustered in the lower left corner of the plot, making
+it difficult to see the general pattern of the majority of the data.
+This difficulty was caused by a few outlying players whose on-base
+percentages (OBPs) were exceptionally high. These values are present in
+our dataset only because these players had very few batting
+opportunities.</p>
+<p>Both OBP and SLG are known as <em>rate</em> statistics, since they
+measure the frequency of certain events over time (as opposed to their
+<em>count</em>). In order to compare these rates sensibly, it makes
+sense to include only players with a reasonable number of opportunities,
+so that these observed rates have the chance to approach what we might
+expect from a player’s long-run rate.</p>
+<p>In Major League Baseball, batters qualify for the batting title only
+if they have 3.1 plate appearances per game. This translates into
+roughly 502 plate appearances in a 162-game season. The
+<code>mlbbat10</code> dataset does not include plate appearances as a
+variable, but we can use at-bats (<code>at_bat</code>)–which constitute
+a subset of plate appearances–as a proxy.</p>
+<p>Let’s make a scatterplot of the same relationship as before, but only
+for players with at least 200 at-bats. To do this, we’ll need to carry
+out the following steps:</p>
+<ol style="list-style-type: decimal">
+<li>Create a new dataset named <code>ab_gt_200</code> which contains
+only the players who had at least 200 at-bats.</li>
+<li>Using <code>ab_gt_200</code>, create a scatterplot for
+<code>slg</code> as a function of <code>obp</code>.</li>
+</ol>
+<div class="tutorial-exercise" data-label="ex9" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code># Filter for AB greater than or equal to 200
+ab_gt_200 &lt;- mlbbat10 |&gt;
+  filter(___)
+
+# Scatterplot of slg vs. obp
+ggplot(ab_gt_200, aes(x = ___, y = ___)) +
+  geom_point()</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="ex9-hint-1"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>mlbbat10 |&gt;
+  filter(at_bat &gt;= 200)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex9-hint-2"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(ab_gt_200, aes(x = obp, y = slg)) +
+  geom_point()</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="ex9-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code># Filter for AB greater than or equal to 200
+ab_gt_200 &lt;- mlbbat10 |&gt;
+  filter(at_bat &gt;= 200)
+
+# Scatterplot of slg vs. obp
+ggplot(ab_gt_200, aes(x = obp, y = slg)) +
+  geom_point()</code></pre>
+</div>
+<div id="section-section-4" class="section level3">
+<h3></h3>
+<p>Notice, there is still one player who seems to be far from the rest
+of the data.</p>
+<p>Use <code>filter()</code> to find the observation (row) that
+corresponds to the player from the <code>ab_gt_200</code> dataset with
+whose OBP was below 0.200.</p>
+<div class="tutorial-exercise" data-label="ex10" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code>ab_gt_200 |&gt;
+  filter(___)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="ex10-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code># Identify the outlying player
+ab_gt_200 |&gt;
+  filter(obp &lt; 0.2)</code></pre>
+</div>
+</div>
+</div>
+<div id="section-hash-and-submit" class="section level2">
+<h2>Hash and submit</h2>
+<div class="encoder_ui">
+<div>
+If you have completed this tutorial and are happy with all of your
+solutions, please enter your identifying information, then click the button below to generate your hash
+<div class="form-group shiny-input-container">
+<label class="control-label" id="name-label" for="name">What's your name?</label>
+<input id="name" type="text" class="shiny-input-text form-control" value=""/>
+</div>
+<div class="form-group shiny-input-container">
+<label class="control-label" id="studentID-label" for="studentID">What is your student ID (Gebruikersnaam  s-/p-nummer)?</label>
+<input id="studentID" type="text" class="shiny-input-text form-control" value=""/>
+</div>
+<div id="outb35b581d6662ccd6" class="shiny-text-output"></div>
+</div>
+<div class="row" style="padding-bottom: 0.5em;">
+<div class="col-sm-3">
+<button id="hash_generate" type="button" class="btn btn-default action-button" title="Generate hash">Generate</button>
+</div>
+<div class="col-sm-7"></div>
+<div class="col-sm-2">
+<div class="btn-group btn-group-sm pull-right" role="group" aria-label="Clipboard buttons">
+<button id="hash_select" class="btn btn-default" type="button" title="Select hash"><svg
+      aria-hidden="true" focusable="false"
+      data-prefix="fas" data-icon="i-cursor"
+      class="svg-inline--fa fa-i-cursor fa-w-8"
+      role="img" xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 256 512" style="height: 16px;">
+      <path fill="currentColor" d="M256 52.048V12.065C256 5.496 250.726.148 244.158.066 211.621-.344 166.469.011 128 37.959 90.266.736 46.979-.114 11.913.114 5.318.157 0 5.519 0 12.114v39.645c0 6.687 5.458 12.078 12.145 11.998C38.111 63.447 96 67.243 96 112.182V224H60c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12h36v112c0 44.932-56.075 48.031-83.95 47.959C5.404 447.942 0 453.306 0 459.952v39.983c0 6.569 5.274 11.917 11.842 11.999 32.537.409 77.689.054 116.158-37.894 37.734 37.223 81.021 38.073 116.087 37.845 6.595-.043 11.913-5.405 11.913-12V460.24c0-6.687-5.458-12.078-12.145-11.998C217.889 448.553 160 444.939 160 400V288h36c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12h-36V112.182c0-44.932 56.075-48.213 83.95-48.142 6.646.018 12.05-5.346 12.05-11.992z">
+      </path>
+    </svg></button>
+<span class="btn-separator"></span>
+<button id="hash_copy" class="btn btn-default" type="button" title="Copy hash to clipboard"><svg
+      aria-hidden="true" focusable="false"
+      data-prefix="far" data-icon="clipboard"
+      class="svg-inline--fa fa-clipboard fa-w-12"
+      role="img" xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 384 512" style="height: 16px;">
+      <path fill="currentColor" d="M336 64h-80c0-35.3-28.7-64-64-64s-64 28.7-64 64H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zM192 40c13.3 0 24 10.7 24 24s-10.7 24-24 24-24-10.7-24-24 10.7-24 24-24zm144 418c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V118c0-3.3 2.7-6 6-6h42v36c0 6.6 5.4 12 12 12h168c6.6 0 12-5.4 12-12v-36h42c3.3 0 6 2.7 6 6z">
+      </path>
+    </svg></button>
+</div>
+</div>
+</div>
+<pre id="hash_output" class="shiny-text-output" style="white-space: pre-wrap;"></pre>
+<br/>
+<script>selectText = function(node) {
+        node = document.getElementById(node);
+
+        if (document.body.createTextRange) {
+          const range = document.body.createTextRange();
+          range.moveToElementText(node);
+          range.select();
+        } else if (window.getSelection) {
+          const selection = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        } else {
+          console.warn('Could not select text in node: Unsupported browser.');
+        }
+      }</script>
+<script>document.getElementById('hash_select').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        selectText('hash_output');
+      });</script>
+<script>document.getElementById('hash_copy').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        selectText('hash_output');
+        document.execCommand('copy');
+      });</script>
+</div>
+<div id="section-submit-your-hash-in-a-form" class="section level3">
+<h3>Submit your hash in a form</h3>
+<p>After creating the hash, please copy it, navigate to <a
+href="https://forms.gle/uxn1MkCSNkmiHcnB6">this form</a> and fill it in
+and submit. You will need to submit the form once for every lesson you
+complete in this tutorial.</p>
+<p><img src="images/Submit-hash.jpg" width="50%" style="display: block; margin: auto;" />
+
+<script type="application/shiny-prerendered" data-context="server-start">
+# https://oferengel-posit.shinyapps.io/chisquare-test/
+
+library(dplyr)
+library(purrr)
+try_paths <- c(
+  here::here("R", "header-include.R"), 
+  here::here("tutorials", "03-models", "R", "header-include.R")
+  )
+
+
+
+
+hdr_path <- try_paths[map_lgl(try_paths, file.exists)]
+  
+
+source(hdr_path)
+
+theme_set(theme_classic())
+
+
+
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::register_http_handlers(session, metadata = NULL)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::prepare_tutorial_state(session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::i18n_observe_tutorial_language(input, session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+session$onSessionEnded(function() {
+        learnr:::event_trigger(session, "session_stop")
+      })
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex1-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex1-code-editor`)), session)
+output$`tutorial-exercise-ex1-output` <- renderUI({
+  `tutorial-exercise-ex1-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex1", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_classic())", 
+"", "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
+    setup = NULL, chunks = list(list(label = "ex1", code = "# Scatterplot of weight vs. weeks\n", 
+        opts = list(label = "\"ex1\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("# Scatterplot of weight vs. weeks", 
+    "ggplot(data = ncbirths, aes(x = weeks, y = weight)) +", 
+    "  geom_point()"), chunk_opts = list(label = "ex1-solution")), 
+    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "03-01-lesson_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "03-01-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex1", exercise = TRUE, code = c("# Scatterplot of weight vs. weeks", 
+        ""), out.width.px = 624, out.height.px = 384, params.src = "ex1, exercise = TRUE", 
+        fig.num = 0, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-cut-ex-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-cut-ex-code-editor`)), session)
+output$`tutorial-exercise-cut-ex-output` <- renderUI({
+  `tutorial-exercise-cut-ex-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "cut-ex", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_classic())", 
+"", "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
+    setup = NULL, chunks = list(list(label = "cut-ex", code = "ncbirths <- ncbirths |>\n  mutate(weeks_cut = cut(___, breaks = ___))", 
+        opts = list(label = "\"cut-ex\"", exercise = "TRUE"), 
+        engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = NULL, tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "03-01-lesson_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "03-01-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "cut-ex", exercise = TRUE, code = c("ncbirths <- ncbirths |>", 
+        "  mutate(weeks_cut = cut(___, breaks = ___))"), out.width.px = 624, 
+        out.height.px = 384, params.src = "cut-ex, exercise = TRUE", 
+        fig.num = 0, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex2-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex2-code-editor`)), session)
+output$`tutorial-exercise-ex2-output` <- renderUI({
+  `tutorial-exercise-ex2-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex2", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_classic())", 
+"", "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
+    setup = "ncbirths <- ncbirths |>\n  mutate(weeks_cut = cut(weeks, breaks = 4))", 
+    chunks = list(list(label = "ex2-setup", code = "ncbirths <- ncbirths |>\n  mutate(weeks_cut = cut(weeks, breaks = 4))", 
+        opts = list(label = "\"ex2-setup\""), engine = "r"), 
+        list(label = "ex2", code = "ggplot(data = ___,\n       aes(x = ___, y = ___)) +\n  ___", 
+            opts = list(label = "\"ex2\"", exercise = "TRUE"), 
+            engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("ggplot(data = ncbirths,", 
+    "       aes(x = weeks_cut, y = weight)) +", "  geom_boxplot()"
+    ), chunk_opts = list(label = "ex2-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "03-01-lesson_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "03-01-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex2", exercise = TRUE, code = c("ggplot(data = ___,", 
+        "       aes(x = ___, y = ___)) +", "  ___"), out.width.px = 624, 
+        out.height.px = 384, params.src = "ex2, exercise = TRUE", 
+        fig.num = 0, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex3-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex3-code-editor`)), session)
+output$`tutorial-exercise-ex3-output` <- renderUI({
+  `tutorial-exercise-ex3-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex3", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_classic())", 
+"", "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
+    setup = NULL, chunks = list(list(label = "ex3", code = "# Mammals scatterplot\n", 
+        opts = list(label = "\"ex3\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("ggplot(data = mammals, aes(x = body_wt, y = brain_wt)) +", 
+    "  geom_point()"), chunk_opts = list(label = "ex3-solution")), 
+    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "03-01-lesson_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "03-01-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex3", exercise = TRUE, code = c("# Mammals scatterplot", 
+        ""), out.width.px = 624, out.height.px = 384, params.src = "ex3, exercise = TRUE", 
+        fig.num = 0, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex4-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex4-code-editor`)), session)
+output$`tutorial-exercise-ex4-output` <- renderUI({
+  `tutorial-exercise-ex4-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex4", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_classic())", 
+"", "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
+    setup = NULL, chunks = list(list(label = "ex4", code = "", 
+        opts = list(label = "\"ex4\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("ggplot(data = mlbbat10, aes(x = obp, y = slg)) +", 
+    "  geom_point()"), chunk_opts = list(label = "ex4-solution")), 
+    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "03-01-lesson_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "03-01-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex4", exercise = TRUE, code = "", out.width.px = 624, 
+        out.height.px = 384, params.src = "ex4, exercise = TRUE", 
+        fig.num = 0L, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex5-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex5-code-editor`)), session)
+output$`tutorial-exercise-ex5-output` <- renderUI({
+  `tutorial-exercise-ex5-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex5", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_classic())", 
+"", "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
+    setup = NULL, chunks = list(list(label = "ex5", code = "", 
+        opts = list(label = "\"ex5\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("ggplot(data = bdims, aes(x = hgt, y = wgt, color = as.factor(sex))) +", 
+    "  geom_point()"), chunk_opts = list(label = "ex5-solution")), 
+    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "03-01-lesson_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "03-01-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex5", exercise = TRUE, code = "", out.width.px = 624, 
+        out.height.px = 384, params.src = "ex5, exercise = TRUE", 
+        fig.num = 0L, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex6-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex6-code-editor`)), session)
+output$`tutorial-exercise-ex6-output` <- renderUI({
+  `tutorial-exercise-ex6-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex6", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_classic())", 
+"", "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
+    setup = NULL, chunks = list(list(label = "ex6", code = "", 
+        opts = list(label = "\"ex6\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("ggplot(data = smoking, aes(x = age, y = amt_weekdays)) +", 
+    "  geom_point()"), chunk_opts = list(label = "ex6-solution")), 
+    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "03-01-lesson_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "03-01-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex6", exercise = TRUE, code = "", out.width.px = 624, 
+        out.height.px = 384, params.src = "ex6, exercise = TRUE", 
+        fig.num = 0L, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = c("auto", "single", "multiple", "learnr_radio", 
+"learnr_checkbox", "learnr_text", "learnr_numeric"), label = "mc1", 
+    question = structure("Describe the form, direction, and strength of this relationship", html = TRUE, class = c("html", 
+    "character")), answers = list(structure(list(id = "lnr_ans_d6a1a3d", 
+        option = "Linear, positive, strong", value = "Linear, positive, strong", 
+        label = structure("Linear, positive, strong", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Is it positive?", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_777daaa", 
+        option = "Linear, negative, weak", value = "Linear, negative, weak", 
+        label = structure("Linear, negative, weak", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Is it weak? Looks moderately strong to me.", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_962f197", 
+        option = "Linear, negative, moderately strong", value = "Linear, negative, moderately strong", 
+        label = structure("Linear, negative, moderately strong", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = structure("The scatterplot shows a linear and negative relationship!", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_63049ad", 
+        option = "Non-linear, negative, strong", value = "Non-linear, negative, strong", 
+        label = structure("Non-linear, negative, strong", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Is it non-linear?", html = TRUE, class = c("html", 
+        "character")), type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Resplendent!\nCorrect!", html = TRUE, class = c("html", 
+    "character")), try_again = structure("That’s okay: you learn more from mistakes than successes. Let’s do it one more time.\nIncorrect", html = TRUE, class = c("html", 
+    "character")), incorrect = structure("That’s okay: you learn more from mistakes than successes. Let’s do it one more time.\nIncorrect", html = TRUE, class = c("html", 
+    "character")), message = NULL, post_message = NULL), ids = list(
+        answer = "mc1-answer", question = "mc1"), loading = NULL, 
+    random_answer_order = TRUE, allow_retry = TRUE, seed = 1319228558.38569, 
+    options = list()), class = c("auto", "single", "multiple", 
+"learnr_radio", "learnr_checkbox", "learnr_text", "learnr_numeric", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex7-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex7-code-editor`)), session)
+output$`tutorial-exercise-ex7-output` <- renderUI({
+  `tutorial-exercise-ex7-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex7", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_classic())", 
+"", "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
+    setup = NULL, chunks = list(list(label = "ex7", code = " ggplot(data = mammals, aes(x = body_wt, y = brain_wt)) +\n  geom_point() +\n  ___(x = \"log10\", y = \"log10\")", 
+        opts = list(label = "\"ex7\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("ggplot(data = mammals, aes(x = body_wt, y = brain_wt)) +", 
+    "  geom_point() +", "  coord_trans(x = \"log10\", y = \"log10\")"
+    ), chunk_opts = list(label = "ex7-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "03-01-lesson_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "03-01-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex7", exercise = TRUE, code = c(" ggplot(data = mammals, aes(x = body_wt, y = brain_wt)) +", 
+        "  geom_point() +", "  ___(x = \"log10\", y = \"log10\")"
+        ), out.width.px = 624, out.height.px = 384, params.src = "ex7, exercise = TRUE", 
+        fig.num = 0, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex8-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex8-code-editor`)), session)
+output$`tutorial-exercise-ex8-output` <- renderUI({
+  `tutorial-exercise-ex8-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex8", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_classic())", 
+"", "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
+    setup = NULL, chunks = list(list(label = "ex8", code = "ggplot(data = mammals, aes(x = body_wt, y = brain_wt)) +\n  geom_point() +\n  ___ +\n  ___", 
+        opts = list(label = "\"ex8\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("ggplot(data = mammals, aes(x = body_wt, y = brain_wt)) +", 
+    "  geom_point() +", "  scale_x_log10() +", "  scale_y_log10()"
+    ), chunk_opts = list(label = "ex8-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "03-01-lesson_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "03-01-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex8", exercise = TRUE, code = c("ggplot(data = mammals, aes(x = body_wt, y = brain_wt)) +", 
+        "  geom_point() +", "  ___ +", "  ___"), out.width.px = 624, 
+        out.height.px = 384, params.src = "ex8, exercise = TRUE", 
+        fig.num = 0, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex9-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex9-code-editor`)), session)
+output$`tutorial-exercise-ex9-output` <- renderUI({
+  `tutorial-exercise-ex9-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex9", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_classic())", 
+"", "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
+    setup = NULL, chunks = list(list(label = "ex9", code = "# Filter for AB greater than or equal to 200\nab_gt_200 <- mlbbat10 |>\n  filter(___)\n\n# Scatterplot of slg vs. obp\nggplot(ab_gt_200, aes(x = ___, y = ___)) +\n  geom_point()", 
+        opts = list(label = "\"ex9\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("# Filter for AB greater than or equal to 200", 
+    "ab_gt_200 <- mlbbat10 |>", "  filter(at_bat >= 200)", "", 
+    "# Scatterplot of slg vs. obp", "ggplot(ab_gt_200, aes(x = obp, y = slg)) +", 
+    "  geom_point()"), chunk_opts = list(label = "ex9-solution")), 
+    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "03-01-lesson_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "03-01-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex9", exercise = TRUE, code = c("# Filter for AB greater than or equal to 200", 
+        "ab_gt_200 <- mlbbat10 |>", "  filter(___)", "", "# Scatterplot of slg vs. obp", 
+        "ggplot(ab_gt_200, aes(x = ___, y = ___)) +", "  geom_point()"
+        ), out.width.px = 624, out.height.px = 384, params.src = "ex9, exercise = TRUE", 
+        fig.num = 0, exercise.df_print = "paged"), engine = "r", 
+    version = "4"), class = c("r", "tutorial_exercise")))
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-ex10-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-ex10-code-editor`)), session)
+output$`tutorial-exercise-ex10-output` <- renderUI({
+  `tutorial-exercise-ex10-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "ex10", global_setup = structure(c("# https://oferengel-posit.shinyapps.io/chisquare-test/", 
+"", "library(dplyr)", "library(purrr)", "try_paths <- c(", "  here::here(\"R\", \"header-include.R\"), ", 
+"  here::here(\"tutorials\", \"03-models\", \"R\", \"header-include.R\")", 
+"  )", "", "", "", "", "hdr_path <- try_paths[map_lgl(try_paths, file.exists)]", 
+"  ", "", "source(hdr_path)", "", "theme_set(theme_classic())", 
+"", "", ""), chunk_opts = list(label = "setup", include = FALSE)), 
+    setup = "ab_gt_200 <- mlbbat10 |>\n  filter(at_bat >= 200)", 
+    chunks = list(list(label = "ex10-setup", code = "ab_gt_200 <- mlbbat10 |>\n  filter(at_bat >= 200)", 
+        opts = list(label = "\"ex10-setup\""), engine = "r"), 
+        list(label = "ex10", code = "ab_gt_200 |>\n  filter(___)", 
+            opts = list(label = "\"ex10\"", exercise = "TRUE"), 
+            engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("# Identify the outlying player", 
+    "ab_gt_200 |>", "  filter(obp < 0.2)"), chunk_opts = list(
+        label = "ex10-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "03-01-lesson_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "03-01-lesson_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "ex10", exercise = TRUE, code = c("ab_gt_200 |>", 
+        "  filter(___)"), out.width.px = 624, out.height.px = 384, 
+        params.src = "ex10, exercise = TRUE", fig.num = 0, exercise.df_print = "paged"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+encoder_logic()
+</script>
+</p>
+<!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="dependencies">
+{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["header-attrs"]},{"type":"character","attributes":{},"value":["2.29"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/pandoc"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["header-attrs.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.6.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/3.6.0"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery-3.6.0.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquerylib"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.1.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootstrap"]},{"type":"character","attributes":{},"value":["3.3.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/bootstrap"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["viewport"]}},"value":[{"type":"character","attributes":{},"value":["width=device-width, initial-scale=1"]}]},{"type":"character","attributes":{},"value":["js/bootstrap.min.js","shim/html5shiv.min.js","shim/respond.min.js"]},{"type":"character","attributes":{},"value":["css/cerulean.min.css"]},{"type":"character","attributes":{},"value":["<style>h1 {font-size: 34px;}\n       h1.title {font-size: 38px;}\n       h2 {font-size: 30px;}\n       h3 {font-size: 24px;}\n       h4 {font-size: 18px;}\n       h5 {font-size: 16px;}\n       h6 {font-size: 12px;}\n       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}\n       pre:not([class]) { background-color: white }<\/style>"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["pagedtable"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/pagedtable-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/pagedtable.js"]},{"type":"character","attributes":{},"value":["css/pagedtable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["highlightjs"]},{"type":"character","attributes":{},"value":["9.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/highlightjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["highlight.js"]},{"type":"character","attributes":{},"value":["textmate.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.11.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["i18n"]},{"type":"character","attributes":{},"value":["21.6.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/i18n"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["i18next.min.js","tutorial-i18n-init.js"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["<script id=\"i18n-cstm-trns\" type=\"application/json\">{\"language\":\"en\",\"resources\":{\"en\":{\"translation\":{\"button\":{\"runcode\":\"Run Code\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Hint\",\"hint_plural\":\"Hints\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Next Hint\",\"hintprev\":\"Previous Hint\",\"solution\":\"Solution\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copy to Clipboard\",\"startover\":\"Start Over\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continue\",\"submitanswer\":\"Submit Answer\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Previous Topic\",\"nexttopic\":\"Next Topic\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Try Again\"},\"text\":{\"startover\":\"Start Over\",\"areyousure\":\"Are you sure you want to start over? (all exercise progress will be reset)\",\"youmustcomplete\":\"You must complete the\",\"exercise\":\"exercise\",\"exercise_plural\":\"exercises\",\"inthissection\":\"in this section before continuing.\",\"code\":\"Code\",\"enginecap\":\"{{engine}} $t(text.code)\",\"quiz\":\"Quiz\",\"blank\":\"blank\",\"blank_plural\":\"blanks\",\"exercisecontainsblank\":\"This exercise contains {{count}} $t(text.blank).\",\"pleasereplaceblank\":\"Please replace {{blank}} with valid code.\",\"unparsable\":\"It looks like this might not be valid R code. R cannot determine how to turn your text into a complete command. You may have forgotten to fill in a blank, to remove an underscore, to include a comma between arguments, or to close an opening <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> or <code>{<\\/code> with a matching <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code> or <code>}<\\/code>.\\n\",\"unparsablequotes\":\"<p>It looks like your R code contains specially formatted quotation marks or &quot;curly&quot; quotes (<code>{{character}}<\\/code>) around character strings, making your code invalid. R requires character values to be contained in straight quotation marks (<code>&quot;<\\/code> or <code>'<\\/code>).<\\/p> {{code}} <p>Don't worry, this is a common source of errors when you copy code from another app that applies its own formatting to text. You can try replacing the code on that line with the following. There may be other places that need to be fixed, too.<\\/p> {{suggestion}}\\n\",\"unparsableunicode\":\"<p>It looks like your R code contains an unexpected special character (<code>{{character}}<\\/code>) that makes your code invalid.<\\/p> {{code}} <p>Sometimes your code may contain a special character that looks like a regular character, especially if you copy and paste the code from another app. Try deleting the special character from your code and retyping it manually.<\\/p>\\n\",\"unparsableunicodesuggestion\":\"<p>It looks like your R code contains an unexpected special character (<code>{{character}}<\\/code>) that makes your code invalid.<\\/p> {{code}} <p>Sometimes your code may contain a special character that looks like a regular character, especially if you copy and paste the code from another app. You can try replacing the code on that line with the following. There may be other places that need to be fixed, too.<\\/p> {{suggestion}}\\n\",\"and\":\"and\",\"or\":\"or\",\"listcomma\":\", \",\"oxfordcomma\":\",\"}}},\"fr\":{\"translation\":{\"button\":{\"runcode\":\"Lancer le Code\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Indication\",\"hint_plural\":\"Indications\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Indication Suivante\",\"hintprev\":\"Indication Précédente\",\"solution\":\"Solution\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copier dans le Presse-papier\",\"startover\":\"Recommencer\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuer\",\"submitanswer\":\"Soumettre\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Chapitre Précédent\",\"nexttopic\":\"Chapitre Suivant\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Réessayer\"},\"text\":{\"startover\":\"Recommencer\",\"areyousure\":\"Êtes-vous certains de vouloir recommencer? (La progression sera remise à zéro)\",\"youmustcomplete\":\"Vous devez d'abord compléter\",\"exercise\":\"l'exercice\",\"exercise_plural\":\"des exercices\",\"inthissection\":\"de cette section avec de continuer.\",\"code\":\"Code\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"and\":\"et\",\"or\":\"ou\",\"oxfordcomma\":\"\"}}},\"es\":{\"translation\":{\"button\":{\"runcode\":\"Ejecutar código\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Pista\",\"hint_plural\":\"Pistas\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Siguiente pista\",\"hintprev\":\"Pista anterior\",\"solution\":\"Solución\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copiar al portapapeles\",\"startover\":\"Reiniciar\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuar\",\"submitanswer\":\"Enviar respuesta\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Tema anterior\",\"nexttopic\":\"Tema siguiente\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Volver a intentar\"},\"text\":{\"startover\":\"Reiniciar\",\"areyousure\":\"¿De verdad quieres empezar de nuevo? (todo el progreso del ejercicio se perderá)\",\"youmustcomplete\":\"Debes completar\",\"exercise\":\"el ejercicio\",\"exercise_plural\":\"los ejercicios\",\"inthissection\":\"en esta sección antes de continuar.\",\"code\":\"Código\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Cuestionario\",\"and\":\"y\",\"or\":\"o\",\"oxfordcomma\":\"\"}}},\"pt\":{\"translation\":{\"button\":{\"runcode\":\"Executar código\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Dica\",\"hint_plural\":\"Dicas\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Próxima dica\",\"hintprev\":\"Dica anterior\",\"solution\":\"Solução\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copiar para a área de transferência\",\"startover\":\"Reiniciar\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuar\",\"submitanswer\":\"Enviar resposta\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Tópico anterior\",\"nexttopic\":\"Próximo tópico\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Tentar novamente\"},\"text\":{\"startover\":\"Reiniciar\",\"areyousure\":\"Tem certeza que deseja começar novamente? (todo o progresso feito será perdido)\",\"youmustcomplete\":\"Você deve completar\",\"exercise\":\"o exercício\",\"exercise_plural\":\"os exercícios\",\"inthissection\":\"nesta seção antes de continuar.\",\"code\":\"Código\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"and\":\"e\",\"or\":\"ou\",\"oxfordcomma\":\"\"}}},\"tr\":{\"translation\":{\"button\":{\"runcode\":\"Çalıştırma Kodu\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Ipucu\",\"hint_plural\":\"İpuçları\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Sonraki İpucu\",\"hintprev\":\"Önceki İpucu\",\"solution\":\"Çözüm\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Pano'ya Kopyala\",\"startover\":\"Baştan Başlamak\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Devam et\",\"submitanswer\":\"Cevabı onayla\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Önceki Konu\",\"nexttopic\":\"Sonraki Konu\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Tekrar Deneyin\"},\"text\":{\"startover\":\"Baştan Başlamak\",\"areyousure\":\"Baştan başlamak istediğinizden emin misiniz? (tüm egzersiz ilerlemesi kaybolacak)\",\"youmustcomplete\":\"Tamamlamalısın\",\"exercise\":\"egzersiz\",\"exercise_plural\":\"egzersizler\",\"inthissection\":\"devam etmeden önce bu bölümde\",\"code\":\"Kod\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Sınav\",\"oxfordcomma\":\"\"}}},\"emo\":{\"translation\":{\"button\":{\"runcode\":\"🏃\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"💡\",\"hint_plural\":\"$t(button.hint)\",\"hinttitle\":\"$t(button.hint)\",\"solution\":\"🎯\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"📋\",\"startover\":\"⏮\",\"startovertitle\":\"Start Over\",\"continue\":\"✅\",\"submitanswer\":\"🆗\",\"submitanswertitle\":\"Submit Answer\",\"previoustopic\":\"⬅\",\"nexttopic\":\"➡\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"🔁\"},\"text\":{\"startover\":\"⏮\",\"areyousure\":\"🤔\",\"youmustcomplete\":\"⚠️ 👉 🧑‍💻\",\"exercise\":\"\",\"exercise_plural\":\"\",\"inthissection\":\"\",\"code\":\"💻\",\"enginecap\":\"$t(text.code) {{engine}}\",\"oxfordcomma\":\"\"}}},\"eu\":{\"translation\":{\"button\":{\"runcode\":\"Kodea egikaritu\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Laguntza\",\"hint_plural\":\"Laguntza\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Aurreko laguntza\",\"hintprev\":\"Hurrengo laguntza\",\"solution\":\"Ebazpena\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Arbelean kopiatu\",\"startover\":\"Berrabiarazi\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Jarraitu\",\"submitanswer\":\"Erantzuna bidali\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Aurreko atala\",\"nexttopic\":\"Hurrengo atala\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Berriro saiatu\"},\"text\":{\"startover\":\"Berrabiarazi\",\"areyousure\":\"Berriro hasi nahi duzu? (egindako lana galdu egingo da)\",\"youmustcomplete\":\"Aurrera egin baino lehen atal honetako\",\"exercise\":\"ariketa egin behar duzu.\",\"exercise_plural\":\"ariketak egin behar dituzu.\",\"inthissection\":\"\",\"code\":\"Kodea\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Galdetegia\",\"oxfordcomma\":\"\"}}},\"de\":{\"translation\":{\"button\":{\"runcode\":\"Code ausführen\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Tipp\",\"hint_plural\":\"Tipps\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Nächster Tipp\",\"hintprev\":\"Vorheriger Tipp\",\"solution\":\"Lösung\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"In die Zwischenablage kopieren\",\"startover\":\"Neustart\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Weiter\",\"submitanswer\":\"Antwort einreichen\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Vorheriges Kapitel\",\"nexttopic\":\"Nächstes Kapitel\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Nochmal versuchen\"},\"text\":{\"startover\":\"Neustart\",\"areyousure\":\"Bist du sicher, dass du neustarten willst? (der gesamte Lernfortschritt wird gelöscht)\",\"youmustcomplete\":\"Vervollstädinge\",\"exercise\":\"die Übung\",\"exercise_plural\":\"die Übungen\",\"inthissection\":\"in diesem Kapitel, bevor du fortfährst.\",\"code\":\"Code\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"blank\":\"Lücke\",\"blank_plural\":\"Lücken\",\"pleasereplaceblank\":\"Bitte ersetze {{blank}} mit gültigem Code.\",\"unparsable\":\"Dies scheint kein gültiger R Code zu sein. R kann deinen Text nicht in einen gültigen Befehl übersetzen. Du hast vielleicht vergessen, die Lücke zu füllen, einen Unterstrich zu entfernen, ein Komma zwischen Argumente zu setzen oder ein eröffnendes <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> oder <code>{<\\/code> mit einem zugehörigen <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code> oder <code>}<\\/code> zu schließen.\\n\",\"and\":\"und\",\"or\":\"oder\",\"listcomma\":\", \",\"oxfordcomma\":\",\"}}},\"ko\":{\"translation\":{\"button\":{\"runcode\":\"코드 실행\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"힌트\",\"hint_plural\":\"힌트들\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"다음 힌트\",\"hintprev\":\"이전 힌트\",\"solution\":\"솔루션\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"클립보드에 복사\",\"startover\":\"재학습\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"다음 학습으로\",\"submitanswer\":\"정답 제출\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"이전 토픽\",\"nexttopic\":\"다음 토픽\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"재시도\"},\"text\":{\"startover\":\"재학습\",\"areyousure\":\"다시 시작 하시겠습니까? (모든 예제의 진행 정보가 재설정됩니다)\",\"youmustcomplete\":\"당신은 완료해야 합니다\",\"exercise\":\"연습문제\",\"exercise_plural\":\"연습문제들\",\"inthissection\":\"이 섹션을 실행하기 전에\",\"code\":\"코드\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"퀴즈\",\"blank\":\"공백\",\"blank_plural\":\"공백들\",\"exercisecontainsblank\":\"이 연습문제에는 {{count}}개의 $t(text.blank)이 포함되어 있습니다.\",\"pleasereplaceblank\":\"{{blank}}를 유효한 코드로 바꾸십시오.\",\"unparsable\":\"이것은 유효한 R 코드가 아닐 수 있습니다. R은 텍스트를 완전한 명령으로 변환하는 방법을 결정할 수 없습니다. 당신은 공백이나 밑줄을 대체하여 채우기, 인수를 컴마로 구분하기, 또는 <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> , <code>{<\\/code>로 시작하는 구문을 닫는 <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code>, <code>}<\\/code>을 잊었을 수도 있습니다.\\n\",\"and\":\"그리고\",\"or\":\"혹은\",\"listcomma\":\", \",\"oxfordcomma\":\"\"}}},\"zh\":{\"translation\":{\"button\":{\"runcode\":\"运行代码\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"提示\",\"hint_plural\":\"提示\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"下一个提示\",\"hintprev\":\"上一个提示\",\"solution\":\"答案\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"复制到剪切板\",\"startover\":\"重新开始\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"继续\",\"submitanswer\":\"提交答案\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"上一专题\",\"nexttopic\":\"下一专题\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"再试一次\"},\"text\":{\"startover\":\"重置\",\"areyousure\":\"你确定要重新开始吗? (所有当前进度将被重置)\",\"youmustcomplete\":\"你必须完成\",\"exercise\":\"练习\",\"exercise_plural\":\"练习\",\"inthissection\":\"在进行本节之前\",\"code\":\"代码\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"测试\",\"blank\":\"空\",\"blank_plural\":\"空\",\"exercisecontainsblank\":\"本练习包含{{count}}个$t(text.blank)\",\"pleasereplaceblank\":\"请在{{blank}}内填写恰当的代码\",\"unparsable\":\"这似乎不是有效的R代码。 R不知道如何将您的文本转换为完整的命令。 您是否忘了填空，忘了删除下划线，忘了在参数之间包含逗号，或者是忘了用<code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code>,<code>}<\\/code>来封闭<code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code>。 or <code>{<\\/code>。\\n\",\"unparsablequotes\":\"<p>您的R代码中似乎含有特殊格式的引号，或者弯引号(<code>{{character}}<\\/code>) 在字符串前后，在R中字符串应该被直引号(<code>&quot;<\\/code> 或者 <code>'<\\/code>)包裹。<\\/p> {{code}} <p>别担心，该错误经常在复制粘贴包含格式的代码时遇到， 您可以尝试将该行中的代码替换为以下代码，也许还有其他地方需要修改。<\\/p> {{suggestion}}\\n\",\"unparsableunicode\":\"<p>您的代码中似乎包含有异常字符(<code>{{character}}<\\/code>),导致代码无效。<\\/p> {{code}} <p>有时候你的代码可能含有看似正常字符的特殊字符，特别是当你复制粘贴其他来源代码的时候。 请试着删除这些特殊字符,重新输入<\\/p>\\n\",\"unparsableunicodesuggestion\":\"<p>您的代码中似乎包含有异常字符(<code>{{character}}<\\/code>),导致代码无效。<\\/p> {{code}} <p>有时候你的代码可能含有看似正常字符的特殊字符，特别是当你复制粘贴其他来源代码的时候。 请试着删除这些特殊字符,重新输入<\\/p>\\n\",\"and\":\"且\",\"or\":\"或\",\"listcomma\":\",\",\"oxfordcomma\":\",\"}}},\"pl\":{\"translation\":{\"button\":{\"runcode\":\"Uruchom kod\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Podpowiedź\",\"hint_plural\":\"Podpowiedzi\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Następna podpowiedź\",\"hintprev\":\"Poprzednia podpowiedź\",\"solution\":\"Rozwiązanie\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Kopiuj do schowka\",\"startover\":\"Zacznij od początku\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Kontynuuj\",\"submitanswer\":\"Wyślij\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Poprzednia sekcja\",\"nexttopic\":\"Następna sekcja\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Spróbuj ponownie\"},\"text\":{\"startover\":\"Zacznij od początku\",\"areyousure\":\"Czy na pewno chcesz zacząć od początku? (cały postęp w zadaniu zostanie utracony)\",\"youmustcomplete\":\"Musisz ukończyć\",\"exercise\":\"ćwiczenie\",\"exercise_plural\":\"ćwiczenia\",\"inthissection\":\"w tej sekcji przed kontynuowaniem\",\"code\":\"Kod\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"blank\":\"luka\",\"blank_plural\":\"luk(i)\",\"exercisecontainsblank\":\"To ćwiczenie zawiera {{count}} $t(text.blank).\",\"pleasereplaceblank\":\"Proszę uzupełnić {{blank}} prawidłowym kodem.\",\"unparsable\":\"Wygląda na to, że może to nie być prawidłowy kod R. R nie jest w stanie przetworzyć Twojego tekstu na polecenie. Mogłeś(-aś) zapomnieć wypełnić luki, usunąć podkreślnik, umieścić przecinka między argumentami, lub zamknąć znak <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> lub <code>{<\\/code> odpowiadającym <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code> lub <code>}<\\/code>.\\n\",\"unparsablequotes\":\"<p>Wygląda na to, że Twój kod zawiera szczególnie sformatowane cudzysłowy lub cudzysłowy typograficzne (<code>{{character}}<\\/code>) przy ciągach znaków, co sprawia, że kod jest niepoprawny. R wymaga cudzysłowów prostych (<code>&quot;<\\/code> albo <code>'<\\/code>).<\\/p> {{code}} <p>Nie martw się, to powszechne źródło błędów, gdy kopiuje się kod z innego programu, który sam formatuje teskt. Możesz spróbować zastąpić swój kod następującym kodem. Mogą być też inne miejsca, które wymagają poprawienia.<\\/p> {{suggestion}}\\n\",\"unparsableunicode\":\"<p>Wygląda na to, że Twój kod zawiera niespodziewany znak specjalny (<code>{{character}}<\\/code>), co sprawia, że kod jest niepoprawny.<\\/p> {{code}} <p>Czasami Twój kod może zawierać znak specjalny, który wygląda jak zwykły znak, zwłaszcza jeśli kopiujesz kod z innego programu. Spróbuj usunąć znak specjalny i wpisać do ponownie ręcznie.<\\/p>\\n\",\"unparsableunicodesuggestion\":\"<p>Wygląda na to, że Twój kod zawiera niespodziewany znak specjalny (<code>{{character}}<\\/code>), co sprawia, że kod jest niepoprawny.<\\/p> {{code}} <p>Czasami Twój kod może zawierać znak specjalny, który wygląda jak zwykły znak, zwłaszcza jeśli kopiujesz kod z innego programu. Możesz spróbować zastąpić swój kod następującym kodem. Mogą być też inne miejsca, które wymagają poprawienia.<\\/p> {{suggestion}}\\n\",\"and\":\"i\",\"or\":\"lub\",\"listcomma\":\", \",\"oxfordcomma\":\"\"}}}}}<\/script>"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-format"]},{"type":"character","attributes":{},"value":["0.11.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmarkdown/templates/tutorial/resources"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-format.js"]},{"type":"character","attributes":{},"value":["tutorial-format.css","rstudio-theme.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.6.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/3.6.0"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery-3.6.0.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquerylib"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.1.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["navigation"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/navigation-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tabsets.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["highlightjs"]},{"type":"character","attributes":{},"value":["9.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/highlightjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["highlight.js"]},{"type":"character","attributes":{},"value":["default.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.6.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/3.6.0"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery-3.6.0.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquerylib"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.1.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["font-awesome"]},{"type":"character","attributes":{},"value":["6.5.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fontawesome"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/all.min.css","css/v4-shims.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fontawesome"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.3"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootbox"]},{"type":"character","attributes":{},"value":["5.5.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/bootbox"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["bootbox.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["idb-keyvalue"]},{"type":"character","attributes":{},"value":["3.2.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/idb-keyval"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["idb-keyval-iife-compat.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.11.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]}]}
+</script>
+<!--/html_preserve-->
+<!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="execution_dependencies">
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82]}},"value":[{"type":"character","attributes":{},"value":["airports","assertthat","backports","base","bslib","cachem","checkmate","cherryblossom","cli","colorspace","commonmark","compiler","crayon","datasets","digest","dplyr","ellipsis","emo","evaluate","farver","fastmap","fontawesome","forcats","generics","ggplot2","glue","gradethis","graphics","grDevices","grid","gtable","here","hms","htmltools","htmlwidgets","httpuv","jquerylib","jsonlite","knitr","labeling","later","learnr","learnrhash","lifecycle","lubridate","magrittr","markdown","methods","mime","munsell","openintro","pillar","pkgconfig","promises","purrr","R6","Rcpp","readr","rlang","rmarkdown","rprojroot","rstudioapi","sass","scales","shiny","stats","stringi","stringr","tibble","tidyr","tidyselect","tidyverse","timechange","tools","tzdb","usdata","utils","vctrs","withr","xfun","xtable","yaml"]},{"type":"character","attributes":{},"value":["0.1.0","0.2.1","1.5.0","4.4.2","0.8.0","1.1.0","2.3.2","0.1.0","3.6.3","2.1-1","1.9.2","4.4.2","1.5.3","4.4.2","0.6.37","1.1.4","0.3.2","0.0.0.9000","1.0.1","2.1.2","1.2.0","0.5.3","1.0.0","0.1.3","3.5.1","1.8.0","0.2.14","4.4.2","4.4.2","4.4.2","0.3.6","1.0.1","1.1.3","0.5.8.1","1.6.4","1.6.15","0.1.4","1.8.9","1.49","0.4.3","1.4.1","0.11.5","0.2.0","1.0.4","1.9.4","2.0.3","1.13","4.4.2","0.12","0.5.1","2.5.0","1.10.0","2.0.3","1.3.2","1.0.2","2.5.1","1.0.13-1","2.1.5","1.1.4","2.29","2.0.4","0.17.1","0.4.9","1.3.0","1.10.0","4.4.2","1.8.4","1.5.1","3.2.1","1.3.1","1.2.1","2.0.0","0.3.0","4.4.2","0.4.0","0.3.1","4.4.2","0.6.5","3.0.2","0.49","1.8-4","2.3.10"]}]}]}
+</script>
+<!--/html_preserve-->
+</div>
+</div>
+
+</article> <!-- topics -->
+
+<div class="topicsContainer">
+<div class="topicsPositioner">
+<div class="band">
+<div class="bandContent topicsListContainer">
+
+<!-- begin doc-metadata -->
+<div id="doc-metadata">
+<h1 class="title toc-ignore" style="display:none;">Regression modeling:
+1 - Visualizing two variables</h1>
+</div>
+<!-- end doc-metadata -->
+
+</div> <!-- bandContent.topicsListContainer -->
+</div> <!-- band -->
+</div> <!-- topicsPositioner -->
+</div> <!-- topicsContainer -->
+
+
+</main> <!-- bandContent page -->
+</div> <!-- pageContent band -->
+
+
+
+<!-- Build Tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("section-TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<script>
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+
+</body>
+
+</html>

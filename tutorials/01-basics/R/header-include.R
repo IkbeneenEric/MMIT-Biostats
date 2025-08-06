@@ -7,7 +7,7 @@ library(here)
 library(shiny)
 shiny_url <- "https://oferengel-posit.shinyapps.io/"
 # submit_hash_url <- "https://forms.gle/ajEDfePc1jcTukyB7"
-submit_hash_url <- "https://forms.gle/uxn1MkCSNkmiHcnB6"
+submit_hash_url <- "https://docs.google.com/forms/d/e/1FAIpQLSebZHrYskrhiCwg-840XRg12O8GGdkir1X4zPHDyhi_vli7Ww/viewform?usp=dialog"
 
 gradethis::gradethis_setup(pass.praise = TRUE, fail.encourage = TRUE)
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
