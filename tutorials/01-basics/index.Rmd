@@ -23,7 +23,7 @@ These tutorials provide a bird's eye view of R visualization and programming you
 
 ## Tutorials
 
-### 1 - [Basic visualization](`r glue("{shiny_url}01-basics-viz/")`){target="_blank"}
+### 1 - [Basic visualization](`r glue("{shiny_url}01-basic-viz/")`){target="_blank"}
 
 Visualization is one of the most important tools for data science and a rewarding way to start learning R; since you get an immediate visual response which helps you explore the data in a variety of ways. In this tutorial you will learn how to...  
 
@@ -31,7 +31,7 @@ Visualization is one of the most important tools for data science and a rewardin
 *   How to add variables to a graph with **aesthetics**
 *   How to make different "types" of graphs with **geoms** 
 
-### 2 - [Basic programming](`r glue("{shiny_url}02-basics-prog")`){target="_blank"}
+### 2 - [Basic programming](`r glue("{shiny_url}02-basic-viz")`){target="_blank"}
 
 
 In this tutorial you will acquire the foundations to understand R code. You'll learn about:
