@@ -2,7 +2,7 @@
 title: "Regression modeling"
 output: html_document
 params:
-  shiny_url: "https://oferengel-posit.shinyapps.io/"
+  shiny_url: "https://oahbxj-inge0r-holtman.shinyapps.io/"
 ---
 
 <meta http-equiv='cache-control' content='no-cache'> 
@@ -37,7 +37,7 @@ In this tutorial you'll also take your skills with simple linear regression to t
 
 ## Lessons
 
-### 1 - [Visualizing two variables](`r glue("{shiny_url}03-01-lesson/")`){target="_blank"}
+### 1 - [Visualizing two variables](`r glue("{shiny_url}03-lesson/")`){target="_blank"}
 
 * Explore [bivariate relationships](https://en.wikipedia.org/wiki/Bivariate_analysis) graphically
 * Characterize bivariate relationships
