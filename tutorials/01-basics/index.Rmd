@@ -2,7 +2,7 @@
 title: "Basic visualization and programming in R"
 output: html_document
 params:
-  shiny_url: "https://wivpih-eric-hoekstra.shinyapps.io/"
+  shiny_url: "https://oahbxj-inge0r-holtman.shinyapps.io/"
 ---
 
 <meta http-equiv='cache-control' content='no-cache'> 
