@@ -19,7 +19,7 @@ library(gradethis)
 library(glue)
 library(shiny)
 gradethis::gradethis_setup(pass.praise = TRUE, fail.encourage = TRUE)
-submit_hash_url <- "https://forms.gle/uxn1MkCSNkmiHcnB6"
+submit_hash_url <- "https://docs.google.com/forms/d/e/1FAIpQLSebZHrYskrhiCwg-840XRg12O8GGdkir1X4zPHDyhi_vli7Ww/viewform?usp=dialog"
 
 
 
